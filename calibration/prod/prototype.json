@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "image_size": [
+    2592,
+    1944
+  ],
+  "model": "brown",
+  "K": [
+    [
+      1300,
+      0,
+      1296
+    ],
+    [
+      0,
+      1300,
+      972
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "D": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "road_polygon": [
+    [
+      -50,
+      -10
+    ],
+    [
+      50,
+      -10
+    ],
+    [
+      50,
+      30
+    ],
+    [
+      -50,
+      30
+    ]
+  ],
+  "calibration_id": "PROTOTYPE-UNCALIBRATED",
+  "note": "Dummy calibration; must be replaced with real survey/intrinsic calibration. Not physically calibrated.",
+  "Rcw": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -0.5422000925673253,
+      -0.8402494032250087
+    ],
+    [
+      0.0,
+      0.8402494032250087,
+      -0.5422000925673253
+    ]
+  ],
+  "tcw": [
+    0.0,
+    -1.2207539095482087,
+    11.113494495086714
+  ]
+}
