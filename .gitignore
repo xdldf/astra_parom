@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+runs/
+*.avi
+*.mp4
+runs/
+examples/
+__pycache__/
+*.avi
+*.mp4
+.venv/
+
