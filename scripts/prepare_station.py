@@ -1,4 +1,4 @@
-"""First-run model download and supplied installation calibration."""
+"""Install bundled models, verify GPU inference and supply installation calibration."""
 import os
 from pathlib import Path
 import shutil
@@ -12,6 +12,8 @@ sys.path.insert(0,str(ROOT))
 
 
 def main():
+    from scripts.install_model_assets import install_models
+    install_models()
     from web_app import workbench as wb
     from web_app.plates import engine
     import torch

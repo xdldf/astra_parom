@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "workbench/yolo26n.pt",
+      "bytes": 5544453,
+      "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+    },
+    {
+      "path": "plate-models/detector/yolo-v9-t-640-license-plate-end2end/yolo-v9-t-640-license-plates-end2end.onnx",
+      "bytes": 7835770,
+      "sha256": "c3c1026ca7d0585dd88084d68182dd897113712fa734ae1557ca70174440c076"
+    },
+    {
+      "path": "plate-models/ocr/cct-s-v1-global-model/cct_s_v1_global.onnx",
+      "bytes": 7623453,
+      "sha256": "5c95b3231fff415b05cb48a3a39fab7c009364c2ee441bef092e0162ab75ea74"
+    },
+    {
+      "path": "plate-models/ocr/cct-s-v1-global-model/cct_s_v1_global_plate_config.yaml",
+      "bytes": 773,
+      "sha256": "8ade332ef026520a3360a7c154cc10be664bee25482f3997bce34a7007b4786e"
+    }
+  ]
+}

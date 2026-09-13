@@ -10,6 +10,8 @@ examples/
 *.mov
 *.pt
 *.onnx
+!models/**/*.pt
+!models/**/*.onnx
 *.sqlite*
 *.db
 *.log
