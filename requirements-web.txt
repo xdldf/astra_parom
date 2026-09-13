@@ -1,0 +1,12 @@
+-r requirements.txt
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+python-multipart>=0.0.18,<1
+ultralytics>=8.4,<9
+httpx>=0.27,<1
+
+# CUDA 12 / cuDNN 9, matching requirements-gpu.txt
+fast-alpr[onnx-gpu]==0.4.0
+fast-plate-ocr==1.1.0
+onnxruntime-gpu==1.23.2
+opencv-python-headless==4.12.0.88

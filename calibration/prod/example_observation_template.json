@@ -1,0 +1,23 @@
+{
+  "_NOTE": "This is a template. Replace REPLACE_* with your actual measured values.",
+  "schema_version": 1,
+  "video_sha256": "REPLACE_WITH_ACTUAL_SHA256",
+  "tracks": [
+    {
+      "track_id": "first-vehicle",
+      "observations": [
+        {
+          "frame": 3000,
+          "sigma_px": 2.0,
+          "comment": "These pixel values must come from your actual observation.",
+          "rear_contact_uv": [100, 200],
+          "front_contact_uv": [400, 250],
+          "rear_uv": [120, 150],
+          "front_uv": [420, 180]
+        }
+      ],
+      "real_length_m": 4.52,
+      "measurement_note": "Real length must be independently measured for this physical vehicle."
+    }
+  ]
+}

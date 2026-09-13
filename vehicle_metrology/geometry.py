@@ -24,8 +24,8 @@ class Camera:
                   np.asarray(data['D'], float).reshape(-1), np.asarray(data['Rcw'], float),
                   np.asarray(data['tcw'], float).reshape(3),
                   np.asarray(data['road_polygon'], float), str(data['calibration_id']))
-        if cam.model not in ('brown', 'fisheye'):
-            raise ValueError('Model must be brown or fisheye')
+        if cam.model not in ("brown", "fisheye", "fisheye-corrected", "fisheye-corrected-rational"):
+            raise ValueError("Model must be brown or fisheye; fisheye-corrected supports full image correction")
         if cam.K.shape != (3,3) or cam.Rcw.shape != (3,3):
             raise ValueError('K and Rcw must be 3x3')
         if len(cam.image_size) != 2 or any(int(v) != v or v <= 0 for v in cam.image_size):
@@ -34,7 +34,7 @@ class Camera:
             raise ValueError('road_polygon must be Nx2, N>=3')
         if not all(np.all(np.isfinite(v)) for v in (cam.K,cam.D,cam.Rcw,cam.tcw,cam.road_polygon)):
             raise ValueError('Nonfinite calibration')
-        if cam.D.size not in ((4,) if cam.model == 'fisheye' else (4,5)):
+        if cam.D.size not in ((4,) if cam.model in ('fisheye', 'fisheye-corrected', 'fisheye-corrected-rational') else (4,5,8)):
             raise ValueError('Incorrect distortion coefficient count')
         if not np.allclose(cam.Rcw.T@cam.Rcw,np.eye(3),atol=1e-6) or not np.isclose(np.linalg.det(cam.Rcw),1):
             raise ValueError('Rcw must be a proper rotation')
@@ -58,14 +58,14 @@ class Camera:
         if not np.isfinite(points).all() or np.any((points@self.Rcw.T+self.tcw)[:,2] <= 0):
             raise ValueError('Nonfinite points or points behind camera')
         rvec = cv2.Rodrigues(self.Rcw)[0]
-        fn = cv2.fisheye.projectPoints if self.model == 'fisheye' else cv2.projectPoints
+        fn = (cv2.fisheye.projectPoints if self.model in ('fisheye', 'fisheye-corrected', 'fisheye-corrected-rational') else cv2.projectPoints)
         return fn(points.reshape(-1,1,3),rvec,self.tcw,self.K,self.D)[0].reshape(-1,2)
 
     def rays(self, pixels):
         pixels = np.ascontiguousarray(pixels,dtype=float).reshape(-1,1,2)
         if not np.isfinite(pixels).all():
             raise ValueError('Nonfinite pixels')
-        if self.model == 'fisheye':
+        if self.model in ('fisheye', 'fisheye-corrected', 'fisheye-corrected-rational'):
             uv = cv2.fisheye.undistortPoints(pixels,self.K,self.D).reshape(-1,2)
         else:
             uv = cv2.undistortPointsIter(pixels,self.K,self.D,None,None,

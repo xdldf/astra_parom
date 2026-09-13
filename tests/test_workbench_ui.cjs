@@ -1,0 +1,113 @@
+// Exercise the actual frontend event handlers without a browser or model download.
+const {test} = require('node:test');
+const assert = require('node:assert/strict');
+const vm = require('node:vm');
+const fs = require('node:fs');
+const path = require('node:path');
+
+function studio() {
+  const elements = new Map();
+  const strokes = [];
+  const context = new Proxy({}, {get: (_,key) => (...args) => {
+    if (key === 'measureText') return {width:100};
+    strokes.push([key,...args]);
+  }});
+  function element() {
+    return {value:'0',textContent:'',className:'',hidden:false,checked:false,
+      width:600,height:500,clientWidth:600,children:[],
+      append(...items){this.children.push(...items);},
+      replaceChildren(){this.children=[];},
+      getContext(){return context;}, setPointerCapture(){},
+      getBoundingClientRect(){return {left:0,top:0,width:600,height:500};}};
+  }
+  const document = {getElementById(id){
+    if(!elements.has(id))elements.set(id,element());
+    return elements.get(id);
+  },createElement:element};
+  const sandbox = vm.createContext({document,console,structuredClone,FormData,
+    setTimeout,clearTimeout,Image:class {set src(_){this.width=600;this.height=500;this.onload();}},
+    fetch:async (_url,options)=>{
+      const body=JSON.parse(options.body);
+      if(_url.endsWith('validate-profile')) {
+        if(body.polygon.length<4) return {ok:false,json:async()=>({detail:'Invalid road'})};
+        return {ok:true,json:async()=>body};
+      }
+      return {ok:true,json:async()=>({image:'test',detections:[],scale:null})};
+    }});
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../web_app/static/app.js'),'utf8'),sandbox);
+  vm.runInContext(`media={id:'test',frames:2}; picture={};
+    profile={image_size:[600,500],lens:{...defaults},polygon:[],references:[]};
+    draft=[[20,200],[580,200],[580,450],[20,450]]; mode='road';`,sandbox);
+  return {elements,strokes,run:code=>vm.runInContext(code,sandbox)};
+}
+
+test('known-length slider and Detect preserve an unfinished four-point road',async()=>{
+  const ui=studio();
+  ui.elements.get('length').value='5.2';
+  ui.elements.get('length').oninput();
+  assert.equal(ui.run('draft.length'),4);
+  await ui.elements.get('detect').onclick();
+  assert.equal(ui.run('profile.polygon.length'),4);
+  assert.equal(ui.run('mode'),'select');
+  assert.equal(ui.run('draft.length'),0);
+  ui.run('draw()');
+  assert.ok(ui.strokes.some(s=>s[0]==='lineTo'&&s[1]===580&&s[2]===450));
+});
+
+test('setting a reference preserves the saved road',async()=>{
+  const ui=studio();
+  await ui.run('finishPendingRoad()');
+  const before=ui.run('JSON.stringify(profile.polygon)');
+  ui.run(`detections=[{bbox:[100,150,100,75],label:'car'}];selected=0;`);
+  ui.elements.get('length').value='5';
+  await ui.elements.get('addRef').onclick();
+  assert.equal(ui.run('JSON.stringify(profile.polygon)'),before);
+  assert.equal(ui.run('profile.references[0].length_m'),5);
+});
+
+test('an incomplete road is retained instead of hidden on detection',async()=>{
+  const ui=studio();
+  ui.run('draft.pop()');
+  await ui.elements.get('detect').onclick();
+  assert.equal(ui.run('mode'),'road');
+  assert.equal(ui.run('draft.length'),3);
+});
+
+test('line placement and dragging preserve road and references',async()=>{
+  const ui=studio();
+  await ui.elements.get('placeLine').onclick();
+  assert.equal(ui.run('profile.polygon.length'),4);
+  assert.equal(ui.run('mode'),'line');
+  // Stub refresh to keep this pointer test independent of frame rendering.
+  ui.run('refresh=async()=>{}');
+  const canvas=ui.elements.get('canvas');
+  canvas.onpointerdown({clientX:300,clientY:100,pointerId:1});
+  assert.equal(ui.run('profile.measurement_line_x'),300);
+  canvas.onpointerdown({clientX:300,clientY:100,pointerId:1});
+  canvas.onpointermove({clientX:340,clientY:100});
+  await canvas.onpointerup();
+  assert.equal(ui.run('profile.measurement_line_x'),340);
+  assert.equal(ui.run('profile.polygon.length'),4);
+});
+
+test('play continues through bbox center crossings to the end',async()=>{
+  const ui=studio();
+  await ui.run('finishPendingRoad()');
+  ui.run(`profile.measurement_line_x=150;media.frames=4;media.fps=25;
+    refresh=async detect=>{if(!detect)throw Error('Detection was skipped');
+      detections=[{bbox:[100,150,100,75],label:'car',depth:.1,
+        at_measurement_line:true,status:'needs_reference'}];};`);
+  await ui.elements.get('play').onclick();
+  assert.equal(Number(ui.elements.get('timeline').value),3);
+  assert.equal(ui.run('playing'),false);
+  assert.equal(ui.elements.get('play').textContent,'Play');
+  assert.doesNotMatch((ui.elements.get('status')?.textContent||''),/Paused: bbox center/);
+});
+
+test('disabling a line also finishes and preserves a valid road draft',async()=>{
+  const ui=studio();
+  ui.run('profile.measurement_line_x=150');
+  await ui.elements.get('removeLine').onclick();
+  assert.equal(ui.run('profile.measurement_line_x'),null);
+  assert.equal(ui.run('profile.polygon.length'),4);
+});
