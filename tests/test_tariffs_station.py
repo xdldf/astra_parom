@@ -402,3 +402,73 @@ def test_video_capture_uses_only_matching_session_front_history(client,monkeypat
     assert result.status_code==200,result.text
     assert 'front_evidence' not in result.json()['source']
     assert cv2.imread(str(station.DATA/result.json()['front_photo'])).mean()==pytest.approx(40,abs=1)
+
+
+def test_tariffs_toggle_persists_and_preserves_historical_prices(client):
+    assert client.get('/api/station/configuration').json()=={'tariffs_enabled':True}
+    record=client.post('/api/station/vehicles',json={'category':'car','length_m':4}).json()
+    record=client.post('/api/station/vehicles/'+record['id'],json=edit_payload(record)).json()
+    paths=['/configuration','/vehicles','/vehicles/'+record['id'],'/client']
+    etags={path:client.get('/api/station'+path).headers['etag'] for path in paths}
+    assert client.post('/api/station/configuration',json={'tariffs_enabled':False}).status_code==200
+    for path in paths:
+        response=client.get('/api/station'+path,headers={'If-None-Match':etags[path]})
+        assert response.status_code==200
+        assert response.json()['tariffs_enabled'] is False
+    second=TestClient(app)
+    assert second.get('/api/station/configuration').json()['tariffs_enabled'] is False
+    with station.connect() as db:
+        stored=station.find(db,record['id'])
+    assert stored['tariff']==record['tariff']
+    assert stored['version']==record['version']
+    assert second.post('/api/station/vehicles/'+record['id'],json=edit_payload(record,'pay')).status_code==409
+    rows=list(csv.reader(io.StringIO(client.get('/api/station/reports.csv').text.lstrip('\ufeff')),delimiter=';'))
+    assert 'Тариф, руб.' not in rows[0] and 'Пункт тарифа' not in rows[0]
+    assert len(rows[0])==len(rows[1])==8
+    assert client.post('/api/station/configuration',json={'tariffs_enabled':True}).status_code==200
+    assert client.get('/api/station/vehicles/'+record['id']).json()['tariff']==record['tariff']
+    assert 'Тариф, руб.' in client.get('/api/station/reports.csv').text
+
+
+def test_measurement_only_skips_quotes_and_requires_reconfirmation_before_payment(client,monkeypatch):
+    client.post('/api/station/configuration',json={'tariffs_enabled':False})
+    with monkeypatch.context() as context:
+        context.setattr(station,'quote',lambda *a,**kw:pytest.fail('Tariff engine must not run in measurement-only mode'))
+        assert client.post('/api/station/quote',json={'category':'truck','length_m':17.16}).json()['mode']=='disabled'
+        record=client.post('/api/station/vehicles',json={'category':'truck','length_m':17.16,'manual_rub':9000}).json()
+        assert record['tariff']['mode']=='disabled' and record['manual_rub'] is None
+        record=client.post('/api/station/vehicles/'+record['id'],json=edit_payload(record)).json()
+        assert record['status']=='Подтвержден' and record['tariff']['amount_rub'] is None
+    client.post('/api/station/configuration',json={'tariffs_enabled':True})
+    url='/api/station/vehicles/'+record['id']
+    assert client.post(url,json=edit_payload(record,'pay')).status_code==409
+    payload=edit_payload(record,reason='Категория проверена')
+    payload['category']='road_train'
+    confirmed=client.post(url,json=payload).json()
+    assert confirmed['tariff']['amount_rub']==14000
+    assert client.post(url,json=edit_payload(confirmed,'pay')).status_code==200
+
+
+def test_capture_respects_measurement_only_setting(client,monkeypatch):
+    client.post('/api/station/configuration',json={'tariffs_enabled':False})
+    monkeypatch.setattr(station,'quote',lambda *a,**kw:pytest.fail('Capture must skip tariff calculation'))
+    monkeypatch.setattr(workbench,'read_frame',lambda *a:np.zeros((500,600,3),np.uint8))
+    payload=dict(media_id='side',frame=1,bbox=[100,150,100,75],label='truck',
+        profile={'image_size':[600,500],'polygon':[[20,200],[580,200],[580,450],[20,450]],
+                 'references':[{'bbox':[100,150,100,75],'length_m':5}]})
+    response=client.post('/api/station/capture',json=payload)
+    assert response.status_code==200,response.text
+    r=response.json()
+    assert r['length_m']==5 and r['side_photo']
+    assert r['tariff']['mode']=='disabled' and r['tariff']['amount_rub'] is None
+
+
+def test_stale_operator_cannot_confirm_under_a_different_tariff_mode(client):
+    record=client.post('/api/station/vehicles',json={'category':'car','length_m':4}).json()
+    client.post('/api/station/configuration',json={'tariffs_enabled':False})
+    payload=edit_payload(record,tariffs_enabled=True)
+    response=client.post('/api/station/vehicles/'+record['id'],json=payload)
+    assert response.status_code==409
+    assert client.get('/api/station/vehicles/'+record['id']).json()['version']==record['version']
+    payload['tariffs_enabled']=False
+    assert client.post('/api/station/vehicles/'+record['id'],json=payload).json()['tariff']['mode']=='disabled'

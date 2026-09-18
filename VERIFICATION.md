@@ -1,3 +1,9 @@
+## Optional tariffs — 2026-09-18
+
+- Station regression tests: **77 passed**; camera tests: **10 passed**; station UI tests: **9 passed**.
+- Tests cover persisted shared configuration, cache invalidation, disabled tariff calculation during capture and confirmation, preserving historical prices when toggling, CSV columns, unsaved form preservation, re-confirmation before payment after re-enabling, and rejecting a stale operator's confirmation after a mode change.
+- An isolated browser preview confirmed a measurement with tariffs off, displayed its photos and length without a price on the client screen, and hid tariff columns and money totals in reports. Production settings and records were not used.
+
 ## Truck photo timing and category guidance — 2026-09-18
 
 - Full Python suite: **146 passed**. Front-history tests cover an eight-second cab/body separation, bounded age/count/bytes, tracking loss, reconnects, different readable plates, and rejecting a mismatched recorded-video session.

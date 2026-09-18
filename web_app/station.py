@@ -36,6 +36,39 @@ def connect():
     return connect_database(DB)
 
 
+def tariffs_enabled(db):
+    row=db.execute("SELECT value FROM settings WHERE key='tariffs_enabled'").fetchone()
+    return row is None or row['value']!='false'
+
+
+def station_quote(fields, enabled):
+    if not enabled:
+        return dict(amount_rub=None,code=None,mode='disabled',warnings=[],boundary_m=None,category_options=[])
+    return quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
+
+
+class Configuration(BaseModel):
+    tariffs_enabled: bool=Field(strict=True)
+
+
+@router.get('/configuration')
+def configuration(request: Request,response: Response):
+    with connect() as db:
+        enabled=tariffs_enabled(db)
+    unchanged=conditional(request,response,str(DB)+'tariffs'+str(enabled))
+    return unchanged if unchanged is not None else dict(tariffs_enabled=enabled)
+
+
+@router.post('/configuration')
+def configure(payload: Configuration):
+    with connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        if tariffs_enabled(db)!=payload.tariffs_enabled:
+            db.execute("INSERT OR REPLACE INTO settings VALUES('tariffs_enabled',?)",('true' if payload.tariffs_enabled else 'false',))
+            db.execute("UPDATE settings SET value=CAST(value AS INTEGER)+1 WHERE key='vehicle_revision'")
+    return payload.model_dump()
+
+
 def find(db,ident):
     row=db.execute('SELECT data FROM vehicles WHERE id=?',(ident,)).fetchone()
     if not row:
@@ -58,6 +91,7 @@ class Fields(BaseModel):
     actor: str=Field('Оператор',min_length=1,max_length=100)
     reason: str=Field('',max_length=1000)
     station_id: str=Field('default',pattern=r'^[a-zA-Z0-9_-]{1,64}$')
+    tariffs_enabled: bool | None=Field(None,strict=True)
 
     @model_validator(mode='after')
     def validate_category(self):
@@ -89,14 +123,14 @@ class Capture(BaseModel):
     front_offset_seconds: float=Field(3,ge=-3600,le=3600,allow_inf_nan=False)
 
 
-def new_record(fields,source=None):
+def new_record(fields,source=None,tariffs=True):
     stamp=now()
-    tariff=quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
+    tariff=station_quote(fields,tariffs)
     return dict(id=uuid.uuid4().hex,version=1,created_at=stamp,updated_at=stamp,
                 plate=normalize_plate(fields.plate),category=fields.category,length_m=fields.length_m,
                 load_capacity_t=fields.load_capacity_t,
                 measured_length_m=source.get('measured_length_m') if source else None,
-                tariff=tariff,manual_rub=fields.manual_rub,status='Требует проверки',
+                tariff=tariff,manual_rub=fields.manual_rub if tariffs else None,status='Требует проверки',
                 actor=fields.actor,source=source,side_photo=None,front_photo=None)
 
 
@@ -116,15 +150,18 @@ def health():
 
 @router.post('/quote')
 def calculate(fields: Fields):
-    return quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
+    with connect() as db:
+        return station_quote(fields,tariffs_enabled(db))
 
 
 @router.post('/vehicles')
 def create(fields: Fields):
-    if fields.manual_rub is not None and not fields.reason.strip():
-        raise HTTPException(422,'Укажите причину ручного тарифа')
-    record=new_record(fields)
     with connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        enabled=tariffs_enabled(db)
+        if enabled and fields.manual_rub is not None and not fields.reason.strip():
+            raise HTTPException(422,'Укажите причину ручного тарифа')
+        record=new_record(fields,tariffs=enabled)
         db.execute('INSERT INTO vehicles VALUES(?,?,?,?)',(record['id'],None,1,json.dumps(record,ensure_ascii=False)))
         event(db,record,fields.actor,'create',fields.reason)
     return record
@@ -183,10 +220,12 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
         source['front_camera']=paired
     if camera_note:
         source['camera_note']=camera_note
-    record=new_record(Fields(category=category,length_m=measured['length_m'],actor=payload.actor),source)
+    fields=Fields(category=category,length_m=measured['length_m'],actor=payload.actor)
     with connect() as db:
         existing=db.execute('SELECT data FROM vehicles WHERE source_key=?',(source_key,)).fetchone()
         if existing:return json.loads(existing['data'])
+        enabled=tariffs_enabled(db)
+    record=new_record(fields,source,tariffs=enabled)
     image=result.get('frame_image')
     if image is None:
         image=cv2.imdecode(np.frombuffer(base64.b64decode(result['image']),np.uint8),cv2.IMREAD_COLOR)
@@ -239,6 +278,8 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
         existing=db.execute('SELECT data FROM vehicles WHERE source_key=?',(source_key,)).fetchone()
         if existing:
             return json.loads(existing['data'])
+        if tariffs_enabled(db)!=enabled:
+            record['tariff']=station_quote(fields,tariffs_enabled(db))
         for filename,jpeg in encoded.items():
             (DATA/filename).write_bytes(jpeg)
         db.execute('INSERT INTO vehicles VALUES(?,?,?,?)',(record['id'],source_key,1,json.dumps(record,ensure_ascii=False)))
@@ -306,6 +347,7 @@ def vehicles(request: Request,response: Response,plate: str='',status: str='',ca
     where,args=filters(plate,status,category,length_min,length_max,date_from,date_to)
     with connect() as db:
         db.execute('BEGIN')
+        enabled=tariffs_enabled(db)
         revision=db.execute("SELECT value FROM settings WHERE key='vehicle_revision'").fetchone()[0]
         unchanged=conditional(request,response,str(DB)+revision+str(request.url))
         if unchanged is not None:return unchanged
@@ -323,7 +365,7 @@ def vehicles(request: Request,response: Response,plate: str='',status: str='',ca
             json_extract(v.data, '$.source.front_evidence.offset_seconds') AS front_photo_offset_seconds
             FROM (SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC LIMIT ? OFFSET ?) AS page
             JOIN vehicles v ON v.id=page.id ORDER BY page.seq DESC""",args+[limit,offset])]
-    return dict(rows=rows,**totals,limit=limit,offset=offset,snapshot=snapshot,has_more=offset+len(rows)<totals['count'])
+    return dict(rows=rows,**totals,limit=limit,offset=offset,snapshot=snapshot,has_more=offset+len(rows)<totals['count'],tariffs_enabled=enabled)
 
 
 @router.get('/vehicles/{ident}')
@@ -332,10 +374,12 @@ def vehicle(ident: str,request: Request,response: Response):
         db.execute('BEGIN')
         row=db.execute('SELECT version FROM vehicles WHERE id=?',(ident,)).fetchone()
         if row is None:raise HTTPException(404,'Запись не найдена')
-        unchanged=conditional(request,response,str(DB)+ident+str(row['version']))
+        enabled=tariffs_enabled(db)
+        unchanged=conditional(request,response,str(DB)+ident+str(row['version'])+str(enabled))
         if unchanged is not None:return unchanged
         record=find(db,ident)
-        if record['category']=='truck' and record.get('length_m',0) and record['length_m']>11.9 and record['tariff']['amount_rub'] is None:
+        record['tariffs_enabled']=enabled
+        if enabled and record['tariff'].get('mode')!='disabled' and record['category']=='truck' and record.get('length_m',0) and record['length_m']>11.9 and record['tariff']['amount_rub'] is None:
             record['tariff']=quote('truck',record['length_m'])
         record['history']=[dict(row) for row in db.execute('SELECT timestamp,actor,action,reason FROM audit WHERE vehicle_id=? ORDER BY id DESC',(ident,))]
         return record
@@ -348,11 +392,18 @@ def update(ident: str,fields: Edit):
         old=find(db,ident)
         if old['version']!=fields.version:
             raise HTTPException(409,'Запись изменена в другом окне. Обновите список и выберите автомобиль снова.')
+        enabled=tariffs_enabled(db)
+        if fields.tariffs_enabled is not None and fields.tariffs_enabled!=enabled:
+            raise HTTPException(409,'Режим тарифов изменён другим оператором. Обновите запись и повторите действие.')
+        if fields.action=='pay' and not enabled:
+            raise HTTPException(409,'Тарифы отключены: доступно только измерение.')
         if old['status']=='Оплачен':
             raise HTTPException(409,'Оплаченная запись закрыта для изменений')
         if fields.action=='pay' and old['status']!='Подтвержден':
             raise HTTPException(409,'Сначала подтвердите автомобиль')
         if fields.action=='pay':
+            if old['tariff'].get('mode')=='disabled' or old['tariff']['amount_rub'] is None:
+                raise HTTPException(409,'Сначала рассчитайте тариф и подтвердите запись заново.')
             if any(old.get(k)!=getattr(fields,k) for k in ('category','length_m','manual_rub','load_capacity_t')) or old['plate']!=normalize_plate(fields.plate):
                 raise HTTPException(422,'Перед оплатой подтвердите изменения данных')
             record=dict(old,status='Оплачен')
@@ -361,14 +412,15 @@ def update(ident: str,fields: Edit):
                 raise HTTPException(422,'Укажите причину отклонения')
             record=dict(old,status='Отклонён')
         else:
-            changed=any(old.get(k)!=getattr(fields,k) for k in ('category','length_m','manual_rub','load_capacity_t')) or old['plate']!=normalize_plate(fields.plate)
-            if (changed or fields.manual_rub is not None) and not fields.reason.strip():
+            keys=('category','length_m','load_capacity_t')+(('manual_rub',) if enabled else ())
+            changed=any(old.get(k)!=getattr(fields,k) for k in keys) or old['plate']!=normalize_plate(fields.plate)
+            if (changed or (enabled and fields.manual_rub is not None)) and not fields.reason.strip():
                 raise HTTPException(422,'Укажите причину изменения')
-            tariff=quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
-            if fields.action=='confirm' and tariff['amount_rub'] is None:
+            tariff=station_quote(fields,enabled)
+            if fields.action=='confirm' and enabled and tariff['amount_rub'] is None:
                 raise HTTPException(422,'Тариф не определён. Уточните данные или задайте ручной тариф с причиной.')
             record=dict(old,plate=normalize_plate(fields.plate),category=fields.category,length_m=fields.length_m,
-                        manual_rub=fields.manual_rub,load_capacity_t=fields.load_capacity_t,tariff=tariff,
+                        manual_rub=fields.manual_rub if enabled else None,load_capacity_t=fields.load_capacity_t,tariff=tariff,
                         status='Подтвержден' if fields.action=='confirm' else 'Требует проверки')
         record.update(version=old['version']+1,updated_at=now(),actor=fields.actor)
         db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',(record['version'],json.dumps(record,ensure_ascii=False),ident))
@@ -388,16 +440,17 @@ def client_key(station_id):
 def client_screen(request: Request,response: Response,station_id: str=Query('default',pattern=r'^[a-zA-Z0-9_-]{1,64}$')):
     with connect() as db:
         db.execute('BEGIN')
+        enabled=tariffs_enabled(db)
         row=db.execute("SELECT value FROM settings WHERE key=?",(client_key(station_id),)).fetchone()
         version=db.execute('SELECT version FROM vehicles WHERE id=?',(row['value'],)).fetchone() if row else None
-        unchanged=conditional(request,response,str(DB)+station_id+(row['value']+str(version[0]) if row and version else 'empty'))
+        unchanged=conditional(request,response,str(DB)+station_id+str(enabled)+(row['value']+str(version[0]) if row and version else 'empty'))
         if unchanged is not None:return unchanged
         record=find(db,row['value']) if row else None
         if record and record['status'] not in {'Подтвержден','Оплачен'}: record=None
         if record:
             record={k:record.get(k) for k in ('id','version','status','plate','category','length_m','load_capacity_t',
                                              'tariff','front_photo','side_photo')}
-        return dict(vehicle=record)
+        return dict(vehicle=record,tariffs_enabled=enabled)
 
 
 @router.get('/photos/{filename}')
@@ -451,13 +504,17 @@ def front_photo(ident: str,version: int=Form(...),actor: str=Form('Операт�
 @router.get('/reports.csv')
 def report_csv(status: str='',category: str='',date_from: date|None=None,date_to: date|None=None):
     where,args=filters(status=status,category=category,date_from=date_from,date_to=date_to)
+    with connect() as db:
+        enabled=tariffs_enabled(db)
+    def columns(values):
+        return [v for i,v in enumerate(values) if enabled or i not in (5,8)]
     def safe(s):
         text=str(s if s is not None else '')
         return "'"+text if text.lstrip().startswith(('=','+','-','@')) or text.startswith(('\t','\r','\n')) else text
     def stream():
         out=io.StringIO()
         writer=csv.writer(out,delimiter=';',lineterminator='\r\n')
-        writer.writerow(['Дата','Время','Гос. номер','Длина, м','Категория','Тариф, руб.','Статус','Оператор','Пункт тарифа','Грузоподъёмность, т'])
+        writer.writerow(columns(['Дата','Время','Гос. номер','Длина, м','Категория','Тариф, руб.','Статус','Оператор','Пункт тарифа','Грузоподъёмность, т']))
         yield '\ufeff'+out.getvalue()
         # Page limits apply only to the UI. Export all matching rows in bounded batches.
         with connect() as db:
@@ -465,10 +522,10 @@ def report_csv(status: str='',category: str='',date_from: date|None=None,date_to
             while batch:=cursor.fetchmany(250):
                 out.seek(0);out.truncate(0)
                 for r in batch:
-                    writer.writerow([safe(v) for v in [r['created_at'][:10],r['created_at'][11:19],r['plate'],
+                    writer.writerow([safe(v) for v in columns([r['created_at'][:10],r['created_at'][11:19],r['plate'],
                         '' if r['length_m'] is None else str(r['length_m']).replace('.',','),CATEGORIES[r['category']],
                         r['amount_rub'],r['status'],r['actor'],r['code'],
-                        '' if r['load_capacity_t'] is None else str(r['load_capacity_t']).replace('.',',')]])
+                        '' if r['load_capacity_t'] is None else str(r['load_capacity_t']).replace('.',',')])])
                 yield out.getvalue()
     return StreamingResponse(stream(),media_type='text/csv; charset=utf-8',
                     headers={'Content-Disposition':'attachment; filename="ferry_report.csv"'})

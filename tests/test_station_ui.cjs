@@ -105,3 +105,33 @@ test('earlier cab thumbnail explains timing and category choices only edit the f
   assert.equal(ui.run('dirty'),true);
   assert.equal(ui.requests.length,count);
 });
+
+test('turning tariffs off keeps unsaved edits and permits measurement confirmation',async()=>{
+  const ui=await stationUI();
+  ui.run("current={id:'editing',status:'Подтвержден',tariff:{amount_rub:9000,warnings:['Tariff warning'],category_options:['road_train']}};dirty=true;mode='manual';");
+  ui.elements.get('plateInput').value='МОИ ПРАВКИ';
+  ui.elements.get('categoryInput').value='truck';
+  ui.elements.get('manualTariff').value='';
+  ui.run('applyTariffMode(false)');
+  assert.equal(ui.elements.get('plateInput').value,'МОИ ПРАВКИ');
+  assert.equal(ui.run('dirty'),true);
+  assert.equal(ui.elements.get('tariffsEnabled').checked,false);
+  assert.equal(ui.elements.get('confirm').disabled,false);
+  assert.equal(ui.elements.get('confirm').textContent,'✓ Подтвердить измерение');
+  assert.equal(ui.elements.get('paid').disabled,true);
+  assert.equal(ui.run('fields().manual_rub'),null);
+  assert.equal(ui.elements.get('warningText').children.length,0);
+});
+
+test('tariff switch saves server setting and another operator receives it through queue polling',async()=>{
+  const first=await stationUI();
+  first.respond((path,options)=>({data:JSON.parse(options.body)}));
+  first.elements.get('tariffsEnabled').checked=false;
+  await first.elements.get('tariffsEnabled').onchange();
+  assert.equal(first.requests[0].path,'/api/station/configuration');
+  assert.equal(first.run('tariffsEnabled'),false);
+  const second=await stationUI();
+  second.respond(()=>({data:{...page(),tariffs_enabled:false}}));
+  await second.run('loadVehicles()');
+  assert.equal(second.run('tariffsEnabled'),false);
+});
