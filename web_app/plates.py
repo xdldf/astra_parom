@@ -60,6 +60,7 @@ def resume_pending():
 def process_record(ident):
     from web_app import station as st, workbench as wb
     import cv2
+    record=None
     try:
         with st.connect() as db:
             record = st.find(db, ident)
@@ -68,11 +69,17 @@ def process_record(ident):
         stored=(record.get('source') or {}).get('front_samples')
         if stored:
             anchor_image=cv2.imread(str(st.DATA/record['front_photo']))
-            anchor=front_vehicle(anchor_image)
+            tracked=bool((record.get('source') or {}).get('front_evidence'))
+            anchor=front_vehicle(anchor_image) if not tracked and anchor_image is not None else None
             for sample in stored:
                 image=cv2.imread(str(st.DATA/sample['photo']))
                 if image is not None:
-                    samples.append((sample['frame'],image,recognize(image,reference_box=anchor) if anchor else []))
+                    if tracked and 'candidates' in sample and not record.get('plate_ocr',{}).get('reread'):
+                        candidates=sample['candidates']
+                    else:
+                        reference=sample.get('target_box') if tracked else anchor
+                        candidates=recognize(image,reference_box=reference) if reference is not None else []
+                    samples.append((sample['frame'],image,candidates))
         elif front and front.get('media_id'):
             anchor=front_vehicle(wb.read_frame(front['media_id'], front['frame']))
             item = wb.media[front['media_id']]
@@ -112,15 +119,15 @@ def process_record(ident):
         result = dict(state='review' if evidence else 'not_found', candidates=evidence,
                       detector=DETECTOR, ocr=OCR, device='CUDA:0',
                       association='operator_review', completed_at=st.now())
-        save_result(ident, result)
+        save_result(ident, result, record.get('front_photo'))
     except Exception as exc:
-        save_result(ident, {'state':'error', 'error':str(exc), 'candidates':[]})
+        save_result(ident, {'state':'error', 'error':str(exc), 'candidates':[]},record.get('front_photo') if record else None)
     finally:
         with JOB_LOCK:
             JOBS.discard(ident)
 
 
-def save_result(ident, result):
+def save_result(ident, result, front_photo=None):
     from web_app import station as st
     with st.connect() as db:
         db.execute('BEGIN IMMEDIATE')
@@ -128,6 +135,8 @@ def save_result(ident, result):
         # Evidence must never overwrite an operator's number or a closed transaction.
         if old['status'] in {'Оплачен', 'Подтвержден'}:
             return
+        if front_photo is not None and old.get('front_photo')!=front_photo:
+            return  # Operator replaced the image while OCR was running.
         record = dict(old, plate_ocr=result, version=old['version']+1, updated_at=st.now())
         db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',
                    (record['version'], json.dumps(record,ensure_ascii=False), ident))
@@ -169,10 +178,10 @@ def engine():
     return MODEL
 
 
-def recognize(image, reference_box=None):
+def recognize(image, reference_box=None, target_box=None):
     """Return coordinates in the original frame, with raw model evidence."""
     import cv2
-    target=front_vehicle(image)
+    target=target_box if target_box is not None else front_vehicle(image)
     if target is None or (reference_box is not None and not same_vehicle(target,reference_box)):
         return []
     with LOCK:

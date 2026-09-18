@@ -64,6 +64,7 @@ def quote(category, length_m, manual_rub=None, load_capacity_t=None):
     bands=BANDS[category]
     fixed=len(bands)==1 and bands[0][1] is None and bands[0][2] is None
     warnings=[]
+    category_options=[]
     amount=code=None
     if length is None and not fixed:
         warnings.append('Укажите грузоподъёмность по документам, в тоннах (не массу груза).' if by_capacity else
@@ -76,7 +77,11 @@ def quote(category, length_m, manual_rub=None, load_capacity_t=None):
                 amount,code=price,c
                 break
         if amount is None:
-            warnings.append(('Грузоподъёмность' if by_capacity else 'Длина')+' не попадает в однозначный диапазон Приложения №1. Нужен ручной тариф с причиной.')
+            if category=='truck' and length>Decimal('11.90'):
+                warnings.append('Категория «Грузовой автомобиль» по длине заканчивается на 11,90 м. Для тягача с полуприцепом выберите «Тягач с прицепом / полуприцепом». Для других грузовиков уточните тип состава и грузоподъёмность по документам; длина не определяет категорию.')
+                category_options=['road_train','truck_capacity','truck_trailer','lowbed','oversize']
+            else:
+                warnings.append(('Грузоподъёмность' if by_capacity else 'Длина')+' не попадает в однозначный диапазон Приложения №1. Нужен ручной тариф с причиной.')
     boundary=None
     if length is not None:
         bounds={Decimal(v) for b in bands for v in b[1:3] if v is not None}
@@ -89,7 +94,8 @@ def quote(category, length_m, manual_rub=None, load_capacity_t=None):
     if category in {'tractor','road_train','lowbed','oversize'}:
         warnings.append('Проверьте тип состава и полную длину с прицепом. Пункт 7.2 также содержит особое условие для ГАЗ / малотоннажных ТС от 12 м; для него используйте ручной тариф с причиной.')
     return dict(amount_rub=amount,code=code,mode='auto',warnings=warnings,
-                boundary_m=None if by_capacity else boundary, boundary_t=boundary if by_capacity else None)
+                boundary_m=None if by_capacity else boundary, boundary_t=boundary if by_capacity else None,
+                category_options=category_options)
 
 
 def catalog():

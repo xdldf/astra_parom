@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse, Response
 from pydantic import BaseModel, Field, field_validator
 from web_app import workbench as wb
+from web_app.front_history import FrontHistory
 
 router=APIRouter(prefix='/api/ip')
 CONFIG=wb.DATA.parent/'ip-cameras.json'
@@ -166,6 +167,7 @@ class Station:
         self.capture_lock=threading.Lock()
         self.saved={}
         self.last_capture=None
+        self.front_history=FrontHistory()
 
     def start(self):
         for fn in (self.side.run,self.front.run,self.produce,self.infer,self.read_plates):
@@ -290,24 +292,39 @@ class Station:
                 paired=dict(kind='ip',frame=b.seq,side_seconds=a.stamp,front_seconds=b.stamp,
                             offset_seconds=self.cfg.offset_seconds,sync_error_ms=delta*1000,
                             clock='server_receive_monotonic',association='operator_review')
+            front_image=b.image() if b else None
+            evidence=[]
+            if b is not None and self.front_history.frames:
+                from web_app.plates import front_vehicle
+                try:
+                    evidence=self.front_history.select(b,front_vehicle(front_image),self.front.epoch)
+                except Exception:
+                    pass  # A plate-model failure must not discard a measured vehicle.
+            if b is not None and not evidence:
                 samples=sorted(self.front.snapshot(),key=lambda p:abs(p.stamp-b.stamp))[:5]
                 samples=[(p.seq,p.image()) for p in samples if abs(p.stamp-b.stamp)<.5]
-            record=st.persist_capture(payload,result,b.image() if b else None,paired,samples,
-                                      camera_note=None if b else 'Нет согласованного фронтального снимка: номер нужно проверить вручную')
+            record=st.persist_capture(payload,result,front_image,paired,samples,
+                                      camera_note=None if b else 'Нет согласованного фронтального снимка: номер нужно проверить вручную',
+                                      front_evidence=evidence)
             self.saved[track_id]=record
             if len(self.saved)>1000:self.saved.pop(next(iter(self.saved)))
             self.last_capture=record['id']
             return record
 
     def read_plates(self):
-        from web_app.plates import recognize
+        from web_app.plates import recognize, front_vehicle
         last=-1
         while not self.stop.wait(.25):
             b=self.fresh(self.front)
             if not b or b.seq==last:continue
             last=b.seq
             try:
-                self.plates=dict(stamp=b.stamp,frame=b.seq,candidates=recognize(b.image()))
+                epoch=self.front.epoch
+                image=b.image();box=front_vehicle(image)
+                candidates=recognize(image,target_box=box) if box is not None else []
+                if epoch!=self.front.epoch:continue
+                self.front_history.observe(b,box,candidates,epoch)
+                self.plates=dict(stamp=b.stamp,frame=b.seq,candidates=candidates)
                 self.plate_error=None
             except Exception:self.plate_error='Номер временно недоступен'
 

@@ -55,6 +55,10 @@ function query(report=false){
   for(const [key,id] of Object.entries(names))if($(id).value.trim())params.set(key,$(id).value.trim());
   return params;
 }
+function frontPhotoNote(record){
+  const offset=record.front_photo_offset_seconds??record.source?.front_evidence?.offset_seconds;
+  return offset==null?'Фото спереди':`Фото номера · ${Math.abs(offset).toFixed(1)} с ${offset<=0?'до':'после'} синхронного кадра. Проверьте соответствие автомобиля.`;
+}
 function carPhotos(tr,record){
   const td=cell(tr,'');td.className='car-photos';
   for(const [field,label] of [['side_photo','Фото сбоку'],['front_photo','Фото спереди']]){
@@ -70,7 +74,7 @@ function carPhotos(tr,record){
       e.stopPropagation();
       $('expandedMeasurement').src=url;
       $('measurementTitle').textContent=label;
-      $('measurementCaption').textContent=(record.plate||'Номер не указан')+' · '+lengthText(record.length_m);
+      $('measurementCaption').textContent=(record.plate||'Номер не указан')+' · '+lengthText(record.length_m)+(field==='front_photo'?' · '+frontPhotoNote(record):'');
       $('measurementDialog').showModal();
     };
     td.append(button);
@@ -116,9 +120,16 @@ function showQuote(q){
   $('confirm').disabled=q.amount_rub==null||current?.status==='Оплачен';
   const notes=[...q.warnings];
   if(current?.source?.camera_note)notes.unshift(current.source.camera_note);
+  for(const warning of current?.source?.measurement?.warnings||[])notes.unshift(warning);
   if(current?.source)notes.unshift('Проверьте длину и категорию автомобиля.');
   $('warning').hidden=!notes.length;$('warningText').replaceChildren();
   notes.forEach(text=>{let small=document.createElement('small');small.textContent=text;$('warningText').append(small);});
+  for(const category of q.category_options||[]){
+    const button=document.createElement('button');button.className='small-btn';button.type='button';button.textContent=categories[category];
+    button.disabled=current?.status==='Оплачен';
+    button.onclick=()=>{$('categoryInput').value=category;if(!$('reason').value.trim())$('reason').value='Уточнение типа автомобиля / состава';changed();};
+    $('warningText').append(button);
+  }
   $('boundaryTariffs').replaceChildren();
   tariffRows.filter(t=>t.category===$('categoryInput').value).forEach(t=>{let d=document.createElement('div');d.textContent=`${t.code}: ${t.description} — ${fmt(t.amount_rub)}`;$('boundaryTariffs').append(d);});
 }
@@ -133,6 +144,8 @@ function renderRecord(r){
   $('lengthInput').value=r.length_m??'';$('capacityInput').value=r.load_capacity_t??'';capacityUI();$('manualTariff').value=r.manual_rub??'';$('reason').value='';
   mode=r.manual_rub!=null?'manual':'auto';modeUI();
   photo('selectedFront','selectedFrontEmpty',r.front_photo,r.version);$('expandFront').disabled=!r.front_photo;
+  $('frontPhotoTiming').textContent=frontPhotoNote(r);
+  $('expandSynchronizedFront').hidden=!r.source?.synchronized_front_photo;
   photo('selectedMeasurement','selectedMeasurementEmpty',r.side_photo,r.version);$('expandMeasurement').disabled=!r.side_photo;$('selectedPhotoFrame').textContent=r.source?`Кадр ${r.source.frame}`:'';
   photo('frontImage','frontEmpty',r.front_photo,r.version);photo('sideImage','sideEmpty',r.side_photo,r.version);
   $('measureLabel').hidden=r.measured_length_m==null;$('measureLabel').textContent='≈ '+lengthText(r.measured_length_m);
@@ -306,7 +319,7 @@ $('captureLive').onclick=()=>action(async()=>{const snapshot=structuredClone(liv
 try{const saved=JSON.parse(localStorage.getItem('ferryVideo'));if(saved?.media&&saved?.profile){liveSource=saved;calibrationLabel();$('liveStatus').textContent=saved.media.name;}}catch{}
 window.addEventListener('pagehide',()=>{if(streamId)fetch('/api/stream/'+streamId,{method:'DELETE',keepalive:true});});
 async function queueLive(snapshot,d){
-  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:'yolo26n',actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_offset_seconds:snapshot.source.frontOffset??3});
+  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:'yolo26n',actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
   await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+record.id));return record;
 }
 $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
@@ -330,7 +343,8 @@ $('expandMeasurement').onclick=()=>{if(!current?.side_photo)return;$('measuremen
 $('closeMeasurement').onclick=()=>$('measurementDialog').close();
 $('measurementDialog').onclick=e=>{if(e.target!==$('measurementDialog'))return;const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();};
 
-$('expandFront').onclick=()=>{if(!current?.front_photo)return;$('measurementTitle').textContent='Фото спереди';$('expandedMeasurement').src=$('selectedFront').src;const p=current.source?.front_camera;$('measurementCaption').textContent=p?.kind==='ip'?'Снимки камер в момент измерения. Проверьте соответствие автомобиля.':p?`Синхронный кадр спереди ${p.frame} · ${p.front_seconds.toFixed(2)} с · боковой ${p.side_seconds.toFixed(2)} с. Проверьте соответствие автомобиля.`:'Фото спереди';$('measurementDialog').showModal();};
+$('expandFront').onclick=()=>{if(!current?.front_photo)return;$('measurementTitle').textContent='Фото спереди';$('expandedMeasurement').src=$('selectedFront').src;$('measurementCaption').textContent=frontPhotoNote(current);$('measurementDialog').showModal();};
+$('expandSynchronizedFront').onclick=()=>{const filename=current?.source?.synchronized_front_photo;if(!filename)return;$('measurementTitle').textContent='Синхронное фото спереди';$('expandedMeasurement').src='/api/station/photos/'+encodeURIComponent(filename)+'?v='+current.version;$('measurementCaption').textContent='Фронтальная камера в момент бокового измерения. Сравните с выбранным фото номера.';$('measurementDialog').showModal();};
 $('frontOffset').oninput=()=>{$('frontOffsetValue').textContent=(Number($('frontOffset').value)>=0?'+':'')+Number($('frontOffset').value).toFixed(2)+' с';};
 $('frontOffset').onchange=async()=>{if(!liveSource)return;const running=!!streamId;await stopStream();liveSource.frontOffset=Number($('frontOffset').value);localStorage.setItem('ferryVideo',JSON.stringify(liveSource));if(running)await startStream();};
 $('frontVideoFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const fd=new FormData();fd.append('file',file);const frontMedia=await workbench('/media',fd);if(frontMedia.frames<2)throw Error('Выберите видео');const running=!!streamId;await stopStream();if(!liveSource)throw Error('Сначала выберите боковое видео');liveSource.frontMedia=frontMedia;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));$('frontStatus').textContent=frontMedia.name;if(running)await startStream();}catch(e){toast(e.message);}e.target.value='';};

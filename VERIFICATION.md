@@ -1,3 +1,12 @@
+## Truck photo timing and category guidance — 2026-09-18
+
+- Full Python suite: **146 passed**. Front-history tests cover an eight-second cab/body separation, bounded age/count/bytes, tracking loss, reconnects, different readable plates, and rejecting a mismatched recorded-video session.
+- Capture integration preserves the original simultaneous photo and stores an earlier tracked cab photo with its time difference. Persisted live OCR survives loss of the camera buffer and avoids a second GPU OCR pass; explicit re-read processes the selected passage samples again.
+- Uploading a replacement photo clears old front evidence; a late OCR result from the replaced photo cannot overwrite it.
+- A 17.16 m generic truck remains unpriced until the operator chooses a supported category. Choosing tractor/semitrailer produces the existing 7.4 tariff (14,000 RUB); this is a software test, not verification of the photographed vehicle's classification or true length.
+- Seven station UI tests passed. Browser checks in an isolated synthetic database verified the earlier-photo time caption, synchronized-photo viewer, and operator category selection showing 14,000 RUB.
+- No real truck video, independently measured full length, or on-site GPU test was available. Tracking remains a heuristic requiring operator confirmation; short-reference calibration warnings do not establish physical measurement accuracy.
+
 ## Multi-operator, tariff and ruler update — 2026-09-18
 
 Validation performed in an isolated Linux Python 3.12 environment with OpenCV 4.14.0.94, NumPy 2.2.6, SciPy 1.17.1, FastAPI 0.141.1 and CPU PyTorch for mocked detector tests. Production GPU requirements were not changed.

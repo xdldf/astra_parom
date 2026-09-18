@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from web_app import workbench as wb
+from web_app.front_history import FrontHistory
 
 router = APIRouter(prefix='/api/stream')
 sessions = {}
@@ -64,6 +65,7 @@ class Camera:
         self.latest = None
         self.front_latest = None
         self.plate_result = None
+        self.front_history = FrontHistory()
         self.plate_error = None
         self.jpeg = None
         self.front_jpeg = None
@@ -206,14 +208,19 @@ class Camera:
     def recognize_plates(self):
         if not self.front:
             return
-        from web_app.plates import recognize
+        from web_app.plates import recognize, front_vehicle
+        from web_app.ip_cameras import Packet
         last=-1
         while not self.stop.is_set():
             sample=self.front_latest
             if sample and sample[0]!=last:
                 last,raw=sample
                 try:
-                    self.plate_result={'frame':last,'candidates':recognize(raw)}
+                    box=front_vehicle(raw)
+                    candidates=recognize(raw,target_box=box) if box is not None else []
+                    jpeg=cv2.imencode('.jpg',raw,[cv2.IMWRITE_JPEG_QUALITY,90])[1].tobytes() if candidates else b''
+                    self.front_history.observe(Packet(last,last/self.front['fps'],jpeg),box,candidates,0)
+                    self.plate_result={'frame':last,'candidates':candidates}
                     self.plate_error=None
                 except Exception as exc:
                     self.plate_error=str(exc)

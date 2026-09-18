@@ -85,6 +85,7 @@ class Capture(BaseModel):
     source: Literal['manual','yolo26x','yolo26n']='manual'
     actor: str=Field('Оператор',min_length=1,max_length=100)
     front_media_id: str | None = None
+    front_session_id: str | None = None
     front_offset_seconds: float=Field(3,ge=-3600,le=3600,allow_inf_nan=False)
 
 
@@ -137,6 +138,7 @@ def capture(payload: Capture):
             include_image=False,include_frame=True)
     front_image=None
     paired=None
+    evidence=[]
     if payload.front_media_id:
         from web_app.video_stream import paired_frame
         workbench.read_frame(payload.front_media_id,0)
@@ -151,10 +153,21 @@ def capture(payload: Capture):
         paired=dict(media_id=payload.front_media_id,frame=fi,offset_seconds=payload.front_offset_seconds,
                     side_seconds=payload.frame/side['fps'],front_seconds=fi/front['fps'],
                     association='synchronized_frame_operator_review')
-    return persist_capture(payload,result,front_image,paired)
+        if payload.front_session_id:
+            from web_app.video_stream import sessions
+            from web_app.ip_cameras import Packet
+            from web_app.plates import front_vehicle
+            camera=sessions.get(payload.front_session_id)
+            if (camera and camera.front_history.frames and camera.request.media_id==payload.media_id
+                    and camera.request.front_media_id==payload.front_media_id):
+                try:
+                    evidence=camera.front_history.select(Packet(fi,fi/front['fps'],b''),front_vehicle(front_image),0)
+                except Exception:
+                    pass
+    return persist_capture(payload,result,front_image,paired,front_evidence=evidence)
 
 
-def persist_capture(payload,result,front_image=None,paired=None,front_samples=None,camera_note=None):
+def persist_capture(payload,result,front_image=None,paired=None,front_samples=None,camera_note=None,front_evidence=None):
     measured=result['detections'][0]
     if measured['status'] in {'outside_road','clipped','waiting_for_line','outside_calibration'}:
         raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге, в области калибровки и у линии измерения (если она включена).')
@@ -183,6 +196,29 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
     # Encode outside the SQLite write transaction so operators can continue saving.
     photos={record['id']+'-side.jpg':crop}
     record['side_photo']=record['id']+'-side.jpg'
+    if front_evidence and front_image is not None and paired:
+        # Keep the simultaneous image as evidence; the readable cab can pass
+        # earlier than the centre of a long truck reaches the measurement line.
+        selected=front_evidence[0]['packet']
+        earlier=selected.image()
+        if earlier is not None:
+            filename=uuid.uuid4().hex+'-front.jpg'
+            photos[filename]=front_image
+            source['synchronized_front_photo']=filename
+            source['front_evidence']=dict(frame=selected.seq,seconds=selected.stamp,
+                offset_seconds=selected.stamp-paired['front_seconds'],association='tracked_passage_operator_review')
+            front_image=earlier
+            source['camera_note']='Фото номера выбрано из того же непрерывного проезда фронтальной камеры. Сверьте кабину и номер с боковым снимком.'
+            # Reuse the live OCR results; do not run a second GPU search per car.
+            front_samples=None
+            source['front_samples']=[]
+            for item in front_evidence:
+                packet=item['packet'];filename=uuid.uuid4().hex+'-front.jpg'
+                pixels=packet.image()
+                if pixels is None:continue
+                photos[filename]=pixels
+                source['front_samples'].append(dict(frame=packet.seq,photo=filename,
+                    target_box=item['box'],candidates=item['candidates']))
     if front_image is not None:
         record['front_photo']=record['id']+'-front.jpg'
         photos[record['front_photo']]=front_image
@@ -226,7 +262,7 @@ def recognize_plate(ident: str):
         if old.get('plate_ocr',{}).get('state')=='queued':
             enqueue(ident)
             return old
-        record=dict(old,plate_ocr={'state':'queued','candidates':[]},version=old['version']+1,updated_at=now())
+        record=dict(old,plate_ocr={'state':'queued','candidates':[],'reread':True},version=old['version']+1,updated_at=now())
         db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',(record['version'],json.dumps(record,ensure_ascii=False),ident))
     enqueue(ident)
     return record
@@ -282,7 +318,11 @@ def vehicles(request: Request,response: Response,plate: str='',status: str='',ca
             COALESCE(SUM(CASE WHEN status='Оплачен' THEN amount_rub ELSE 0 END),0) AS paid_rub,
             COALESCE(SUM(status IN ('Требует проверки','Отклонён')),0) AS issues
             FROM vehicle_list WHERE {where}""",args).fetchone())
-        rows=[summary(r) for r in db.execute(f"""SELECT page.*, json_extract(v.data, '$.side_photo') AS side_photo, json_extract(v.data, '$.front_photo') AS front_photo FROM (SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC LIMIT ? OFFSET ?) AS page JOIN vehicles v ON v.id=page.id ORDER BY page.seq DESC""",args+[limit,offset])]
+        rows=[summary(r) for r in db.execute(f"""SELECT page.*, json_extract(v.data, '$.side_photo') AS side_photo,
+            json_extract(v.data, '$.front_photo') AS front_photo,
+            json_extract(v.data, '$.source.front_evidence.offset_seconds') AS front_photo_offset_seconds
+            FROM (SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC LIMIT ? OFFSET ?) AS page
+            JOIN vehicles v ON v.id=page.id ORDER BY page.seq DESC""",args+[limit,offset])]
     return dict(rows=rows,**totals,limit=limit,offset=offset,snapshot=snapshot,has_more=offset+len(rows)<totals['count'])
 
 
@@ -295,6 +335,8 @@ def vehicle(ident: str,request: Request,response: Response):
         unchanged=conditional(request,response,str(DB)+ident+str(row['version']))
         if unchanged is not None:return unchanged
         record=find(db,ident)
+        if record['category']=='truck' and record.get('length_m',0) and record['length_m']>11.9 and record['tariff']['amount_rub'] is None:
+            record['tariff']=quote('truck',record['length_m'])
         record['history']=[dict(row) for row in db.execute('SELECT timestamp,actor,action,reason FROM audit WHERE vehicle_id=? ORDER BY id DESC',(ident,))]
         return record
 
@@ -395,7 +437,11 @@ def front_photo(ident: str,version: int=Form(...),actor: str=Form('Операт�
         old=find(db,ident)
         if old['version']!=version: raise HTTPException(409,'Обновите запись перед загрузкой фото')
         if old['status']=='Оплачен': raise HTTPException(409,'Оплаченная запись закрыта для изменений')
-        record=dict(old,front_photo=ident+'-front.jpg',version=old['version']+1,updated_at=now())
+        record=dict(old,front_photo=uuid.uuid4().hex+'-front.jpg',version=old['version']+1,updated_at=now())
+        if old.get('source'):
+            record['source']={k:v for k,v in old['source'].items() if k not in
+                {'front_camera','front_evidence','front_samples','synchronized_front_photo','camera_note'}}
+        record.pop('plate_ocr',None)
         cv2.imwrite(str(DATA/record['front_photo']),image)
         db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',(record['version'],json.dumps(record,ensure_ascii=False),ident))
         event(db,record,actor,'front_photo','Добавлено фото спереди',old)

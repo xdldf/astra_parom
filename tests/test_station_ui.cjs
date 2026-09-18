@@ -90,3 +90,18 @@ test('row thumbnails open original photos without selecting a row or losing edit
   assert.equal(ui.elements.get('expandedMeasurement').src,'/api/station/photos/front.jpg?v=1');
   assert.equal(ui.elements.get('measurementDialog').open,true);
 });
+
+test('earlier cab thumbnail explains timing and category choices only edit the form',async()=>{
+  const ui=await stationUI();
+  const data=page();data.rows[0].front_photo='cab.jpg';data.rows[0].front_photo_offset_seconds=-8;
+  ui.respond(()=>({data}));
+  await ui.run('loadVehicles()');
+  ui.elements.get('carsTable').children[0].children[0].children[0].onclick({stopPropagation(){}});
+  assert.match(ui.elements.get('measurementCaption').textContent,/8.0 с до синхронного/);
+  ui.run("current={status:'Требует проверки'};categories={road_train:'Тягач с полуприцепом'};showQuote({amount_rub:null,warnings:['Выберите тип'],category_options:['road_train']});");
+  const count=ui.requests.length;
+  ui.elements.get('warningText').children.at(-1).onclick();
+  assert.equal(ui.elements.get('categoryInput').value,'road_train');
+  assert.equal(ui.run('dirty'),true);
+  assert.equal(ui.requests.length,count);
+});

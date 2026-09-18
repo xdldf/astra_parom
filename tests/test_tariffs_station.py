@@ -351,3 +351,54 @@ def test_list_photo_references_and_small_thumbnail(client):
     assert len(thumb.content)<len(original.content)
     assert 'max-age' in thumb.headers['cache-control']
     assert client.get('/api/station/photos/invalid.jpg?thumbnail=true').status_code==404
+
+
+def test_long_truck_requires_category_choice_not_automatic_reclassification(client):
+    q=quote('truck',17.16)
+    assert q['amount_rub'] is None
+    assert 'road_train' in q['category_options']
+    assert not any('Нужен ручной тариф' in w for w in q['warnings'])
+    record=client.post('/api/station/vehicles',json={'category':'truck','length_m':17.16}).json()
+    assert record['category']=='truck' and record['tariff']['amount_rub'] is None
+    url='/api/station/vehicles/'+record['id']
+    payload=edit_payload(record)
+    assert client.post(url,json=payload).status_code==422
+    payload['category']='road_train'
+    payload['reason']='Уточнение типа состава'
+    response=client.post(url,json=payload)
+    assert response.status_code==200
+    assert response.json()['tariff']['amount_rub']==14000
+    assert response.json()['tariff']['code']=='7.4'
+
+
+def test_video_capture_uses_only_matching_session_front_history(client,monkeypatch):
+    from types import SimpleNamespace
+    from web_app import video_stream,plates
+    from web_app.ip_cameras import Packet
+    from web_app.front_history import FrontHistory
+    monkeypatch.setattr(plates,'enqueue',lambda _:None)
+    monkeypatch.setattr(plates,'front_vehicle',lambda image:[0,0,600,500])
+    monkeypatch.setattr(workbench,'read_frame',lambda key,index:np.full((500,600,3),40,np.uint8))
+    for name in ('front','side'):
+        monkeypatch.setitem(workbench.media,name,{'kind':'video','fps':10,'frames':300})
+    history=FrontHistory()
+    jpeg=cv2.imencode('.jpg',np.full((500,600,3),200,np.uint8))[1].tobytes()
+    candidate=dict(text='А123ВС14',confidence=.95,bbox=[100,300,200,350])
+    history.observe(Packet(20,2,jpeg),[0,0,600,500],[candidate],0)
+    for second in range(3,11):history.observe(Packet(second*10,second,b''),[0,0,600,500],[],0)
+    monkeypatch.setitem(video_stream.sessions,'video-session',SimpleNamespace(
+        front_history=history,request=SimpleNamespace(media_id='side',front_media_id='front')))
+    payload=dict(media_id='side',front_media_id='front',front_session_id='video-session',front_offset_seconds=0,
+        profile={'image_size':[600,500],'polygon':[[20,200],[580,200],[580,450],[20,450]],
+                 'references':[{'bbox':[100,150,100,75],'length_m':5}]},
+        frame=100,bbox=[100,150,100,75],label='truck')
+    result=client.post('/api/station/capture',json=payload)
+    assert result.status_code==200,result.text
+    assert result.json()['source']['front_evidence']['offset_seconds']==-8
+    assert cv2.imread(str(station.DATA/result.json()['front_photo'])).mean()==pytest.approx(200,abs=1)
+    video_stream.sessions['video-session'].request.media_id='other-recording'
+    payload['frame']=101
+    result=client.post('/api/station/capture',json=payload)
+    assert result.status_code==200,result.text
+    assert 'front_evidence' not in result.json()['source']
+    assert cv2.imread(str(station.DATA/result.json()['front_photo'])).mean()==pytest.approx(40,abs=1)

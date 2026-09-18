@@ -117,7 +117,8 @@ def test_front_recognition_runs_without_side(monkeypatch):
     c=ip.Station(ip.Settings(),wb.Profile(image_size=(600,500)))
     b=ip.Packet(1,time.monotonic(),cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes())
     c.front.packets.append(b)
-    monkeypatch.setattr(plates,'recognize',lambda image:[{'text':'А123ВС14','bbox':[100,300,200,350]}])
+    monkeypatch.setattr(plates,'front_vehicle',lambda image:[0,0,600,500])
+    monkeypatch.setattr(plates,'recognize',lambda image,**kwargs:[{'text':'А123ВС14','bbox':[100,300,200,350]}])
     t=threading.Thread(target=c.read_plates);t.start()
     try:
         deadline=time.monotonic()+2
@@ -164,3 +165,48 @@ def test_concurrent_starts_share_one_camera_station(tmp_path,monkeypatch):
         results=list(pool.map(lambda _:ip.start(),range(8)))
     assert len(started)==1
     assert {r['id'] for r in results}==set(started)
+
+
+def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,monkeypatch):
+    monkeypatch.setattr(station,'DATA',tmp_path)
+    monkeypatch.setattr(station,'DB',tmp_path/'db.sqlite')
+    monkeypatch.setattr(plates,'enqueue',lambda _:None)
+    monkeypatch.setattr(plates,'front_vehicle',lambda image:[0,0,600,500])
+    profile=wb.Profile(image_size=(600,500),polygon=[(20,200),(580,200),(580,450),(20,450)],
+                       references=[{'bbox':[100,150,100,75],'length_m':5}])
+    camera=ip.Station(ip.Settings(),profile)
+    now=time.monotonic()
+    def frame(seq,stamp,value):
+        return ip.Packet(seq,stamp,cv2.imencode('.jpg',np.full((500,600,3),value,np.uint8))[1].tobytes())
+    cab=frame(1,now-8,200)
+    candidate=dict(text='А123ВС14',confidence=.98,detection_confidence=.95,bbox=[100,300,200,350])
+    camera.front_history.observe(cab,[0,0,600,500],[candidate],camera.front.epoch)
+    for i in range(1,9):
+        body=frame(i+1,now-8+i,40)
+        camera.front_history.observe(body,[0,0,600,500],[],camera.front.epoch)
+    side=frame(20,now,80)
+    camera.side.packets.append(side);camera.front.packets.append(body)
+    result=camera.capture((side,body,0),{'bbox':[100,150,100,75],'label':'truck'},'truck')
+    assert cv2.imread(str(tmp_path/result['front_photo'])).mean()==pytest.approx(200,abs=1)
+    source=result['source']
+    assert cv2.imread(str(tmp_path/source['synchronized_front_photo'])).mean()==pytest.approx(40,abs=1)
+    assert source['front_evidence']['offset_seconds']==pytest.approx(-8)
+    assert source['front_camera']['frame']==body.seq
+    assert result['plate']==''  # The operator still confirms the match.
+    camera.front_history.frames=[]
+    def no_gpu(*args,**kwargs):pytest.fail('Cached live evidence must not run GPU OCR again')
+    monkeypatch.setattr(plates,'recognize',no_gpu)
+    monkeypatch.setattr(plates,'front_vehicle',no_gpu)
+    plates.process_record(result['id'])
+    with station.connect() as db:
+        saved=station.find(db,result['id'])
+    assert saved['plate']=='' and saved['plate_ocr']['state']=='review'
+    assert saved['plate_ocr']['candidates'][0]['text']==candidate['text']
+    client=TestClient(app)
+    row=client.get('/api/station/vehicles').json()['rows'][0]
+    assert row['front_photo_offset_seconds']==pytest.approx(-8)
+    calls=[]
+    monkeypatch.setattr(plates,'recognize',lambda image,reference_box=None:calls.append(reference_box) or [candidate])
+    client.post('/api/station/vehicles/'+result['id']+'/recognize-plate')
+    plates.process_record(result['id'])
+    assert calls==[[0,0,600,500]]

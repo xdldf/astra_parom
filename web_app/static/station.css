@@ -197,3 +197,4 @@ button:disabled{opacity:.45;cursor:not-allowed}.client-only .screen-switch,.clie
 .car-thumbnail:hover{border-color:#1677c8}
 .car-thumbnail:focus-visible{outline:2px solid #1677c8;outline-offset:2px}
 .car-thumbnail:disabled{cursor:default}
+#frontPhotoTiming{position:absolute;bottom:0;left:0;right:0;padding:5px 8px;color:white;background:rgba(0,0,0,.65);font-size:11px;pointer-events:none}

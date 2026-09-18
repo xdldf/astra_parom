@@ -92,3 +92,21 @@ def test_foreground_plate_no_rear_fallback():
     assert plates.foreground_plate([rear,near],[100,200,500,600])==[near]
     assert plates.foreground_plate([rear],[100,200,500,600])==[]
     assert not plates.same_vehicle([100,200,500,600],[10,10,50,50])
+
+
+def test_uploaded_front_replaces_old_evidence_and_rejects_stale_ocr(client,monkeypatch):
+    r=with_photo(client)
+    old_photo=r['front_photo']
+    with station.connect() as db:
+        r['source']={'measurement':{'length_m':4.5},'front_evidence':{'frame':1},
+                     'front_samples':[{'frame':1,'photo':old_photo}],'front_camera':{'frame':2}}
+        db.execute('UPDATE vehicles SET data=? WHERE id=?',(json.dumps(r),r['id']))
+    jpg=cv2.imencode('.jpg',np.full((80,160,3),100,np.uint8))[1].tobytes()
+    updated=client.post('/api/station/vehicles/'+r['id']+'/front-photo',
+        data={'version':r['version']},files={'file':('new.jpg',jpg,'image/jpeg')}).json()
+    assert updated['front_photo']!=old_photo
+    assert updated['source']=={'measurement':{'length_m':4.5}}
+    assert 'plate_ocr' not in updated
+    plates.save_result(r['id'],{'state':'review','candidates':[{'text':'OLD'}]},old_photo)
+    fresh=client.get('/api/station/vehicles/'+r['id']).json()
+    assert 'plate_ocr' not in fresh

@@ -35,14 +35,15 @@ def fit_scale(polygon, references, rulers=()):
     if not samples:
         return None
     t, ppm = np.asarray(samples).T
+    width=max(r['bbox'][2] for r in references)
     if len(samples) == 1:
-        return dict(intercept=float(ppm[0]), slope=0., status='single_reference', depths=t.tolist())
+        return dict(intercept=float(ppm[0]), slope=0., status='single_reference', depths=t.tolist(), max_reference_width_px=width)
     if np.ptp(t) < .08:
         raise ValueError('Reference cars are too close in road depth. Add one nearer or farther away.')
     slope, intercept = np.polyfit(t, ppm, 1)
     if slope <= 0 or intercept <= 0:
         raise ValueError('References imply an invalid perspective curve. Check lengths, boxes and road edges.')
-    return dict(intercept=float(intercept), slope=float(slope), status='depth_calibrated', depths=t.tolist())
+    return dict(intercept=float(intercept), slope=float(slope), status='depth_calibrated', depths=t.tolist(), max_reference_width_px=width)
 
 
 def fit_rulers(polygon, rulers):
@@ -105,7 +106,7 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
                   center=[x+w/2, y+h/2],
                   line_offset_px=None if line_x is None else x+w/2-line_x,
                   at_measurement_line=line_x is not None and abs(x+w/2-line_x) <= line_tolerance_px,
-                  cm_per_px=None, coefficient=None, status='outside_road')
+                  cm_per_px=None, coefficient=None, status='outside_road', warnings=[])
     if t is None:
         return result
     if min(x, y) <= 1 or x+w >= image_size[0]-1 or y+h >= image_size[1]-1:
@@ -124,6 +125,8 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
             result.update(length_m=length, cm_per_px=100*length/w)
         return result
     ppm = scale['intercept'] + scale['slope']*t
+    if w > 1.5*scale.get('max_reference_width_px',float('inf')):
+        result['warnings'].append('Автомобиль значительно шире эталона в кадре. Масштаб по короткому автомобилю не проверяет искажение по всей длине состава. Проверьте длину по документам или мерным отметкам вдоль всей зоны измерения.')
     result.update(length_m=float(w/ppm), cm_per_px=float(100/ppm),
                   coefficient=float((scale['intercept']+scale['slope'])/ppm),
                   status=scale['status'])

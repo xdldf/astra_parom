@@ -227,3 +227,10 @@ def test_ruler_measurement_is_invariant_under_preview_resizing():
         metric_rulers=[ruler([50,100,125,150,200],150)])
     result2=workbench.render_raw(cv2.resize(raw,(300,250)),workbench.FrameRequest(profile=small,boxes=[(50,100,150,50)]),include_image=False)
     assert result2['detections'][0]['length_m']==pytest.approx(4)
+
+
+def test_long_vehicle_warns_when_calibration_uses_short_reference():
+    scale=fit_scale(POLY,REFS[:1])
+    measured=measure_box([50,100,450,150],POLY,scale,(600,500))
+    assert measured['length_m'] is not None
+    assert measured['warnings']
