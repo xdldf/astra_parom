@@ -1,10 +1,15 @@
-"""Tariffs transcribed from the user's Appendix 1; no inferred gap filling."""
+"""Appendix 1, section 6 amended by order 37/ПЯ of 2026-09-08.
+
+Ranges are transcribed literally, without rounding or filling gaps.
+"""
 from decimal import Decimal
 
 CATEGORIES = {
     'car':'Легковой автомобиль', 'car_trailer':'Прицеп к легковому автомобилю',
     'boat_trailer':'Лодочный прицеп', 'bus':'Пассажирский автобус',
     'motorcycle':'Мотороллер / мотоцикл', 'truck':'Грузовой автомобиль',
+    'truck_trailer':'Грузовой автомобиль + легковой / лодочный прицеп',
+    'truck_capacity':'Грузовой автомобиль по грузоподъёмности',
     'tractor':'Тягач без прицепа', 'road_train':'Тягач с прицепом / полуприцепом',
     'oversize':'Тягач с тралом: негабаритный / тяжеловесный груз',
     'lowbed':'Автосостав: тягач + трал',
@@ -25,6 +30,10 @@ BANDS = {
              ('6.2','7.10','8.09',5350,True,True,'Средний, 7,10–8,09 м'),
              ('6.3','8.10','10.09',6450,True,True,'Большой, 8,10–10,09 м'),
              ('6.4','10.10','11.90',8500,True,True,'Особо большой, 10,10–11,90 м')],
+    'truck_trailer':[('6.5','11.90',None,9000,False,True,'Грузовой автомобиль + прицеп (легковой, лодочный), на сцепке свыше 11,9 м')],
+    'truck_capacity':[('6.6','15.001','24.00',9200,True,True,'Грузоподъёмность от 15,001 до 24,00 т'),
+                      ('6.7','24.001','30.00',10950,True,True,'Грузоподъёмность от 24,001 до 30,00 т'),
+                      ('6.8','30.001',None,14250,True,True,'Грузоподъёмность от 30,001 т и выше')],
     'tractor':[('7.1','7.10','11.90',5650,True,True,'Без прицепа, 7,10–11,90 м')],
     'road_train':[('7.2',None,'12.00',9050,True,True,'С прицепом, до 12,00 м'),
                   ('7.3','12.10','15.00',10800,True,True,'С прицепом, 12,10–15,00 м'),
@@ -36,12 +45,18 @@ BANDS = {
 }
 
 
-def quote(category, length_m, manual_rub=None):
+def quote(category, length_m, manual_rub=None, load_capacity_t=None):
     if category not in CATEGORIES:
         raise ValueError('Выберите категорию ТС')
     length = None if length_m is None else Decimal(str(length_m))
     if length is not None and (not length.is_finite() or length <= 0):
         raise ValueError('Длина должна быть положительным числом')
+    capacity = None if load_capacity_t is None else Decimal(str(load_capacity_t))
+    if capacity is not None and (not capacity.is_finite() or capacity <= 0):
+        raise ValueError('Грузоподъёмность должна быть положительным числом')
+    by_capacity = category == 'truck_capacity'
+    if by_capacity:
+        length = capacity
     if manual_rub is not None:
         if not isinstance(manual_rub,int) or not 0 <= manual_rub <= 10000000:
             raise ValueError('Укажите целый тариф в рублях')
@@ -51,7 +66,8 @@ def quote(category, length_m, manual_rub=None):
     warnings=[]
     amount=code=None
     if length is None and not fixed:
-        warnings.append('Для расчёта тарифа нужна длина. Уточните измерение.')
+        warnings.append('Укажите грузоподъёмность по документам, в тоннах (не массу груза).' if by_capacity else
+                        'Для расчёта тарифа нужна длина. Уточните измерение.')
     else:
         for c,lo,hi,price,li,ui,_ in bands:
             lower=lo is None or (length>=Decimal(lo) if li else length>Decimal(lo))
@@ -60,7 +76,7 @@ def quote(category, length_m, manual_rub=None):
                 amount,code=price,c
                 break
         if amount is None:
-            warnings.append('Длина не попадает в однозначный диапазон Приложения №1. Нужен ручной тариф с причиной.')
+            warnings.append(('Грузоподъёмность' if by_capacity else 'Длина')+' не попадает в однозначный диапазон Приложения №1. Нужен ручной тариф с причиной.')
     boundary=None
     if length is not None:
         bounds={Decimal(v) for b in bands for v in b[1:3] if v is not None}
@@ -68,10 +84,12 @@ def quote(category, length_m, manual_rub=None):
             nearest=min(bounds,key=lambda n:abs(length-n))
             if abs(length-nearest)<=Decimal('0.10'):
                 boundary=float(nearest)
-                warnings.append('Длина в пределах 0,10 м от границы тарифа. Проверьте измерение.')
+                warnings.append('Грузоподъёмность в пределах 0,10 т от границы тарифа. Проверьте документы.' if by_capacity else
+                                'Длина в пределах 0,10 м от границы тарифа. Проверьте измерение.')
     if category in {'tractor','road_train','lowbed','oversize'}:
         warnings.append('Проверьте тип состава и полную длину с прицепом. Пункт 7.2 также содержит особое условие для ГАЗ / малотоннажных ТС от 12 м; для него используйте ручной тариф с причиной.')
-    return dict(amount_rub=amount,code=code,mode='auto',warnings=warnings,boundary_m=boundary)
+    return dict(amount_rub=amount,code=code,mode='auto',warnings=warnings,
+                boundary_m=None if by_capacity else boundary, boundary_t=boundary if by_capacity else None)
 
 
 def catalog():

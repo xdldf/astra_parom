@@ -182,3 +182,18 @@ button:disabled{opacity:.45;cursor:not-allowed}.client-only .screen-switch,.clie
 .ocr-panel{margin:16px 0;padding:16px;border:1px solid #d8e2ed;border-radius:12px;background:#f6f9fc}.ocr-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}.ocr-panel p{font-size:13px;color:#516177}.ocr-candidates{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px}.ocr-card{width:190px;display:flex;flex-direction:column;gap:7px;padding:10px;background:white;border:1px solid #d8e2ed;border-radius:8px}.ocr-card strong{font-size:21px;letter-spacing:1px}.ocr-card small{font-size:11px;color:#64748b}.ocr-picture{height:95px;cursor:zoom-in;background:#e9eef4;border:0;border-radius:5px}.ocr-picture img{max-width:100%;height:100%;object-fit:contain}
 
 .source-mode{display:flex;align-items:center;justify-content:space-between;padding:12px;gap:12px}.source-mode select{padding:8px;border:1px solid #cbd5e1;border-radius:6px}#ipSettings{padding:14px;margin-bottom:12px;border:1px solid #cbd5e1;border-radius:8px}#ipSettings input:not([type=checkbox]){display:block;width:100%;padding:8px;margin-top:6px}#ipSettings small{display:block;margin-top:10px;color:#64748b}.ip-mode #streamSeek,.ip-mode #frontOffset,.ip-mode #frontOffsetValue,.ip-mode #liveCar,.ip-mode #captureLive{display:none}
+
+#operator .panel:first-child .table-scroll{max-height:65vh;overflow:auto}
+#reports .table-scroll{max-height:65vh;overflow:auto}
+.table-scroll thead th{position:sticky;top:0;background:#f5f7fa;z-index:1}
+.table-footer,.report-table-head{flex-wrap:wrap;gap:10px;align-items:center}
+#recordConflict{display:block}#stationId{width:130px}
+
+.camera-stage img:not([src]){visibility:hidden}
+
+.car-photos{min-width:180px;color:#657183}
+.car-thumbnail{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;width:84px;height:54px;padding:2px;margin:2px;border:1px solid #dbe2e8;border-radius:6px;background:#edf1f4;cursor:zoom-in;overflow:hidden;font-size:10px}
+.car-thumbnail img{width:80px;height:50px;object-fit:contain}
+.car-thumbnail:hover{border-color:#1677c8}
+.car-thumbnail:focus-visible{outline:2px solid #1677c8;outline-offset:2px}
+.car-thumbnail:disabled{cursor:default}

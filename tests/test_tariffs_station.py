@@ -41,7 +41,7 @@ def test_gaps_are_not_invented_or_rounded(category,length):
 
 
 def test_catalog_and_boundary_warning():
-    assert len(catalog())==22
+    assert len(catalog())==26
     assert quote('car',4.92)['boundary_m']==5
     assert quote('car',4.3)['boundary_m'] is None
     assert quote('car',4.605,1650)['mode']=='manual'
@@ -175,3 +175,179 @@ def test_synchronized_capture_saves_front_and_side(client,monkeypatch):
     assert client.post('/api/station/capture',json=payload).json()['id']==record['id']
     payload['front_offset_seconds']=-20
     assert client.post('/api/station/capture',json=payload).status_code==422
+
+
+@pytest.mark.parametrize('capacity,price,code',[
+    (15.001,9200,'6.6'),(24,9200,'6.6'),(24.001,10950,'6.7'),
+    (30,10950,'6.7'),(30.001,14250,'6.8'),(60,14250,'6.8')])
+def test_september_capacity_tariffs(capacity,price,code):
+    result=quote('truck_capacity',4,load_capacity_t=capacity)
+    assert (result['amount_rub'],result['code'])==(price,code)
+    assert result['boundary_m'] is None
+
+
+@pytest.mark.parametrize('capacity',[None,15,24.0005,30.0005])
+def test_capacity_gaps_and_missing_capacity_are_not_inferred(capacity):
+    assert quote('truck_capacity',20,load_capacity_t=capacity)['amount_rub'] is None
+
+
+def test_truck_trailer_and_capacity_persistence(client):
+    assert quote('truck_trailer',11.9)['amount_rub'] is None
+    assert quote('truck_trailer',11.901)['amount_rub']==9000
+    r=client.post('/api/station/vehicles',json={'category':'truck_capacity','length_m':8,'load_capacity_t':25}).json()
+    assert r['tariff']['amount_rub']==10950
+    payload=edit_payload(r);payload['load_capacity_t']=25
+    confirmed=client.post('/api/station/vehicles/'+r['id'],json=payload).json()
+    assert confirmed['status']=='Подтвержден'
+    payload=edit_payload(confirmed,'pay');payload['load_capacity_t']=26
+    assert client.post('/api/station/vehicles/'+r['id'],json=payload).status_code==422
+    payload['load_capacity_t']=25
+    assert client.post('/api/station/vehicles/'+r['id'],json=payload).json()['status']=='Оплачен'
+
+
+def seed_records(count):
+    records=[]
+    with station.connect() as db:
+        for i in range(count):
+            r=station.new_record(station.Fields(category='motorcycle',plate=str(i)))
+            r['status']='Оплачен'
+            r['source']={'calibration':{'large_fixture':'x'*20000}}
+            db.execute('INSERT INTO vehicles VALUES(?,?,?,?)',(r['id'],None,1,json.dumps(r)))
+            records.append(r)
+    return records
+
+
+def test_bounded_projection_paging_full_totals_and_export(client):
+    records=seed_records(301)
+    response=client.get('/api/station/vehicles');first=response.json()
+    assert len(first['rows'])==250 and first['count']==301 and first['has_more']
+    assert len(response.content)<150000
+    assert all('source' not in r for r in first['rows'])
+    assert first['amount_rub']==first['paid_rub']==301*380
+    assert first['rows'][0]['id']==records[-1]['id']
+    headers={'If-None-Match':response.headers['etag']}
+    assert client.get('/api/station/vehicles',headers=headers).status_code==304
+    new=client.post('/api/station/vehicles',json={'category':'motorcycle'}).json()
+    assert client.get('/api/station/vehicles',headers=headers).status_code==200
+    second=client.get('/api/station/vehicles',params={'offset':250,'snapshot':first['snapshot']}).json()
+    assert len(second['rows'])==51 and not second['has_more']
+    assert not ({r['id'] for r in first['rows']} & {r['id'] for r in second['rows']})
+    assert new['id'] not in {r['id'] for r in second['rows']}
+    report=client.get('/api/station/reports.csv')
+    assert len(list(csv.reader(io.StringIO(report.content.decode('utf-8-sig')),delimiter=';')))==303
+    assert client.get('/api/station/vehicles?limit=251').status_code==422
+    assert client.get('/api/station/vehicles?offset=-1').status_code==422
+    assert client.get('/api/station/vehicles?plate=300').json()['count']==1
+
+
+def test_parallel_operator_updates_and_payments(client):
+    from concurrent.futures import ThreadPoolExecutor
+    import threading
+    r=client.post('/api/station/vehicles',json={'category':'motorcycle'}).json()
+    url='/api/station/vehicles/'+r['id']
+    for action in ('confirm','pay'):
+        barrier=threading.Barrier(2)
+        def update(actor):
+            payload=edit_payload(r,action);payload['actor']=actor
+            barrier.wait(timeout=5)
+            return TestClient(app).post(url,json=payload)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results=list(pool.map(update,['Первый','Второй']))
+        assert sorted(x.status_code for x in results)==[200,409]
+        r=next(x.json() for x in results if x.status_code==200)
+    assert [h['action'] for h in client.get(url).json()['history']]==['pay','confirm','create']
+
+
+def test_parallel_independent_records_and_customer_screens(client):
+    from concurrent.futures import ThreadPoolExecutor
+    records=[client.post('/api/station/vehicles',json={'category':'motorcycle'}).json() for _ in range(12)]
+    def confirm(index):
+        payload=edit_payload(records[index]);payload['station_id']='desk-'+str(index)
+        return TestClient(app).post('/api/station/vehicles/'+records[index]['id'],json=payload)
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results=list(pool.map(confirm,range(len(records))))
+    assert all(r.status_code==200 for r in results)
+    for i,record in enumerate(records):
+        assert client.get('/api/station/client?station_id=desk-'+str(i)).json()['vehicle']['id']==record['id']
+    assert client.get('/api/station/client').json()['vehicle'] is None
+    r=results[0].json();payload=edit_payload(r,'edit');payload['station_id']='desk-other'
+    assert client.post('/api/station/vehicles/'+r['id'],json=payload).status_code==200
+    assert client.get('/api/station/client?station_id=desk-0').json()['vehicle'] is None
+
+
+def test_legacy_database_migrates_without_repricing(client):
+    import sqlite3
+    station.DATA.mkdir(parents=True)
+    r=station.new_record(station.Fields(category='truck',length_m=9))
+    r['tariff']['amount_rub']=1234
+    r.pop('load_capacity_t')
+    with sqlite3.connect(station.DB) as db:
+        db.execute('CREATE TABLE vehicles(id TEXT PRIMARY KEY,source_key TEXT UNIQUE,version INTEGER NOT NULL,data TEXT NOT NULL)')
+        db.execute('INSERT INTO vehicles VALUES(?,?,?,?)',(r['id'],None,1,json.dumps(r)))
+    response=client.get('/api/station/vehicles').json()
+    assert response['rows'][0]['tariff']['amount_rub']==1234
+    assert client.get('/api/station/vehicles/'+r['id']).json()['tariff']['amount_rub']==1234
+    with station.connect() as db:
+        assert db.execute('PRAGMA journal_mode').fetchone()[0]=='wal'
+    with pytest.raises(sqlite3.ProgrammingError):db.execute('SELECT 1')
+
+
+def test_ocr_invalidates_list_and_detail_etags(client):
+    from web_app import plates
+    r=client.post('/api/station/vehicles',json={}).json();url='/api/station/vehicles/'+r['id']
+    listing=client.get('/api/station/vehicles');detail=client.get(url)
+    plates.save_result(r['id'],{'state':'review','candidates':[{'text':'А123ВС14'}]})
+    latest=client.get('/api/station/vehicles',headers={'If-None-Match':listing.headers['etag']})
+    assert latest.status_code==200
+    assert latest.json()['rows'][0]['plate_ocr']['candidates'][0]['text']=='А123ВС14'
+    assert client.get(url,headers={'If-None-Match':detail.headers['etag']}).status_code==200
+
+
+
+def test_simultaneous_capture_is_idempotent_and_has_no_orphan_photos(client,monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    monkeypatch.setattr(workbench,'read_frame',lambda *_:np.zeros((500,600,3),np.uint8))
+    payload={'media_id':'parallel-test','profile':{'image_size':[600,500],
+             'polygon':[[20,200],[580,200],[580,450],[20,450]],
+             'references':[{'bbox':[100,150,100,75],'length_m':5}]},
+             'frame':0,'bbox':[100,150,100,75],'label':'car'}
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results=list(pool.map(lambda _:TestClient(app).post('/api/station/capture',json=payload),range(4)))
+    assert all(r.status_code==200 for r in results)
+    assert len({r.json()['id'] for r in results})==1
+    assert client.get('/api/station/vehicles').json()['count']==1
+    assert len(list(station.DATA.glob('*.jpg')))==1
+
+
+def test_customer_etag_is_scoped_to_desk_and_changes_with_publication(client):
+    first=client.get('/api/station/client?station_id=one')
+    r=client.post('/api/station/vehicles',json={'category':'motorcycle'}).json()
+    payload=edit_payload(r);payload['station_id']='two'
+    assert client.post('/api/station/vehicles/'+r['id'],json=payload).status_code==200
+    assert client.get('/api/station/client?station_id=one',headers={'If-None-Match':first.headers['etag']}).status_code==304
+    displayed=client.get('/api/station/client?station_id=two')
+    assert displayed.json()['vehicle']['id']==r['id']
+    assert 'source' not in displayed.json()['vehicle']
+    assert displayed.headers['etag']!=first.headers['etag']
+
+
+def test_list_photo_references_and_small_thumbnail(client):
+    record=client.post('/api/station/vehicles',json={'category':'car','length_m':4}).json()
+    filename=record['id']+'-side.jpg'
+    pixels=np.full((600,1200,3),170,dtype=np.uint8)
+    cv2.imwrite(str(station.DATA/filename),pixels)
+    with station.connect() as db:
+        record['side_photo']=filename
+        db.execute('UPDATE vehicles SET data=? WHERE id=?',(json.dumps(record),record['id']))
+    row=client.get('/api/station/vehicles').json()['rows'][0]
+    assert row['side_photo']==filename
+    assert row['front_photo'] is None
+    assert 'source' not in row
+    original=client.get('/api/station/photos/'+filename)
+    thumb=client.get('/api/station/photos/'+filename+'?thumbnail=true&v=1')
+    assert thumb.status_code==200
+    decoded=cv2.imdecode(np.frombuffer(thumb.content,np.uint8),cv2.IMREAD_COLOR)
+    assert decoded.shape[:2]==(80,160)
+    assert len(thumb.content)<len(original.content)
+    assert 'max-age' in thumb.headers['cache-control']
+    assert client.get('/api/station/photos/invalid.jpg?thumbnail=true').status_code==404

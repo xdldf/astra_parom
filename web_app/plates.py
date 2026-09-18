@@ -52,10 +52,9 @@ def enqueue(ident):
 def resume_pending():
     from web_app import station as st
     with st.connect() as db:
-        pending=[json.loads(row['data']) for row in db.execute('SELECT data FROM vehicles')]
+        pending=db.execute("SELECT id FROM vehicle_list WHERE ocr_state='queued' AND status NOT IN ('Оплачен','Подтвержден')").fetchall()
     for record in pending:
-        if record.get('plate_ocr',{}).get('state')=='queued' and record['status'] not in {'Оплачен','Подтвержден'}:
-            enqueue(record['id'])
+        enqueue(record['id'])
 
 
 def process_record(ident):

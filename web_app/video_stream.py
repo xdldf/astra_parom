@@ -1,5 +1,6 @@
 """Paced file camera: sequential decoder, latest-frame inference, bounded buffers."""
 import threading
+import asyncio
 import time
 import uuid
 import json
@@ -219,15 +220,15 @@ class Camera:
                     self.stop.wait(3)
             self.stop.wait(.2)
 
-    def frames(self, front=False):
+    async def frames(self, front=False):
         last=-1
         while not self.stop.is_set():
             self.touched=time.monotonic()
-            with self.condition:
-                self.condition.wait_for(lambda:self.stop.is_set() or self.sequence!=last,timeout=1)
+            if self.sequence!=last:
                 jpeg,last=(self.front_jpeg if front else self.jpeg),self.sequence
-            if jpeg:
-                yield b'--frame\r\nContent-Type: image/jpeg\r\nContent-Length: '+str(len(jpeg)).encode()+b'\r\n\r\n'+jpeg+b'\r\n'
+                if jpeg:
+                    yield b'--frame\r\nContent-Type: image/jpeg\r\nContent-Length: '+str(len(jpeg)).encode()+b'\r\n\r\n'+jpeg+b'\r\n'
+            await asyncio.sleep(.03)
 
 
 def get(key):

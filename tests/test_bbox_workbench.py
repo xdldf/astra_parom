@@ -173,3 +173,57 @@ def test_detection_refuses_cpu_fallback(monkeypatch):
     assert response.status_code==503
     assert 'CPU fallback is disabled' in response.json()['detail']
     detector.predict.assert_not_called()
+
+
+RULER_POLY=[[10,100],[590,100],[590,490],[10,490]]
+
+def ruler(xs,y,step=1):
+    return {'points':[[x,y] for x in xs],'step_m':step}
+
+
+def test_rulers_integrate_center_compression_across_the_whole_car():
+    # True metric marks 0,1,2,3,4: pixels/metre is 100,50,50,100.
+    scale=fit_scale(RULER_POLY,[],[ruler([100,200,250,300,400],300)])
+    for box,expected in [([100,200,300,100],4),([200,200,100,100],2),([100,200,100,100],1),([150,200,200,100],3)]:
+        measured=measure_box(box,RULER_POLY,scale,(600,500))
+        assert measured['length_m']==pytest.approx(expected)
+        assert measured['status']=='ruler_calibrated'
+    # Width at only the center would incorrectly give six metres, not four.
+    assert measure_box([100,200,300,100],RULER_POLY,scale,(600,500))['length_m']!=6
+
+
+def test_rulers_interpolate_perspective_and_refuse_extrapolation():
+    scale=fit_scale(RULER_POLY,[],[ruler([50,150,250,350,450,550],200),
+                                ruler([50,250,450],400)])
+    assert measure_box([150,150,200,150],RULER_POLY,scale,(600,500))['length_m']==pytest.approx(200/150)
+    assert measure_box([350,100,200,100],RULER_POLY,scale,(600,500))['length_m']==pytest.approx(2)
+    for box in ([150,50,200,100],[150,350,200,100],[20,150,200,150],[350,150,200,150]):
+        r=measure_box(box,RULER_POLY,scale,(600,500))
+        assert r['length_m'] is None and r['status']=='outside_calibration'
+
+
+def test_ruler_validation_and_profile_roundtrip():
+    from pydantic import ValidationError
+    data={'image_size':[600,500],'polygon':RULER_POLY,'metric_rulers':[ruler([100,200,250,400],300)]}
+    profile=workbench.Profile.model_validate(data)
+    assert workbench.Profile.model_validate_json(profile.model_dump_json()).metric_rulers==profile.metric_rulers
+    assert not profile.references
+    reverse=dict(data,metric_rulers=[ruler([400,250,200,100],300)])
+    assert workbench.profile_scale(workbench.Profile.model_validate(reverse))==workbench.profile_scale(profile)
+    for bad in [ruler([100,100,300],300),ruler([100,300,200],300),ruler([100,200,300],90),
+                ruler([100,200],300),ruler([100,200,300],300,0),
+                {'points':[[100,200],[200,300],[300,400]],'step_m':1}]:
+        with pytest.raises(ValidationError):workbench.Profile.model_validate(dict(data,metric_rulers=[bad]))
+
+
+def test_ruler_measurement_is_invariant_under_preview_resizing():
+    raw=np.zeros((500,600,3),np.uint8)
+    profile=workbench.Profile(image_size=(600,500),polygon=RULER_POLY,
+                               metric_rulers=[ruler([100,200,250,300,400],300)])
+    result=workbench.render_raw(raw,workbench.FrameRequest(profile=profile,boxes=[(100,200,300,100)]),include_image=False)
+    assert result['detections'][0]['length_m']==pytest.approx(4)
+    # A genuinely resized source requires matching, scaled calibration coordinates.
+    small=workbench.Profile(image_size=(300,250),polygon=np.asarray(RULER_POLY).astype(float)/2,
+        metric_rulers=[ruler([50,100,125,150,200],150)])
+    result2=workbench.render_raw(cv2.resize(raw,(300,250)),workbench.FrameRequest(profile=small,boxes=[(50,100,150,50)]),include_image=False)
+    assert result2['detections'][0]['length_m']==pytest.approx(4)

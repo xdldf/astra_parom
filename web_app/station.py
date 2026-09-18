@@ -5,21 +5,22 @@ import hashlib
 import io
 import json
 import re
-import sqlite3
 import uuid
+from functools import lru_cache
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 
 import cv2
 import numpy as np
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from fastapi.responses import FileResponse, Response
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query, Request
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from vehicle_metrology.plate_text import normalize_plate
 from vehicle_metrology.tariffs import CATEGORIES, catalog, quote
 from web_app import workbench
+from web_app.station_store import connect_database, summary
 
 router=APIRouter(prefix='/api/station')
 DATA=Path(__file__).parent/'data'/'station'
@@ -32,15 +33,7 @@ def now():
 
 
 def connect():
-    DATA.mkdir(parents=True,exist_ok=True)
-    db=sqlite3.connect(DB,timeout=15)
-    db.row_factory=sqlite3.Row
-    db.executescript('''
-        CREATE TABLE IF NOT EXISTS vehicles(id TEXT PRIMARY KEY, source_key TEXT UNIQUE, version INTEGER NOT NULL, data TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY, vehicle_id TEXT, timestamp TEXT, actor TEXT, action TEXT, reason TEXT, before_json TEXT, after_json TEXT);
-        CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
-    ''')
-    return db
+    return connect_database(DB)
 
 
 def find(db,ident):
@@ -60,9 +53,11 @@ class Fields(BaseModel):
     plate: str=Field('',max_length=24)
     category: str='car'
     length_m: float | None=Field(None,gt=0,le=100)
+    load_capacity_t: float | None=Field(None,gt=0,le=1000)
     manual_rub: int | None=Field(None,ge=0,le=10000000,strict=True)
     actor: str=Field('Оператор',min_length=1,max_length=100)
     reason: str=Field('',max_length=1000)
+    station_id: str=Field('default',pattern=r'^[a-zA-Z0-9_-]{1,64}$')
 
     @model_validator(mode='after')
     def validate_category(self):
@@ -95,9 +90,10 @@ class Capture(BaseModel):
 
 def new_record(fields,source=None):
     stamp=now()
-    tariff=quote(fields.category,fields.length_m,fields.manual_rub)
+    tariff=quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
     return dict(id=uuid.uuid4().hex,version=1,created_at=stamp,updated_at=stamp,
                 plate=normalize_plate(fields.plate),category=fields.category,length_m=fields.length_m,
+                load_capacity_t=fields.load_capacity_t,
                 measured_length_m=source.get('measured_length_m') if source else None,
                 tariff=tariff,manual_rub=fields.manual_rub,status='Требует проверки',
                 actor=fields.actor,source=source,side_photo=None,front_photo=None)
@@ -106,7 +102,7 @@ def new_record(fields,source=None):
 @router.get('/catalog')
 def tariffs():
     return dict(categories=CATEGORIES,tariffs=catalog(),statuses=STATUSES,
-                policy='Точные диапазоны Приложения №1, без округления и заполнения промежутков. Категория подтверждается оператором.')
+                policy='Приложение №1; раздел 6 — приказ №37/ПЯ от 08.09.2026, действует с 08.09.2026. Диапазоны без округления и заполнения промежутков. Грузоподъёмность берётся из документов, не из изображения. Категорию подтверждает оператор.')
 
 
 @router.get('/health')
@@ -119,7 +115,7 @@ def health():
 
 @router.post('/quote')
 def calculate(fields: Fields):
-    return quote(fields.category,fields.length_m,fields.manual_rub)
+    return quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
 
 
 @router.post('/vehicles')
@@ -136,9 +132,9 @@ def create(fields: Fields):
 @router.post('/capture')
 def capture(payload: Capture):
     # Recalculate from the original uploaded frame and submitted calibration.
-    result=workbench.render(payload.media_id,workbench.FrameRequest(profile=payload.profile,
-            frame=payload.frame,boxes=[payload.bbox]))
-    measured=result['detections'][0]
+    result=workbench.render_raw(workbench.read_frame(payload.media_id,payload.frame),
+            workbench.FrameRequest(profile=payload.profile,frame=payload.frame,boxes=[payload.bbox]),
+            include_image=False,include_frame=True)
     front_image=None
     paired=None
     if payload.front_media_id:
@@ -160,8 +156,8 @@ def capture(payload: Capture):
 
 def persist_capture(payload,result,front_image=None,paired=None,front_samples=None,camera_note=None):
     measured=result['detections'][0]
-    if measured['status'] in {'outside_road','clipped','waiting_for_line'}:
-        raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге и у линии измерения (если она включена).')
+    if measured['status'] in {'outside_road','clipped','waiting_for_line','outside_calibration'}:
+        raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге, в области калибровки и у линии измерения (если она включена).')
     category={'car':'car','bus':'bus','truck':'truck','motorcycle':'motorcycle'}.get(payload.label,'car')
     identity=[payload.media_id,payload.frame,[round(v,1) for v in payload.bbox]]
     if paired:
@@ -174,30 +170,41 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
         source['front_camera']=paired
     if camera_note:
         source['camera_note']=camera_note
+    record=new_record(Fields(category=category,length_m=measured['length_m'],actor=payload.actor),source)
+    with connect() as db:
+        existing=db.execute('SELECT data FROM vehicles WHERE source_key=?',(source_key,)).fetchone()
+        if existing:return json.loads(existing['data'])
+    image=result.get('frame_image')
+    if image is None:
+        image=cv2.imdecode(np.frombuffer(base64.b64decode(result['image']),np.uint8),cv2.IMREAD_COLOR)
+    x,y,bw,bh=map(int,payload.bbox)
+    margin=max(20,int(bw*.08))
+    crop=image[max(0,y-margin):min(image.shape[0],y+bh+margin),max(0,x-margin):min(image.shape[1],x+bw+margin)]
+    # Encode outside the SQLite write transaction so operators can continue saving.
+    photos={record['id']+'-side.jpg':crop}
+    record['side_photo']=record['id']+'-side.jpg'
+    if front_image is not None:
+        record['front_photo']=record['id']+'-front.jpg'
+        photos[record['front_photo']]=front_image
+        record['plate_ocr']={'state':'queued','candidates':[]}
     if front_samples:
         source['front_samples']=[]
         for frame_index,sample in front_samples:
             filename=uuid.uuid4().hex+'-front.jpg'
-            DATA.mkdir(parents=True,exist_ok=True)
-            if not cv2.imwrite(str(DATA/filename),sample):
-                raise HTTPException(500,'Не удалось сохранить снимок номера')
+            photos[filename]=sample
             source['front_samples'].append(dict(frame=frame_index,photo=filename))
-    record=new_record(Fields(category=category,length_m=measured['length_m'],actor=payload.actor),source)
+    encoded={}
+    for filename,pixels in photos.items():
+        ok,jpeg=cv2.imencode('.jpg',pixels,[cv2.IMWRITE_JPEG_QUALITY,92])
+        if not ok:raise HTTPException(500,'Не удалось подготовить снимок')
+        encoded[filename]=jpeg.tobytes()
     with connect() as db:
         db.execute('BEGIN IMMEDIATE')
         existing=db.execute('SELECT data FROM vehicles WHERE source_key=?',(source_key,)).fetchone()
         if existing:
             return json.loads(existing['data'])
-        record['side_photo']=record['id']+'-side.jpg'
-        image=cv2.imdecode(np.frombuffer(base64.b64decode(result['image']),np.uint8),cv2.IMREAD_COLOR)
-        x,y,bw,bh=map(int,payload.bbox)
-        margin=max(20,int(bw*.08))
-        crop=image[max(0,y-margin):min(image.shape[0],y+bh+margin),max(0,x-margin):min(image.shape[1],x+bw+margin)]
-        cv2.imwrite(str(DATA/record['side_photo']),crop)
-        if front_image is not None:
-            record['front_photo']=record['id']+'-front.jpg'
-            cv2.imwrite(str(DATA/record['front_photo']),front_image)
-            record['plate_ocr']={'state':'queued','candidates':[]}
+        for filename,jpeg in encoded.items():
+            (DATA/filename).write_bytes(jpeg)
         db.execute('INSERT INTO vehicles VALUES(?,?,?,?)',(record['id'],source_key,1,json.dumps(record,ensure_ascii=False)))
         event(db,record,payload.actor,'capture','Импорт из измерения; требуется проверка оператором')
     if front_image is not None:
@@ -225,7 +232,7 @@ def recognize_plate(ident: str):
     return record
 
 
-def filtered(db,plate='',status='',category='',length_min=None,length_max=None,date_from=None,date_to=None):
+def filters(plate='',status='',category='',length_min=None,length_max=None,date_from=None,date_to=None):
     if status and status not in STATUSES:
         raise HTTPException(422,'Неизвестный статус')
     if category and category not in CATEGORIES:
@@ -234,34 +241,59 @@ def filtered(db,plate='',status='',category='',length_min=None,length_max=None,d
         raise HTTPException(422,'Начальная дата позже конечной')
     if length_min is not None and length_max is not None and length_min>length_max:
         raise HTTPException(422,'Минимальная длина больше максимальной')
-    records=[]
-    for row in db.execute('SELECT data FROM vehicles ORDER BY rowid DESC'):
-        r=json.loads(row['data'])
-        if normalize_plate(plate) not in normalize_plate(r['plate']): continue
-        if status and r['status']!=status: continue
-        if category and r['category']!=category: continue
-        if length_min is not None and (r['length_m'] is None or r['length_m']<length_min): continue
-        if length_max is not None and (r['length_m'] is None or r['length_m']>length_max): continue
-        d=date.fromisoformat(r['created_at'][:10])
-        if date_from and d<date_from: continue
-        if date_to and d>date_to: continue
-        records.append(r)
-    return records
+    clauses,values=[],[]
+    for column,value in (('status',status),('category',category)):
+        if value:
+            clauses.append(column+'=?');values.append(value)
+    if plate:
+        clauses.append('instr(plate,?)>0');values.append(normalize_plate(plate))
+    for column,operator,value in (('length_m','>=',length_min),('length_m','<=',length_max),
+                                   ('created_at','>=',date_from.isoformat() if date_from else None),
+                                   ('created_at','<=',date_to.isoformat()+'T99' if date_to else None)):
+        if value is not None:
+            clauses.append(column+operator+'?');values.append(value)
+    return ' AND '.join(clauses) or '1', values
+
+
+def conditional(request, response, token):
+    etag='"'+hashlib.sha256(token.encode()).hexdigest()+'"'
+    response.headers.update({'ETag':etag,'Cache-Control':'private, no-cache'})
+    if request.headers.get('if-none-match')==etag:
+        return Response(status_code=304,headers=dict(response.headers))
 
 
 @router.get('/vehicles')
-def vehicles(plate: str='',status: str='',category: str='',length_min: float|None=None,
-             length_max: float|None=None,date_from: date|None=None,date_to: date|None=None):
+def vehicles(request: Request,response: Response,plate: str='',status: str='',category: str='',
+             length_min: float|None=Query(None,allow_inf_nan=False),
+             length_max: float|None=Query(None,allow_inf_nan=False),date_from: date|None=None,date_to: date|None=None,
+             limit: int=Query(250,ge=1,le=250),offset: int=Query(0,ge=0),snapshot: int|None=Query(None,ge=0)):
+    where,args=filters(plate,status,category,length_min,length_max,date_from,date_to)
     with connect() as db:
-        rows=filtered(db,plate,status,category,length_min,length_max,date_from,date_to)
-    return dict(rows=rows,count=len(rows),amount_rub=sum(r['tariff']['amount_rub'] or 0 for r in rows if r['status'] in {'Подтвержден','Оплачен'}),
-                paid_rub=sum(r['tariff']['amount_rub'] or 0 for r in rows if r['status']=='Оплачен'),
-                issues=sum(r['status'] in {'Требует проверки','Отклонён'} for r in rows))
+        db.execute('BEGIN')
+        revision=db.execute("SELECT value FROM settings WHERE key='vehicle_revision'").fetchone()[0]
+        unchanged=conditional(request,response,str(DB)+revision+str(request.url))
+        if unchanged is not None:return unchanged
+        # A frozen upper rowid keeps older pages stable when cameras add new cars.
+        if snapshot is None:
+            snapshot=db.execute('SELECT COALESCE(MAX(seq),0) FROM vehicle_list').fetchone()[0]
+        where+=' AND seq<=?';args.append(snapshot)
+        totals=dict(db.execute(f"""SELECT COUNT(*) AS count,
+            COALESCE(SUM(CASE WHEN status IN ('Подтвержден','Оплачен') THEN amount_rub ELSE 0 END),0) AS amount_rub,
+            COALESCE(SUM(CASE WHEN status='Оплачен' THEN amount_rub ELSE 0 END),0) AS paid_rub,
+            COALESCE(SUM(status IN ('Требует проверки','Отклонён')),0) AS issues
+            FROM vehicle_list WHERE {where}""",args).fetchone())
+        rows=[summary(r) for r in db.execute(f"""SELECT page.*, json_extract(v.data, '$.side_photo') AS side_photo, json_extract(v.data, '$.front_photo') AS front_photo FROM (SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC LIMIT ? OFFSET ?) AS page JOIN vehicles v ON v.id=page.id ORDER BY page.seq DESC""",args+[limit,offset])]
+    return dict(rows=rows,**totals,limit=limit,offset=offset,snapshot=snapshot,has_more=offset+len(rows)<totals['count'])
 
 
 @router.get('/vehicles/{ident}')
-def vehicle(ident: str):
+def vehicle(ident: str,request: Request,response: Response):
     with connect() as db:
+        db.execute('BEGIN')
+        row=db.execute('SELECT version FROM vehicles WHERE id=?',(ident,)).fetchone()
+        if row is None:raise HTTPException(404,'Запись не найдена')
+        unchanged=conditional(request,response,str(DB)+ident+str(row['version']))
+        if unchanged is not None:return unchanged
         record=find(db,ident)
         record['history']=[dict(row) for row in db.execute('SELECT timestamp,actor,action,reason FROM audit WHERE vehicle_id=? ORDER BY id DESC',(ident,))]
         return record
@@ -279,7 +311,7 @@ def update(ident: str,fields: Edit):
         if fields.action=='pay' and old['status']!='Подтвержден':
             raise HTTPException(409,'Сначала подтвердите автомобиль')
         if fields.action=='pay':
-            if any(old[k]!=getattr(fields,k) for k in ('category','length_m','manual_rub')) or old['plate']!=normalize_plate(fields.plate):
+            if any(old.get(k)!=getattr(fields,k) for k in ('category','length_m','manual_rub','load_capacity_t')) or old['plate']!=normalize_plate(fields.plate):
                 raise HTTPException(422,'Перед оплатой подтвердите изменения данных')
             record=dict(old,status='Оплачен')
         elif fields.action=='reject':
@@ -287,41 +319,69 @@ def update(ident: str,fields: Edit):
                 raise HTTPException(422,'Укажите причину отклонения')
             record=dict(old,status='Отклонён')
         else:
-            changed=any(old[k]!=getattr(fields,k) for k in ('category','length_m','manual_rub')) or old['plate']!=normalize_plate(fields.plate)
+            changed=any(old.get(k)!=getattr(fields,k) for k in ('category','length_m','manual_rub','load_capacity_t')) or old['plate']!=normalize_plate(fields.plate)
             if (changed or fields.manual_rub is not None) and not fields.reason.strip():
                 raise HTTPException(422,'Укажите причину изменения')
-            tariff=quote(fields.category,fields.length_m,fields.manual_rub)
+            tariff=quote(fields.category,fields.length_m,fields.manual_rub,fields.load_capacity_t)
             if fields.action=='confirm' and tariff['amount_rub'] is None:
                 raise HTTPException(422,'Тариф не определён. Уточните данные или задайте ручной тариф с причиной.')
             record=dict(old,plate=normalize_plate(fields.plate),category=fields.category,length_m=fields.length_m,
-                        manual_rub=fields.manual_rub,tariff=tariff,
+                        manual_rub=fields.manual_rub,load_capacity_t=fields.load_capacity_t,tariff=tariff,
                         status='Подтвержден' if fields.action=='confirm' else 'Требует проверки')
         record.update(version=old['version']+1,updated_at=now(),actor=fields.actor)
         db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',(record['version'],json.dumps(record,ensure_ascii=False),ident))
         if fields.action=='confirm':
-            db.execute("INSERT OR REPLACE INTO settings VALUES('client_vehicle',?)",(ident,))
+            db.execute("INSERT OR REPLACE INTO settings VALUES(?,?)",(client_key(fields.station_id),ident))
         elif fields.action in {'edit','reject'}:
-            db.execute("DELETE FROM settings WHERE key='client_vehicle' AND value=?",(ident,))
+            db.execute("DELETE FROM settings WHERE (key='client_vehicle' OR key LIKE 'client_vehicle:%') AND value=?",(ident,))
         event(db,record,fields.actor,fields.action,fields.reason,old)
     return record
 
 
+def client_key(station_id):
+    return 'client_vehicle' if station_id=='default' else 'client_vehicle:'+station_id
+
+
 @router.get('/client')
-def client_screen():
+def client_screen(request: Request,response: Response,station_id: str=Query('default',pattern=r'^[a-zA-Z0-9_-]{1,64}$')):
     with connect() as db:
-        row=db.execute("SELECT value FROM settings WHERE key='client_vehicle'").fetchone()
+        db.execute('BEGIN')
+        row=db.execute("SELECT value FROM settings WHERE key=?",(client_key(station_id),)).fetchone()
+        version=db.execute('SELECT version FROM vehicles WHERE id=?',(row['value'],)).fetchone() if row else None
+        unchanged=conditional(request,response,str(DB)+station_id+(row['value']+str(version[0]) if row and version else 'empty'))
+        if unchanged is not None:return unchanged
         record=find(db,row['value']) if row else None
         if record and record['status'] not in {'Подтвержден','Оплачен'}: record=None
+        if record:
+            record={k:record.get(k) for k in ('id','version','status','plate','category','length_m','load_capacity_t',
+                                             'tariff','front_photo','side_photo')}
         return dict(vehicle=record)
 
 
 @router.get('/photos/{filename}')
-def photo(filename: str):
+def photo(filename: str, thumbnail: bool=False):
     if not re.fullmatch(r'[0-9a-f]{32}-(?:side|front|plate)\.jpg',filename):
         raise HTTPException(404,'Фото не найдено')
     path=DATA/filename
     if not path.is_file(): raise HTTPException(404,'Фото не найдено')
+    if thumbnail:
+        stat=path.stat()
+        data=photo_thumbnail(str(path),stat.st_mtime_ns,stat.st_size)
+        return Response(data,media_type='image/jpeg',headers={'Cache-Control':'private, max-age=86400'})
     return FileResponse(path)
+
+
+@lru_cache(maxsize=512)
+def photo_thumbnail(path: str, modified: int, size: int):
+    image=cv2.imread(path)
+    if image is None:raise HTTPException(404,'Фото не найдено')
+    height,width=image.shape[:2]
+    ratio=min(1,160/width,100/height)
+    if ratio<1:
+        image=cv2.resize(image,(max(1,round(width*ratio)),max(1,round(height*ratio))),interpolation=cv2.INTER_AREA)
+    ok,encoded=cv2.imencode('.jpg',image,[cv2.IMWRITE_JPEG_QUALITY,75])
+    if not ok:raise HTTPException(500,'Не удалось подготовить фото')
+    return encoded.tobytes()
 
 
 @router.post('/vehicles/{ident}/front-photo')
@@ -344,17 +404,25 @@ def front_photo(ident: str,version: int=Form(...),actor: str=Form('Операт�
 
 @router.get('/reports.csv')
 def report_csv(status: str='',category: str='',date_from: date|None=None,date_to: date|None=None):
-    with connect() as db:
-        rows=filtered(db,status=status,category=category,date_from=date_from,date_to=date_to)
-    out=io.StringIO()
-    writer=csv.writer(out,delimiter=';',lineterminator='\r\n')
-    writer.writerow(['Дата','Время','Гос. номер','Длина, м','Категория','Тариф, руб.','Статус','Оператор','Пункт тарифа'])
+    where,args=filters(status=status,category=category,date_from=date_from,date_to=date_to)
     def safe(s):
         text=str(s if s is not None else '')
         return "'"+text if text.lstrip().startswith(('=','+','-','@')) or text.startswith(('\t','\r','\n')) else text
-    for r in rows:
-        writer.writerow([safe(v) for v in [r['created_at'][:10],r['created_at'][11:19],r['plate'],
-            '' if r['length_m'] is None else str(r['length_m']).replace('.',','),CATEGORIES[r['category']],
-            r['tariff']['amount_rub'],r['status'],r['actor'],r['tariff']['code']]])
-    return Response('\ufeff'+out.getvalue(),media_type='text/csv; charset=utf-8',
+    def stream():
+        out=io.StringIO()
+        writer=csv.writer(out,delimiter=';',lineterminator='\r\n')
+        writer.writerow(['Дата','Время','Гос. номер','Длина, м','Категория','Тариф, руб.','Статус','Оператор','Пункт тарифа','Грузоподъёмность, т'])
+        yield '\ufeff'+out.getvalue()
+        # Page limits apply only to the UI. Export all matching rows in bounded batches.
+        with connect() as db:
+            cursor=db.execute(f'SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC',args)
+            while batch:=cursor.fetchmany(250):
+                out.seek(0);out.truncate(0)
+                for r in batch:
+                    writer.writerow([safe(v) for v in [r['created_at'][:10],r['created_at'][11:19],r['plate'],
+                        '' if r['length_m'] is None else str(r['length_m']).replace('.',','),CATEGORIES[r['category']],
+                        r['amount_rub'],r['status'],r['actor'],r['code'],
+                        '' if r['load_capacity_t'] is None else str(r['load_capacity_t']).replace('.',',')]])
+                yield out.getvalue()
+    return StreamingResponse(stream(),media_type='text/csv; charset=utf-8',
                     headers={'Content-Disposition':'attachment; filename="ferry_report.csv"'})

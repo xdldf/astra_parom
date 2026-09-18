@@ -1,3 +1,17 @@
+## Multi-operator, tariff and ruler update — 2026-09-18
+
+Validation performed in an isolated Linux Python 3.12 environment with OpenCV 4.14.0.94, NumPy 2.2.6, SciPy 1.17.1, FastAPI 0.141.1 and CPU PyTorch for mocked detector tests. Production GPU requirements were not changed.
+
+- Python regression suite passed; final targeted runs cover the additional parallel-capture and stream-viewer cases. Existing Brown/fisheye calibration, geometry, video, OCR, tariff and persistence tests passed.
+- Fifteen frontend tests passed (`test_live_tracks.cjs`, `test_workbench_ui.cjs`, `test_station_ui.cjs`). They exercise ETag reuse without replacing queue rows, paging/filter resets, dirty-form preservation, customer-screen routing, source switching, and original-image coordinates on a half-size preview.
+- Concurrent confirmations/payments of one record produce one success and one HTTP 409 with one audit event. Twelve independent records can be confirmed concurrently onto separate customer displays. Four simultaneous captures produce one record and one photo. Eight simultaneous camera starts share one station. Forty-eight asynchronous stream consumers share pre-encoded frames and wait for changes.
+- A legacy database migrates without changing historical prices; connections close after use. A 301-car fixture returns at most 250 lightweight rows, preserves totals and older-page boundaries against inserts, and exports all records to CSV. OCR updates invalidate ETags.
+- Synthetic rulers recover unequal pixel intervals corresponding to equal metric distances, interpolate depth, reject uncovered regions and invalid geometry, and retain lengths after consistent coordinate scaling. These tests establish numerical behavior, not real-world vehicle accuracy.
+- Browser verification used an isolated 301-record database: queue showed 250 rows, next page showed 51, a 25-tonne capacity tariff saved as 10,950 ₽ (6.7), reports paginated, and ruler controls loaded without JavaScript errors.
+- `python scripts/benchmark_station.py --cars 10000`: prior full-history scan plus serialization 167.07 ms / 50,388,890 bytes; capped page median 7.89 ms / 69,373 bytes; unchanged request median 1.20 ms / empty response body. Synthetic 4 KB calibration payload per record; results are local API performance, not GPU throughput.
+
+Live camera/GPU throughput, several physical operator computers, and independent real-vehicle measurement accuracy require on-site verification. Meter marks must be physically surveyed; browser clicks alone do not establish scale.
+
 # Executed verification
 
 ## Commands actually run

@@ -129,3 +129,38 @@ def test_front_recognition_runs_without_side(monkeypatch):
         assert status['front_ready'] and not status['side_ready']
         assert status['plates'] and status['result'] is None
     finally:c.stop.set();t.join(2)
+
+
+
+def test_many_viewers_share_encoded_frames_without_blocking_worker_threads():
+    import asyncio
+    c=ip.Station(ip.Settings(),wb.Profile(image_size=(600,500)))
+    c.jpeg=b'shared-side';c.front_jpeg=b'shared-front';c.sequence=1
+    async def view():
+        viewers=[c.frames(bool(i%2)) for i in range(48)]
+        first=await asyncio.gather(*(anext(viewer) for viewer in viewers))
+        assert all((b'shared-front' if i%2 else b'shared-side') in frame for i,frame in enumerate(first))
+        next_frames=[asyncio.create_task(anext(viewer)) for viewer in viewers]
+        await asyncio.sleep(.06)
+        assert not any(task.done() for task in next_frames)  # unchanged buffers are not resent
+        c.jpeg=b'new-side';c.front_jpeg=b'new-front';c.sequence=2
+        second=await asyncio.wait_for(asyncio.gather(*next_frames),1)
+        assert all((b'new-front' if i%2 else b'new-side') in frame for i,frame in enumerate(second))
+        c.stop.set()
+        await asyncio.gather(*(viewer.aclose() for viewer in viewers))
+    asyncio.run(view())
+
+
+def test_concurrent_starts_share_one_camera_station(tmp_path,monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    monkeypatch.setattr(ip,'CONFIG',tmp_path/'ip.json');monkeypatch.setattr(ip,'active',None)
+    monkeypatch.setattr(wb,'require_gpu',lambda:0)
+    started=[]
+    monkeypatch.setattr(ip.Station,'start',lambda self:started.append(self.id))
+    profile=wb.Profile(image_size=(600,500),polygon=[(20,200),(580,200),(580,450),(20,450)],
+                      metric_rulers=[{'points':[(100,300),(200,300),(300,300)],'step_m':1}])
+    ip.CONFIG.write_text(ip.Settings(side_url='rtsp://localhost/side',front_url='rtsp://localhost/front',profile=profile).model_dump_json())
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results=list(pool.map(lambda _:ip.start(),range(8)))
+    assert len(started)==1
+    assert {r['id'] for r in results}==set(started)

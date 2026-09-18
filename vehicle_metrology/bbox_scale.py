@@ -22,7 +22,9 @@ def road_depth(polygon, x, y):
     return None
 
 
-def fit_scale(polygon, references):
+def fit_scale(polygon, references, rulers=()):
+    if rulers:
+        return fit_rulers(polygon, rulers)
     samples = []
     for r in references:
         x, y, w, h = r['bbox']
@@ -43,6 +45,59 @@ def fit_scale(polygon, references):
     return dict(intercept=float(intercept), slope=float(slope), status='depth_calibrated', depths=t.tolist())
 
 
+def fit_rulers(polygon, rulers):
+    """Piecewise metric coordinates along surveyed, equally spaced road marks.
+
+    Horizontal intervals may have different pixel widths (residual lens distortion).
+    Each ruler covers one narrow road-depth band; no extrapolation is allowed.
+    """
+    rows = []
+    for ruler in rulers:
+        points = np.asarray(ruler['points'], dtype=float)
+        if points[0, 0] > points[-1, 0]:
+            points = points[::-1]
+        if np.any(np.diff(points[:, 0]) <= 2):
+            raise ValueError('Ruler marks must run left to right (or right to left), at least 2 px apart.')
+        depths = [road_depth(polygon, x, y) for x, y in points]
+        if any(t is None for t in depths):
+            raise ValueError('Every ruler mark must lie on the road.')
+        if np.ptp(depths) > .10:
+            raise ValueError('Draw each ruler along the vehicle travel direction at one road depth.')
+        rows.append(dict(x=points[:, 0].tolist(), step_m=ruler['step_m'], depth=float(np.mean(depths))))
+    rows.sort(key=lambda r: r['depth'])
+    if any(b['depth']-a['depth'] < .08 for a,b in zip(rows, rows[1:])):
+        raise ValueError('Use one continuous ruler per depth; separate near/far rulers by at least 8% road depth.')
+    return dict(status='ruler_calibrated', rulers=rows, depths=[r['depth'] for r in rows])
+
+
+def ruler_length(scale, left, right, depth):
+    rows = scale['rulers']
+    if len(rows) == 1:
+        if abs(depth-rows[0]['depth']) > .05:
+            return None
+        nearby = rows
+    else:
+        exact = [r for r in rows if abs(depth-r['depth']) < 1e-7]
+        if exact:
+            nearby = exact
+        elif depth < rows[0]['depth'] or depth > rows[-1]['depth']:
+            return None
+        else:
+            index = min(len(rows)-2, max(0, int(np.searchsorted(scale['depths'], depth))-1))
+            nearby = rows[index:index+2]
+    ppm = []
+    for row in nearby:
+        xs = row['x']
+        if left < xs[0] or right > xs[-1]:
+            return None
+        metres = np.arange(len(xs))*row['step_m']
+        # Integrate across every interval, rather than sampling just the bbox center.
+        length = np.interp(right, xs, metres)-np.interp(left, xs, metres)
+        ppm.append((right-left)/length)
+    local_ppm = np.interp(depth, [r['depth'] for r in nearby], ppm)
+    return float((right-left)/local_ppm)
+
+
 def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px=10):
     x, y, w, h = bbox
     t = road_depth(polygon, x+w/2, y+h)
@@ -61,6 +116,12 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
         return result
     if scale is None:
         result['status'] = 'needs_reference'
+        return result
+    if scale['status'] == 'ruler_calibrated':
+        length = ruler_length(scale, x, x+w, t)
+        result['status'] = 'outside_calibration' if length is None else 'ruler_calibrated'
+        if length is not None:
+            result.update(length_m=length, cm_per_px=100*length/w)
         return result
     ppm = scale['intercept'] + scale['slope']*t
     result.update(length_m=float(w/ppm), cm_per_px=float(100/ppm),

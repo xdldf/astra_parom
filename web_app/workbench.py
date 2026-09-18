@@ -48,6 +48,12 @@ class Reference(BaseModel):
     frame: int = Field(0, ge=0)
 
 
+class MetricRuler(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+    points: list[tuple[float, float]] = Field(min_length=3, max_length=100)
+    step_m: float = Field(1, gt=0, le=20)
+
+
 class Profile(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     version: Literal[1] = 1
@@ -55,6 +61,7 @@ class Profile(BaseModel):
     lens: Lens = Field(default_factory=Lens)
     polygon: list[tuple[float, float]] = Field(default_factory=list, max_length=100)
     references: list[Reference] = Field(default_factory=list, max_length=100)
+    metric_rulers: list[MetricRuler] = Field(default_factory=list, max_length=20)
     measurement_line_x: float | None = Field(None, ge=0)
     line_tolerance_px: float = Field(10, ge=1, le=100)
 
@@ -89,9 +96,12 @@ class Profile(BaseModel):
             x,y,bw,bh = r.bbox
             if x <= 1 or y <= 1 or bw <= 2 or bh <= 2 or x+bw >= w-1 or y+bh >= h-1:
                 raise ValueError('Reference cars must be fully inside the image')
-        if self.references and not self.polygon:
+        for ruler in self.metric_rulers:
+            if any(not (0 <= x < w and 0 <= y < h) for x,y in ruler.points):
+                raise ValueError('Ruler marks must be inside the original image')
+        if (self.references or self.metric_rulers) and not self.polygon:
             raise ValueError('Draw the road before adding reference cars')
-        fit_scale(self.polygon, [r.model_dump() for r in self.references])
+        profile_scale(self)
         return self
 
 
@@ -101,6 +111,18 @@ class FrameRequest(BaseModel):
     detect: bool = False
     confidence: float = Field(.3, ge=.05, le=.95)
     boxes: list[tuple[float,float,float,float]] = Field(default_factory=list, max_length=200)
+
+
+def profile_scale(profile):
+    return cached_scale(tuple(profile.polygon),
+                        tuple((r.bbox, r.length_m) for r in profile.references),
+                        tuple((tuple(r.points), r.step_m) for r in profile.metric_rulers))
+
+
+@lru_cache(maxsize=64)
+def cached_scale(polygon, references, rulers):
+    return fit_scale(polygon, [dict(bbox=bbox, length_m=length) for bbox,length in references],
+                     [dict(points=points, step_m=step) for points,step in rulers])
 
 
 @lru_cache(maxsize=6)
@@ -117,8 +139,11 @@ def correction_maps(w, h, values):
 
 def corrected(image, lens):
     h,w = image.shape[:2]
-    maps = correction_maps(w,h,tuple(sorted(lens.model_dump().items())))
-    frame = cv2.remap(image, *maps, cv2.INTER_LINEAR)
+    if not lens.k1 and not lens.k2 and lens.zoom == 1:
+        frame = image
+    else:
+        maps = correction_maps(w,h,tuple(sorted(lens.model_dump().items())))
+        frame = cv2.remap(image, *maps, cv2.INTER_LINEAR)
     if lens.tilt_deg:
         # Positive slider values rotate right (clockwise) in image coordinates.
         rotation = cv2.getRotationMatrix2D(((w-1)/2, (h-1)/2), -lens.tilt_deg, 1)
@@ -219,7 +244,7 @@ def detect_vehicles(frame, confidence=.35):
     return detections
 
 
-def render_raw(raw, request, include_image=True):
+def render_raw(raw, request, include_image=True, include_frame=False):
     global model
     if tuple(raw.shape[1::-1]) != request.profile.image_size:
         raise HTTPException(400, 'Calibration resolution does not match this media')
@@ -234,7 +259,7 @@ def render_raw(raw, request, include_image=True):
                 raise HTTPException(400, 'Invalid bbox coordinates')
             detections.append(dict(bbox=list(b), label='selected car', confidence=None))
     refs = [r.model_dump() for r in request.profile.references]
-    scale = fit_scale(request.profile.polygon, refs)
+    scale = profile_scale(request.profile)
     for d in detections:
         d.update(measure_box(d['bbox'],request.profile.polygon,scale,request.profile.image_size,
                             request.profile.measurement_line_x,request.profile.line_tolerance_px))
@@ -242,8 +267,11 @@ def render_raw(raw, request, include_image=True):
     if include_image:
         _,encoded = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,92])
         encoded_image = base64.b64encode(encoded).decode()
-    return dict(image=encoded_image, detections=detections, scale=scale,
+    result = dict(image=encoded_image, detections=detections, scale=scale,
                 references=[measure_box(r['bbox'],request.profile.polygon,scale,request.profile.image_size) for r in refs])
+    if include_frame:
+        result['frame_image'] = frame
+    return result
 
 
 @router.post('/validate-profile')
@@ -261,7 +289,10 @@ def operator_calibration():
 
 @router.post('/operator-calibration')
 def save_operator_calibration(profile: Profile):
-    (DATA.parent/'operator-calibration.json').write_text(profile.model_dump_json(), encoding='utf-8')
+    path = DATA.parent/'operator-calibration.json'
+    temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
+    temporary.write_text(profile.model_dump_json(), encoding='utf-8')
+    temporary.replace(path)
     return profile
 
 

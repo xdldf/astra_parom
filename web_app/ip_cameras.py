@@ -1,5 +1,6 @@
 """Two persistent network receivers; bounded receive-time pairing and server capture."""
 import json
+import asyncio
 import threading
 import time
 import uuid
@@ -281,7 +282,8 @@ class Station:
             raise HTTPException(409,'Нет свежего изображения боковой камеры')
         with self.capture_lock:
             if track_id in self.saved:return self.saved[track_id]
-            result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,boxes=[d['bbox']]))
+            result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,boxes=[d['bbox']]),
+                                 include_image=False,include_frame=True)
             payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source='yolo26n',actor='Камеры')
             paired=None;samples=[]
             if b is not None:
@@ -309,13 +311,14 @@ class Station:
                 self.plate_error=None
             except Exception:self.plate_error='Номер временно недоступен'
 
-    def frames(self,front):
+    async def frames(self,front):
         seq=-1
         while not self.stop.is_set():
-            with self.condition:
-                self.condition.wait_for(lambda:self.sequence!=seq or self.stop.is_set(),timeout=1)
+            if self.sequence!=seq:
                 seq=self.sequence;data=self.front_jpeg if front else self.jpeg
-            if data:yield b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'+data+b'\r\n'
+                if data:yield b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'+data+b'\r\n'
+            # Share already encoded frames without occupying a worker thread per viewer.
+            await asyncio.sleep(.05)
 
 
 @router.get('/configuration')
@@ -354,7 +357,7 @@ def start():
         if not cfg.side_url or not cfg.front_url:raise HTTPException(422,'Сначала настройте адреса камер')
         profile=cfg.profile or wb.operator_calibration()
         if not isinstance(profile,wb.Profile):profile=wb.Profile.model_validate(profile)
-        if not profile.references or len(profile.polygon)<4:raise HTTPException(422,'Сначала загрузите настройку измерения')
+        if not (profile.references or profile.metric_rulers) or len(profile.polygon)<4:raise HTTPException(422,'Сначала загрузите настройку измерения')
         wb.require_gpu()
         active=Station(cfg,profile);active.start()
         return {'running':True,'id':active.id}
@@ -380,14 +383,14 @@ def automatic(enabled: bool):
 
 
 @router.get('/state')
-def state():
+def state(compact: bool=False):
     c=active
     if not c:return {'running':False}
     pair=c.paired()
     side_ready=c.fresh(c.side) is not None;front_ready=c.fresh(c.front) is not None
     return dict(running=True,id=c.id,ready=pair is not None,side_ready=side_ready,front_ready=front_ready,side=c.side.status,front=c.front.status,
                 error=c.error,plate_error=c.plate_error,plates=c.plates if front_ready else None,
-                result=c.result if side_ready else None,sync_error_ms=pair[2]*1000 if pair else None,
+                result=c.result if side_ready and not compact else None,sync_error_ms=pair[2]*1000 if pair else None,
                 auto_measure=c.cfg.auto_measure,last_capture=c.last_capture)
 
 

@@ -111,3 +111,25 @@ test('disabling a line also finishes and preserves a valid road draft',async()=>
   assert.equal(ui.run('profile.measurement_line_x'),null);
   assert.equal(ui.run('profile.polygon.length'),4);
 });
+
+
+test('metre marks on a half-size preview are stored at original image coordinates',async()=>{
+  const ui=studio();
+  await ui.run('finishPendingRoad()');
+  ui.run('refresh=async()=>{}');
+  ui.run("$('rulerStep').value='1'");
+  const canvas=ui.elements.get('canvas');
+  canvas.getBoundingClientRect=()=>({left:30,top:40,width:300,height:250});
+  await ui.elements.get('drawRuler').onclick();
+  for(const clientX of [80,130,155,180,230])canvas.onpointerdown({clientX,clientY:190,pointerId:1});
+  await ui.elements.get('finishRuler').onclick();
+  assert.deepEqual(JSON.parse(ui.run('JSON.stringify(profile.metric_rulers[0])')),
+    {points:[[100,300],[200,300],[250,300],[300,300],[400,300]],step_m:1});
+  assert.equal(ui.run('mode'),'select');
+});
+
+test('lens changes invalidate rulers drawn in the old coordinate system',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');
+  ui.run('refresh=async()=>{};profile.metric_rulers=[{points:[[100,300],[200,300],[300,300]],step_m:1}];invalidateLens()');
+  assert.equal(ui.run('profile.metric_rulers.length'),0);
+});
