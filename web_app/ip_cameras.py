@@ -365,6 +365,15 @@ def calibration(profile: wb.Profile):
     return {'saved':True,'image_size':profile.image_size}
 
 
+@router.get('/calibration')
+def current_calibration():
+    with guard:
+        if active:
+            return active.profile
+        cfg=settings()
+        return cfg.profile or wb.operator_calibration()
+
+
 @router.post('/start')
 def start():
     global active
@@ -417,22 +426,34 @@ def video(camera: str):
     return StreamingResponse(active.frames(camera=='front'),media_type='multipart/x-mixed-replace; boundary=frame',headers={'Cache-Control':'no-store'})
 
 
+def side_snapshot():
+    # Use the receiver's uncorrected full-resolution image, never the annotated
+    # browser preview. Calibration applies the lens correction exactly once.
+    with guard:
+        camera=active
+        if camera:
+            packet=camera.fresh(camera.side)
+            if packet is None:
+                raise HTTPException(409,'Нет свежего кадра боковой камеры. Проверьте подключение и повторите.')
+            return packet.jpeg
+        url=settings().side_url
+    if not url:raise HTTPException(409,'Сначала сохраните адрес боковой камеры в окне оператора.')
+    cap=None
+    try:
+        cap=Receiver.open(url);ok,raw=cap.read()
+        if not ok or raw is None:raise ValueError()
+        ok,encoded=cv2.imencode('.jpg',raw,[cv2.IMWRITE_JPEG_QUALITY,95])
+        if not ok:raise ValueError()
+        return encoded.tobytes()
+    except Exception:raise HTTPException(409,'Не удалось получить снимок камеры. Проверьте адрес и подключение.')
+    finally:
+        if cap is not None:cap.release()
+
+
 @router.get('/side/snapshot')
 def snapshot():
-    if active and active.side.snapshot():
-        image=active.side.snapshot()[-1].jpeg
-    else:
-        url=settings().side_url
-        if not url:raise HTTPException(409,'Сначала сохраните адрес боковой камеры')
-        cap=None
-        try:
-            cap=Receiver.open(url);ok,raw=cap.read()
-            if not ok:raise ValueError()
-            image=cv2.imencode('.jpg',raw)[1].tobytes()
-        except Exception:raise HTTPException(409,'Не удалось получить снимок камеры')
-        finally:
-            if cap is not None:cap.release()
-    return Response(image,media_type='image/jpeg',headers={'Content-Disposition':'attachment; filename="camera-calibration.jpg"'})
+    image=side_snapshot()
+    return Response(image,media_type='image/jpeg',headers={'Content-Disposition':'attachment; filename="camera-calibration.jpg"','Cache-Control':'no-store'})
 
 
 def startup():

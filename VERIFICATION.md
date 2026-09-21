@@ -1,3 +1,11 @@
+## Camera calibration and JSON continuation — 2026-09-21
+
+- Targeted Python tests: **29 passed** (`tests/test_ip_cameras.py`, `tests/test_bbox_workbench.py`). Workbench UI: **15 passed**; station UI: **9 passed**. Python compilation, JavaScript syntax and whitespace checks passed.
+- Camera tests cover reuse of a fresh, original receiver image without stopping capture, stale-frame rejection, snapshot acquisition before the first calibration, and saved-profile retrieval. The workbench persists the original JPEG and renders lens correction once through its existing frame path.
+- Frontend tests cover importing JSON before an image, loading the station's saved profile, preserving calibration across camera snapshots, safe resolution mismatch handling, editing imported reference lengths/ruler spacing/ruler points, and retaining edits when applying to a running IP station is rejected.
+- An isolated browser preview with a synthetic 1200×800 camera image loaded the saved calibration, displayed its overlays, edited ruler spacing, applied it to the test station, and restored the edited value after reloading. Controls and image scroll independently on desktop. Production settings and camera connections were not used.
+- No physical camera or GPU measurement validation was available. These checks establish the calibration workflow and coordinate preservation, not real-world vehicle measurement accuracy.
+
 ## Optional tariffs — 2026-09-18
 
 - Station regression tests: **77 passed**; camera tests: **10 passed**; station UI tests: **9 passed**.

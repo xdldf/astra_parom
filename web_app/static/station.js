@@ -425,3 +425,18 @@ if(new URLSearchParams(location.search).get('page')!=='client')ipApi('/configura
 }).catch(e=>toast(e.message));
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&ipMode){$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');}else if(ipMode)ipPoll();});
+
+
+window.addEventListener('message',e=>{
+  if(e.origin!==location.origin||e.source!==$('calibrationFrame').contentWindow||e.data?.type!=='station-calibration-saved')return;
+  action(async()=>{
+    if(e.data.target==='ip'){$('calibrationStatus').textContent='Калибровка IP-камер сохранена. Подключите камеры.';return;}
+    importedProfile=e.data.profile;
+    if(liveSource&&liveSource.media.image_size.toString()===importedProfile.image_size.toString()){
+      const running=!!streamId;if(running)await stopStream();
+      liveSource.profile=importedProfile;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));
+      if(running)await startStream();
+    }
+    calibrationLabel();toast('Калибровка сохранена для видеозаписей');
+  });
+});

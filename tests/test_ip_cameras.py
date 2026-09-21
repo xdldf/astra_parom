@@ -210,3 +210,61 @@ def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,mo
     client.post('/api/station/vehicles/'+result['id']+'/recognize-plate')
     plates.process_record(result['id'])
     assert calls==[[0,0,600,500]]
+
+
+def test_calibration_frame_uses_fresh_original_receiver_image(tmp_path,monkeypatch):
+    monkeypatch.setattr(wb,'DATA',tmp_path)
+    monkeypatch.setattr(wb,'media',{})
+    profile=wb.Profile(image_size=(600,500),lens={'k1':-.2},
+        polygon=[(20,200),(580,200),(580,450),(20,450)],
+        references=[{'bbox':[100,150,100,75],'length_m':5}])
+    c=ip.Station(ip.Settings(side_url='rtsp://user:secret@host/side'),profile)
+    original=np.random.default_rng(3).integers(0,255,(500,600,3),dtype=np.uint8)
+    jpeg=cv2.imencode('.jpg',original)[1].tobytes()
+    c.side.packets.append(ip.Packet(1,time.monotonic(),jpeg))
+    c.jpeg=b'annotated browser preview must never be used'
+    monkeypatch.setattr(ip,'active',c)
+    monkeypatch.setattr(ip.Receiver,'open',lambda *a:pytest.fail('Must reuse the running receiver'))
+    client=TestClient(app)
+    loaded=client.get('/api/ip/calibration')
+    assert loaded.status_code==200 and loaded.json()==profile.model_dump(mode='json')
+    result=client.post('/api/workbench/camera-frame')
+    assert result.status_code==200,result.text
+    item=result.json()
+    assert item['source']=='ip_camera' and item['image_size']==[600,500] and item['frames']==1
+    assert 'secret' not in result.text
+    assert wb.media[item['id']]['path'].read_bytes()==jpeg
+    assert np.array_equal(wb.read_frame(item['id'],0),cv2.imdecode(np.frombuffer(jpeg,np.uint8),cv2.IMREAD_COLOR))
+    assert client.post('/api/workbench/frame/'+item['id'],json={'profile':profile.model_dump(),'detect':False}).status_code==200
+    assert c.profile==profile and not c.stop.is_set()
+    c.side.packets.clear()
+    c.side.packets.append(ip.Packet(2,time.monotonic()-5,jpeg))
+    assert client.post('/api/workbench/camera-frame').status_code==409
+    assert client.get('/api/ip/side/snapshot').status_code==409
+
+
+def test_calibration_frame_can_open_camera_before_first_calibration(tmp_path,monkeypatch):
+    monkeypatch.setattr(wb,'DATA',tmp_path)
+    monkeypatch.setattr(wb,'media',{})
+    monkeypatch.setattr(ip,'CONFIG',tmp_path/'ip.json')
+    monkeypatch.setattr(ip,'active',None)
+    ip.CONFIG.write_text(ip.Settings(side_url='rtsp://user:secret@host/side').model_dump_json())
+    calls=[]
+    class Camera:
+        def read(self):return True,np.zeros((500,600,3),np.uint8)
+        def release(self):calls.append('released')
+    monkeypatch.setattr(ip.Receiver,'open',lambda url:calls.append(url) or Camera())
+    client=TestClient(app)
+    result=client.post('/api/workbench/camera-frame')
+    assert result.status_code==200 and result.json()['image_size']==[600,500]
+    assert calls==['rtsp://user:secret@host/side','released']
+    assert ip.active is None
+    profile={'image_size':[600,500],'lens':{'tilt_deg':2},'polygon':[[20,200],[580,200],[580,450],[20,450]],
+             'metric_rulers':[{'points':[[100,300],[200,300],[300,300]],'step_m':1}],
+             'measurement_line_x':300,'line_tolerance_px':8}
+    assert client.post('/api/ip/calibration',json=profile).status_code==200
+    continued=client.get('/api/ip/calibration').json()
+    assert continued['metric_rulers']==profile['metric_rulers']
+    assert continued['lens']['tilt_deg']==2 and continued['measurement_line_x']==300
+    ip.CONFIG.write_text(ip.Settings().model_dump_json())
+    assert client.post('/api/workbench/camera-frame').status_code==409

@@ -2,6 +2,7 @@
 import base64
 import threading
 import uuid
+from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -223,6 +224,22 @@ def upload(file: UploadFile = File(...)):
 def render(key: str, request: FrameRequest):
     raw = read_frame(key,request.frame)
     return render_raw(raw, request)
+
+
+@router.post('/camera-frame')
+def camera_frame():
+    from web_app.ip_cameras import side_snapshot
+    jpeg=side_snapshot()
+    raw=cv2.imdecode(np.frombuffer(jpeg,np.uint8),cv2.IMREAD_COLOR)
+    if raw is None:
+        raise HTTPException(409,'Не удалось прочитать кадр боковой камеры.')
+    h,w=raw.shape[:2]
+    key=uuid.uuid4().hex
+    path=DATA/(key+'.jpg')
+    path.write_bytes(jpeg)
+    media[key]=dict(path=path,kind='image',frames=1,fps=0)
+    return dict(id=key,image_size=[w,h],frames=1,fps=0,source='ip_camera',
+                captured_at=datetime.now(timezone.utc).isoformat(),name='Боковая камера · кадр для калибровки')
 
 
 def detect_vehicles(frame, confidence=.35):
