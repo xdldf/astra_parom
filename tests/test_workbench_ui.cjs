@@ -28,7 +28,7 @@ function studio() {
     setTimeout,clearTimeout,Image:class {set src(_){this.width=600;this.height=500;this.onload();}},
     fetch:async (_url,options)=>{
       const body=JSON.parse(options.body);
-      if(_url.endsWith('validate-profile')) {
+      if(_url.endsWith('validate-profile')||_url.endsWith('approved-references')) {
         if(body.polygon.length<4) return {ok:false,json:async()=>({detail:'Invalid road'})};
         return {ok:true,json:async()=>body};
       }

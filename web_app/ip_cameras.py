@@ -359,6 +359,7 @@ def configure(cfg: Settings):
 def calibration(profile: wb.Profile):
     with guard:
         if active:raise HTTPException(409,'Сначала остановите камеры')
+        profile=wb.approved_references(profile)
         cfg=settings();cfg.profile=profile
         temporary=CONFIG.with_suffix('.tmp')
         temporary.write_text(cfg.model_dump_json(),encoding='utf-8');temporary.replace(CONFIG)

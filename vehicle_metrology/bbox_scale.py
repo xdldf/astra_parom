@@ -37,8 +37,15 @@ def fit_scale(polygon, references, rulers=()):
     t, ppm = np.asarray(samples).T
     width=max(r['bbox'][2] for r in references)
     if len(samples) == 1:
-        return dict(intercept=float(ppm[0]), slope=0., status='single_reference', depths=t.tolist(), max_reference_width_px=width)
+        return dict(intercept=float(ppm[0]), slope=0., status='verified_local' if references[0].get('vehicle_id') else 'single_reference', depths=t.tolist(), max_reference_width_px=width)
     if np.ptp(t) < .08:
+        verified = [i for i,r in enumerate(references) if r.get('vehicle_id')]
+        if verified:
+            # Repeated verified passes in one lane do not establish a depth curve.
+            # Use their median local scale only within that observed lane band.
+            return dict(intercept=float(np.median(ppm[verified])), slope=0.,
+                        status='verified_local', depths=t[verified].tolist(),
+                        max_reference_width_px=max(references[i]['bbox'][2] for i in verified))
         raise ValueError('Reference cars are too close in road depth. Add one nearer or farther away.')
     slope, intercept = np.polyfit(t, ppm, 1)
     if slope <= 0 or intercept <= 0:
@@ -124,6 +131,11 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
         if length is not None:
             result.update(length_m=length, cm_per_px=100*length/w)
         return result
+    if scale['status']=='verified_local':
+        if not min(scale['depths'])-.05 <= t <= max(scale['depths'])+.05:
+            result['status']='outside_calibration'
+            return result
+        result['warnings'].append('Проверенные автомобили задают масштаб только в этой полосе. Для других глубин нужны дополнительные эталоны или мерные линии.')
     ppm = scale['intercept'] + scale['slope']*t
     if w > 1.5*scale.get('max_reference_width_px',float('inf')):
         result['warnings'].append('Автомобиль значительно шире эталона в кадре. Масштаб по короткому автомобилю не проверяет искажение по всей длине состава. Проверьте длину по документам или мерным отметкам вдоль всей зоны измерения.')

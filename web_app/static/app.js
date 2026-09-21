@@ -11,7 +11,7 @@ function lensUI(){for(const [id] of controls){$(id).value=profile?.lens[id]??def
 for(const [id,label,min,max,step] of controls){let l=document.createElement('label');l.className='sliderlabel';l.innerHTML=`${label}<output id="${id}Value"></output><input type="range" id="${id}" min="${min}" max="${max}" step="${step}">`;$('lensControls').append(l);$(id).oninput=()=>{if(sessionBusy){lensUI();return;}if(!media)return;profile.lens[id]=Number($(id).value);$(id+'Value').textContent=Number($(id).value).toFixed(3);invalidateLens();};}
 lensUI();
 function invalidateLens(){playing=false;profile.polygon=[];profile.references=[];profile.metric_rulers=[];profile.measurement_line_x=null;draft=[];detections=[];selected=-1;revision++;setMode('select');renderReferences();inspect();clearTimeout(timer);timer=setTimeout(()=>refresh(false),180);}
-async function refresh(detect=false){if(!media)return;if(busy){clearTimeout(timer);timer=setTimeout(()=>refresh(detect),200);return;}busy=true;const rev=revision;const frame=Number($('timeline').value);$('detect').disabled=true;try{status(detect?'Running YOLO26n on the corrected frame… First use downloads the model.':'Updating corrected frame…');const data=await api('/frame/'+media.id,{profile,frame,detect,confidence:Number($('confidence').value),boxes:detect?[]:detections.map(d=>d.bbox)});const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src='data:image/jpeg;base64,'+data.image;});if(rev!==revision)return;picture=img;const previous=detections;detections=data.detections.map((d,i)=>detect?{...d,source:'yolo26n'}:{...d,label:previous[i]?.label??d.label,confidence:previous[i]?.confidence??null,source:previous[i]?.source??'manual'});selected=Math.min(selected,detections.length-1);if(selected<0&&detections.length)selected=0;canvas.width=img.width;canvas.height=img.height;$('empty').hidden=true;$('frameLabel').textContent=media.frames===1?`Снимок · ${profile.image_size.join(' × ')} px`:`Frame ${frame} / ${media.frames-1}`;draw();inspect();renderReferences();status(data.scale?.status==='ruler_calibrated'?'Metric rulers active. Length integrates each marked interval; outside coverage is not measured.':data.scale?.status==='depth_calibrated'?'Depth calibration active. Select a car to inspect the scale.':data.scale?'One reference: constant scale only. Add another car at a different depth.':detect?`Found ${detections.length} vehicles. Select one and set its known length.`:'Draw the road, then add known-length reference cars.');}catch(e){status(e.message,true);playing=false;}finally{busy=false;$('detect').disabled=false;}}
+async function refresh(detect=false){if(!media)return;if(busy){clearTimeout(timer);timer=setTimeout(()=>refresh(detect),200);return;}busy=true;const rev=revision;const frame=Number($('timeline').value);$('detect').disabled=true;try{status(detect?'Running YOLO26n on the corrected frame… First use downloads the model.':'Updating corrected frame…');const data=await api('/frame/'+media.id,{profile,frame,detect,confidence:Number($('confidence').value),boxes:detect?[]:detections.map(d=>d.bbox)});const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src='data:image/jpeg;base64,'+data.image;});if(rev!==revision)return;picture=img;const previous=detections;detections=data.detections.map((d,i)=>detect?{...d,source:'yolo26n'}:{...d,label:previous[i]?.label??d.label,confidence:previous[i]?.confidence??null,source:previous[i]?.source??'manual'});selected=Math.min(selected,detections.length-1);if(selected<0&&detections.length)selected=0;canvas.width=img.width;canvas.height=img.height;$('empty').hidden=true;$('frameLabel').textContent=media.frames===1?`Снимок · ${profile.image_size.join(' × ')} px`:`Frame ${frame} / ${media.frames-1}`;draw();inspect();renderReferences();status(data.scale?.status==='ruler_calibrated'?'Metric rulers active. Length integrates each marked interval; outside coverage is not measured.':data.scale?.status==='verified_local'?'Проверенные автомобили: местный масштаб только в полосе эталонов.':data.scale?.status==='depth_calibrated'?'Depth calibration active. Select a car to inspect the scale.':data.scale?'One reference: constant scale only. Add another car at a different depth.':detect?`Found ${detections.length} vehicles. Select one and set its known length.`:'Draw the road, then add known-length reference cars.');}catch(e){status(e.message,true);playing=false;}finally{busy=false;$('detect').disabled=false;}}
 function point(e){let r=canvas.getBoundingClientRect();return [Math.max(0,Math.min(canvas.width-1,(e.clientX-r.left)*canvas.width/r.width)),Math.max(0,Math.min(canvas.height-1,(e.clientY-r.top)*canvas.height/r.height))];}
 function draw(){if(!picture)return;ctx.drawImage(picture,0,0);const s=canvas.width/1000;ctx.lineWidth=2*s;ctx.font=`${13*s}px system-ui`;if($('grid').checked){ctx.strokeStyle='#ffffff35';ctx.lineWidth=s;for(let n=1;n<10;n++){ctx.beginPath();ctx.moveTo(0,n*canvas.height/10);ctx.lineTo(canvas.width,n*canvas.height/10);ctx.stroke();ctx.beginPath();ctx.moveTo(n*canvas.width/10,0);ctx.lineTo(n*canvas.width/10,canvas.height);ctx.stroke();}}let p=profile.polygon;if(p.length){ctx.beginPath();p.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle='#65e6aa20';ctx.fill();ctx.strokeStyle='#80e6bd';ctx.lineWidth=2*s;ctx.stroke();p.forEach(([x,y],i)=>{ctx.beginPath();ctx.arc(x,y,5*s,0,Math.PI*2);ctx.fillStyle='#80e6bd';ctx.fill();ctx.fillText(i+1,x+8*s,y-8*s);});}drawDraftAndLine(s);drawRulers(s);detections.forEach((d,i)=>{let [x,y,w,h]=d.bbox;ctx.strokeStyle=i===selected?'#ffe084':'#78c8ff';ctx.lineWidth=(i===selected?3:1.5)*s;ctx.strokeRect(x,y,w,h);ctx.beginPath();ctx.moveTo(x+w/2,y);ctx.lineTo(x+w/2,y+h);ctx.stroke();ctx.beginPath();ctx.arc(x+w/2,y+h/2,4*s,0,Math.PI*2);ctx.fillStyle=d.at_measurement_line?'#80e6bd':ctx.strokeStyle;ctx.fill();ctx.beginPath();ctx.moveTo(x,y+h);ctx.lineTo(x+w,y+h);ctx.stroke();ctx.beginPath();ctx.arc(x+w/2,y+h,5*s,0,Math.PI*2);ctx.fillStyle=ctx.strokeStyle;ctx.fill();let text=`${i+1} · ${d.label} ${d.confidence!=null?Math.round(d.confidence*100)+'% ':''}${d.length_m!=null?'≈ '+d.length_m.toFixed(2)+' m':''}`;let tw=ctx.measureText(text).width;ctx.fillStyle='#09151ee8';ctx.fillRect(x,Math.max(0,y-24*s),tw+12*s,24*s);ctx.fillStyle=ctx.strokeStyle;ctx.fillText(text,x+6*s,Math.max(16*s,y-7*s));if(i===selected&&d.depth!=null){ctx.save();ctx.setLineDash([6*s,5*s]);ctx.beginPath();ctx.moveTo(0,y+h);ctx.lineTo(canvas.width,y+h);ctx.strokeStyle='#ffe08480';ctx.stroke();ctx.restore();}});if(drag?.type==='box'){let [x,y]=drag.start,[ex,ey]=drag.end;ctx.strokeStyle='#ffe084';ctx.strokeRect(x,y,ex-x,ey-y);}}
 canvas.onpointerdown=e=>{if(!ready()||!picture)return;playing=false;let p=point(e);canvas.setPointerCapture(e.pointerId);if(mode==='road'||mode==='ruler'){draft.push(p);draw();return;}if(mode==='line'){profile.measurement_line_x=p[0];setMode('select');refresh();return;}if(mode==='box'){drag={type:'box',start:p,end:p};return;}let near=profile.polygon.findIndex(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<12*canvas.width/canvas.clientWidth);if(near>=0){drag={type:'vertex',index:near,old:structuredClone(profile)};return;}for(let r=0;r<(profile.metric_rulers||[]).length;r++){const index=profile.metric_rulers[r].points.findIndex(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<12*canvas.width/canvas.clientWidth);if(index>=0){drag={type:'ruler-point',ruler:r,index,old:structuredClone(profile)};return;}}if(profile.measurement_line_x!=null&&Math.abs(p[0]-profile.measurement_line_x)<10*canvas.width/canvas.clientWidth){drag={type:'line',old:structuredClone(profile)};return;}selected=detections.findIndex(d=>p[0]>=d.bbox[0]&&p[0]<=d.bbox[0]+d.bbox[2]&&p[1]>=d.bbox[1]&&p[1]<=d.bbox[1]+d.bbox[3]);draw();inspect();};
@@ -25,8 +25,12 @@ function renderReferences(){
     const row=document.createElement('div');row.className='ref';
     const text=document.createElement('span');text.textContent=`Эталон ${i+1} · кадр ${r.frame}`;
     const length=document.createElement('input');length.type='number';length.min='.01';length.max='40';length.step='.01';length.value=r.length_m;length.ariaLabel=`Длина эталона ${i+1}, м`;
+    length.disabled=!!r.vehicle_id;
+    if(r.vehicle_id)text.textContent=`Проверенный автомобиль · ${r.verified_by} · ${r.verified_at}`;
     length.onchange=()=>editProfile(next=>{next.references[i].length_m=Number(length.value);});
     const remove=document.createElement('button');remove.textContent='Удалить';
+    remove.disabled=!!r.vehicle_id;
+    if(r.vehicle_id)remove.textContent='Изменяется в списке автомобилей';
     remove.onclick=()=>editProfile(next=>{next.references.splice(i,1);});
     row.append(text,length,remove);$('references').append(row);
   });
@@ -99,7 +103,7 @@ $('newCalibration').onclick=()=>sessionTask(async()=>{
   status('Откройте кадр с камеры или файл. Сохранённые настройки станции не изменены.');return false;
 });
 async function loadProfile(data,name){
-  const next=await api('/validate-profile',data.profile||data);
+  const next=await api('/approved-references',await api('/validate-profile',data.profile||data));
   if(media&&next.image_size.toString()!==media.image_size.toString())throw Error('Размер JSON не совпадает с изображением. Настройки сохранены. Нажмите «Новая сессия», затем загрузите JSON и кадр нужного разрешения.');
   profile=next;profileName=name;pendingMedia=null;$('resolutionMismatch').hidden=true;resetView();
   if(!media){$('empty').hidden=false;status('Калибровка загружена. Откройте кадр с камеры или изображение того же разрешения, чтобы продолжить.');}
@@ -121,7 +125,7 @@ $('applyCalibration').onclick=()=>sessionTask(async()=>{
   if(!media||!profile)throw Error('Сначала откройте изображение и проверьте калибровку.');
   if(!await finishPendingRoad())return false;
   if(profile.polygon.length<4||!(profile.references.length||profile.metric_rulers?.length))throw Error('Нужна дорога и хотя бы один эталон или мерная линия.');
-  const next=await api('/validate-profile',profile);
+  const next=await api('/approved-references',await api('/validate-profile',profile));
   await stationProfileRequest('POST',next,target);
   profile=next;renderReferences();
   if(typeof window!=='undefined')window.parent.postMessage({type:'station-calibration-saved',target,profile:next},location.origin);
@@ -146,14 +150,20 @@ function download(name,data){let url=URL.createObjectURL(new Blob([JSON.stringif
 $('save').onclick=()=>sessionTask(async()=>{
   if(!profile)throw Error('Сначала загрузите JSON или откройте изображение.');
   if(!await finishPendingRoad())return false;
-  const validated=await api('/validate-profile',profile);
+  const validated=await api('/approved-references',await api('/validate-profile',profile));
+  profile=validated;renderReferences();
   download('roadscale-calibration.json',validated);status('JSON сохранён. Его можно загрузить и продолжить редактирование.');return false;
 });
 $('import').onchange=async e=>{
   const file=e.target.files[0];if(!file)return;
   await sessionTask(async()=>loadProfile(JSON.parse(await file.text()),file.name));e.target.value='';
 };
-$('exportResults').onclick=()=>{if(!ready())return;download('roadscale-measurements.json',{media:media.name,frame:Number($('timeline').value),model:'yolo26n.pt',method:'empirical_bbox_approximation',profile,detections});};
+$('exportResults').onclick=()=>sessionTask(async()=>{
+  if(!media||!profile||!await finishPendingRoad())return false;
+  const next=await api('/approved-references',profile),frame=Number($('timeline').value);
+  const result=await api('/frame/'+media.id,{profile:next,frame,detect:false,boxes:detections.map(d=>d.bbox)});
+  download('roadscale-measurements.json',{media:media.name,frame,model:'yolo26n.pt',method:'empirical_bbox_approximation',profile:next,detections:result.detections});return false;
+});
 
 
 // A draft is never silently discarded when leaving road drawing.

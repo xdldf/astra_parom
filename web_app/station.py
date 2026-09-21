@@ -81,6 +81,57 @@ def event(db,record,actor,action,reason,before=None):
                (record['id'],now(),actor,action,reason,json.dumps(before,ensure_ascii=False),json.dumps(record,ensure_ascii=False)))
 
 
+class CalibrationReferenceRequest(BaseModel):
+    model_config=ConfigDict(allow_inf_nan=False)
+    version: int = Field(ge=1)
+    actor: str = Field(min_length=1,max_length=100)
+    enabled: bool = Field(strict=True)
+    actual_length_m: float | None = Field(None,gt=0,le=40)
+    verified: bool = Field(False,strict=True)
+
+
+@router.post('/vehicles/{ident}/calibration-reference')
+def verify_calibration_reference(ident: str, payload: CalibrationReferenceRequest):
+    from web_app.calibration_references import PREFIX, APPROVED, geometry_key
+    with connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        old=find(db,ident)
+        if old['version'] != payload.version:
+            raise HTTPException(409,'Запись изменена. Обновите её перед проверкой эталона.')
+        record=dict(old)
+        if payload.enabled:
+            if old['status'] not in APPROVED or not db.execute(
+                "SELECT 1 FROM audit WHERE vehicle_id=? AND action='confirm' LIMIT 1",(ident,)).fetchone():
+                raise HTTPException(409,'Сначала человек должен подтвердить автомобиль.')
+            if not payload.verified or payload.actual_length_m is None or not payload.actor.strip():
+                raise HTTPException(422,'Укажите фактическую длину и подтвердите проверку эталона.')
+            source=old.get('source') or {}
+            if not source.get('calibration') or not source.get('bbox') or not old.get('side_photo'):
+                raise HTTPException(422,'Нет исходной геометрии или бокового фото для эталона.')
+            try:
+                profile=workbench.Profile.model_validate(source['calibration'])
+                ref=workbench.Reference(bbox=source['bbox'],length_m=payload.actual_length_m,
+                    frame=source.get('frame',0),vehicle_id=ident,verified_by=payload.actor.strip(),verified_at=now())
+                # Validate the saved outline, rather than running detection on a cropped photo.
+                workbench.Profile.model_validate({**profile.model_dump(),'metric_rulers':[],
+                    'references':[dict(bbox=ref.bbox,length_m=ref.length_m,frame=ref.frame)]})
+            except ValueError as exc:
+                raise HTTPException(422,'Нельзя использовать эту рамку как эталон: '+str(exc))
+            item=dict(geometry=geometry_key(profile),reference=ref.model_dump())
+            record['calibration_reference']=item
+            db.execute('INSERT OR REPLACE INTO settings VALUES(?,?)',(PREFIX+ident,json.dumps(item)))
+        else:
+            record.pop('calibration_reference',None)
+            db.execute('DELETE FROM settings WHERE key=?',(PREFIX+ident,))
+        record.update(version=old['version']+1,updated_at=now())
+        db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',(record['version'],json.dumps(record,ensure_ascii=False),ident))
+        event(db,record,payload.actor,'calibration_reference',
+            'Фактическая длина, рамка и неизменность установки проверены' if payload.enabled else 'Эталон исключён',old)
+    from web_app.calibration_references import invalidate
+    invalidate()
+    return record
+
+
 class Fields(BaseModel):
     model_config=ConfigDict(allow_inf_nan=False)
     plate: str=Field('',max_length=24)
@@ -422,6 +473,10 @@ def update(ident: str,fields: Edit):
             record=dict(old,plate=normalize_plate(fields.plate),category=fields.category,length_m=fields.length_m,
                         manual_rub=fields.manual_rub if enabled else None,load_capacity_t=fields.load_capacity_t,tariff=tariff,
                         status='Подтвержден' if fields.action=='confirm' else 'Требует проверки')
+        if record['status'] not in {'Подтвержден','Оплачен'} or record.get('length_m')!=old.get('length_m'):
+            from web_app.calibration_references import PREFIX
+            record.pop('calibration_reference',None)
+            db.execute('DELETE FROM settings WHERE key=?',(PREFIX+ident,))
         record.update(version=old['version']+1,updated_at=now(),actor=fields.actor)
         db.execute('UPDATE vehicles SET version=?,data=? WHERE id=?',(record['version'],json.dumps(record,ensure_ascii=False),ident))
         if fields.action=='confirm':
@@ -429,6 +484,8 @@ def update(ident: str,fields: Edit):
         elif fields.action in {'edit','reject'}:
             db.execute("DELETE FROM settings WHERE (key='client_vehicle' OR key LIKE 'client_vehicle:%') AND value=?",(ident,))
         event(db,record,fields.actor,fields.action,fields.reason,old)
+    from web_app.calibration_references import invalidate
+    invalidate()
     return record
 
 

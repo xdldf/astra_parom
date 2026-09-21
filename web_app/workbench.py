@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic import BaseModel, Field, ConfigDict, model_validator, model_serializer
 from vehicle_metrology.bbox_scale import fit_scale, measure_box
 
 router = APIRouter(prefix='/api/workbench')
@@ -43,10 +43,21 @@ class Lens(BaseModel):
 
 
 class Reference(BaseModel):
+    vehicle_id: str | None = Field(None, max_length=64)
+    verified_by: str | None = Field(None, max_length=100)
+    verified_at: str | None = Field(None, max_length=64)
     model_config = ConfigDict(allow_inf_nan=False)
     bbox: tuple[float, float, float, float]
     length_m: float = Field(gt=0, le=40)
     frame: int = Field(0, ge=0)
+
+    @model_serializer(mode='wrap')
+    def serialize_reference(self, handler):
+        data=handler(self)
+        for key in ('vehicle_id','verified_by','verified_at'):
+            if data[key] is None:
+                del data[key]
+        return data
 
 
 class MetricRuler(BaseModel):
@@ -115,14 +126,15 @@ class FrameRequest(BaseModel):
 
 
 def profile_scale(profile):
+    from web_app.calibration_references import eligible
     return cached_scale(tuple(profile.polygon),
-                        tuple((r.bbox, r.length_m) for r in profile.references),
+                        tuple((r.bbox, r.length_m, bool(r.vehicle_id)) for r in eligible(profile)),
                         tuple((tuple(r.points), r.step_m) for r in profile.metric_rulers))
 
 
 @lru_cache(maxsize=64)
 def cached_scale(polygon, references, rulers):
-    return fit_scale(polygon, [dict(bbox=bbox, length_m=length) for bbox,length in references],
+    return fit_scale(polygon, [dict(bbox=bbox, length_m=length, vehicle_id=verified) for bbox,length,verified in references],
                      [dict(points=points, step_m=step) for points,step in rulers])
 
 
@@ -304,8 +316,15 @@ def operator_calibration():
     return Profile.model_validate_json(path.read_text(encoding='utf-8'))
 
 
+@router.post('/approved-references')
+def approved_references(profile: Profile):
+    from web_app.calibration_references import merge
+    return merge(profile)
+
+
 @router.post('/operator-calibration')
 def save_operator_calibration(profile: Profile):
+    profile = approved_references(profile)
     path = DATA.parent/'operator-calibration.json'
     temporary = path.with_suffix('.'+uuid.uuid4().hex+'.tmp')
     temporary.write_text(profile.model_dump_json(), encoding='utf-8')

@@ -1,3 +1,10 @@
+## Human-approved calibration references — 2026-09-21
+
+- Full Python suite: **167 passed**. Station UI: **11 passed**; workbench UI: **15 passed**.
+- Tests reject every status without a human confirmation audit, require independent length attestation, cover old approved records and paid records, stale-version rejection, automatic JSON merging/deduplication and provenance, coordinate mismatch, missing source data, and rejection/withdrawal/reconfirmation.
+- A running profile stops using a revoked reference without a restart. Eligibility is cached outside the per-frame database path and invalidated on operator updates. Verified same-lane samples use a local median scale and reject measurements outside their observed lane band; meter rulers retain priority. Legacy manual-reference JSON remains compatible.
+- An isolated synthetic browser preview verified the initially empty actual-length field, saving a verified reference under the named operator, automatic addition in the calibration editor, and JSON export. No production records or camera settings were used. Physical accuracy remains unverified.
+
 ## Camera calibration and JSON continuation — 2026-09-21
 
 - Targeted Python tests: **29 passed** (`tests/test_ip_cameras.py`, `tests/test_bbox_workbench.py`). Workbench UI: **15 passed**; station UI: **9 passed**. Python compilation, JavaScript syntax and whitespace checks passed.

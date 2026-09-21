@@ -203,3 +203,7 @@ button:disabled{opacity:.45;cursor:not-allowed}.client-only .screen-switch,.clie
 .station-mode label{display:flex;align-items:center;gap:6px;cursor:pointer}
 .station-mode small{color:#657183}
 .tariffs-off .tariff-only,body:not(.tariffs-off) .measurement-only{display:none!important}
+
+.calibration-reference label{display:block;margin:10px 0;line-height:1.5}
+.calibration-reference input[type=number]{display:block;width:180px;max-width:100%;padding:8px 10px;margin-top:5px;border:1px solid #d9dce5;border-radius:8px;font:inherit}
+.calibration-reference input[type=checkbox]{margin-right:6px}

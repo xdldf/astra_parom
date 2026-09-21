@@ -1,6 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 let categories={}, statuses=[], tariffRows=[], rows=[], current=null, mode='auto', page='operator';
+let referenceDirty=false;
 let quoteSerial=0, quoteTimer, filterTimer, pending=false, dirty=false;
 let queueOffset=0, queueSnapshot=null, queuePage=null, reportOffset=0, reportSnapshot=null, reportPage=null;
 let queueSerial=0, reportSerial=0, pollBusy=false, ipSessionId=null;
@@ -127,7 +128,7 @@ async function loadVehicles(){
     if(current?.id!==id||serial!==queueSerial||detail.version<current.version)return;
     const stale=detail.version!==current.version;
     $('recordConflict').hidden=!stale;
-    if(stale&&!dirty)renderRecord(detail);
+    if(stale&&!dirty&&!referenceDirty)renderRecord(detail);
   }
 }
 function photo(id,emptyId,filename,version){
@@ -161,6 +162,7 @@ function renderRecord(r){
   r=normalizeRecord(r);
   current=r;dirty=false;$('recordConflict').hidden=true;quoteSerial++;$('emptyDetail').hidden=true;$('recordDetail').hidden=false;
   renderOCR(r);
+  renderCalibrationReference(r);
   $('plate').textContent=r.plate||'Не указан';$('category').textContent=categories[r.category];
   $('detectedLength').textContent=r.source?lengthText(r.measured_length_m):'Ручная запись';
   $('recordStatus').replaceChildren(badge(r.status));$('plateInput').value=r.plate;$('categoryInput').value=r.category;
@@ -199,7 +201,7 @@ function renderOCR(r){
 }
 $('recognizePlate').onclick=()=>action(async()=>{if(dirty)throw Error('Сначала сохраните изменения');renderRecord(await api('/vehicles/'+current.id+'/recognize-plate',{}));});
 async function selectRecord(id){
-  if(dirty){toast('Сохраните изменения текущего автомобиля перед выбором другого.');return;}
+  if(dirty||referenceDirty){toast('Сохраните изменения текущего автомобиля перед выбором другого.');return;}
   const record=await api('/vehicles/'+id);renderRecord(record);queuePage=null;await loadVehicles();
 }
 function fields(){
@@ -440,3 +442,30 @@ window.addEventListener('message',e=>{
     calibrationLabel();toast('Калибровка сохранена для видеозаписей');
   });
 });
+
+function renderCalibrationReference(r){
+  referenceDirty=false;
+  const approved=['Подтвержден','Оплачен'].includes(r.status),ref=r.calibration_reference?.reference;
+  $('referenceLength').value=ref?.length_m??'';
+  $('referenceVerified').checked=false;
+  $('referenceLength').disabled=!approved;$('referenceVerified').disabled=!approved;
+  $('verifyReference').disabled=!approved||!r.source?.bbox||!r.side_photo;
+  $('removeReference').hidden=!ref;
+  $('verifyReference').textContent=ref?'Обновить проверенный эталон':'Добавить проверенный эталон';
+  $('referenceStatus').textContent=ref?`Эталон: ${ref.length_m} м · проверил ${ref.verified_by}`:approved?'Введите независимо проверенную длину. Оценка камеры не подставляется.':'Сначала подтвердите автомобиль. Неподтверждённые записи не участвуют в калибровке.';
+}
+async function saveCalibrationReference(enabled){
+  if(!current||dirty)throw Error('Сначала сохраните изменения и подтвердите автомобиль.');
+  if(enabled&&(!$('referenceVerified').checked||!Number($('referenceLength').value)))throw Error('Введите фактическую длину и подтвердите проверку.');
+  renderRecord(await api('/vehicles/'+current.id+'/calibration-reference',{
+    version:current.version,actor:$('actor').value.trim()||'Оператор',enabled,
+    actual_length_m:enabled?Number($('referenceLength').value):null,verified:$('referenceVerified').checked
+  }));
+  toast(enabled?'Проверенный эталон сохранён. Загрузите или скачайте совместимую калибровку.':'Эталон исключён. Скачайте и примените обновлённую калибровку.');
+  await loadVehicles();
+}
+$('verifyReference').onclick=()=>action(()=>saveCalibrationReference(true));
+$('removeReference').onclick=()=>action(()=>saveCalibrationReference(false));
+
+$('referenceLength').oninput=()=>{referenceDirty=true;};
+$('referenceVerified').onchange=()=>{referenceDirty=true;};

@@ -135,3 +135,28 @@ test('tariff switch saves server setting and another operator receives it throug
   await second.run('loadVehicles()');
   assert.equal(second.run('tariffsEnabled'),false);
 });
+
+test('only approved cars expose reference verification and estimates are not prefilled',async()=>{
+  const ui=await stationUI();
+  ui.run("renderCalibrationReference({status:'Требует проверки',length_m:4.5,source:{bbox:[1,2,3,4]},side_photo:'side.jpg'})");
+  assert.equal(ui.elements.get('verifyReference').disabled,true);
+  assert.equal(ui.elements.get('referenceLength').value,'');
+  ui.run("renderCalibrationReference({status:'Подтвержден',length_m:4.5,source:{bbox:[1,2,3,4]},side_photo:'side.jpg'})");
+  assert.equal(ui.elements.get('verifyReference').disabled,false);
+  assert.equal(ui.elements.get('referenceLength').value,'');
+  assert.equal(ui.elements.get('referenceVerified').checked,false);
+  ui.run("current={id:'old',version:3};dirty=false;");
+  await assert.rejects(ui.run('saveCalibrationReference(true)'),/проверку/);
+  assert.equal(ui.requests.length,0);
+});
+
+test('reference submission sends the separately verified length and actual operator',async()=>{
+  const ui=await stationUI();
+  ui.run("current={id:'old',version:3};dirty=false;renderRecord=()=>{};loadVehicles=async()=>{};");
+  ui.run("$('referenceLength').value='6.25';$('referenceVerified').checked=true;$('actor').value='Анна';");
+  ui.respond(()=>({data:{}}));
+  await ui.run('saveCalibrationReference(true)');
+  const request=ui.requests.at(-1);
+  assert.equal(request.path,'/api/station/vehicles/old/calibration-reference');
+  assert.deepEqual(JSON.parse(request.options.body),{version:3,actor:'Анна',enabled:true,actual_length_m:6.25,verified:true});
+});
