@@ -1,6 +1,7 @@
 const $=id=>document.getElementById(id), canvas=$('canvas'), ctx=canvas.getContext('2d');
 let media=null, profile=null, picture=null, detections=[], selected=-1, mode='select', draft=[], drag=null, busy=false, playing=false, revision=0, timer;
 let profileName='Новая калибровка', pendingMedia=null, sessionBusy=false;
+let detectorPreferences={detector_model:'yolo26m',detector_imgsz:640};
 const defaults={k1:0,k2:0,focal:1,zoom:1,cx:.5,cy:.5,tilt_deg:0};
 const controls=[['k1','Radial correction',-.8,.8,.005],['k2','Edge correction',-.5,.5,.005],['tilt_deg','Tilt · left / right (degrees)',-30,30,.1],['focal','Focal scale',.4,2,.01],['zoom','Zoom / crop',.5,2,.01],['cx','Lens center · horizontal',.2,.8,.005],['cy','Lens center · vertical',.2,.8,.005]];
 function status(text,error=false){$('status').textContent=text;$('status').className=error?'error':'';}
@@ -11,7 +12,7 @@ function lensUI(){for(const [id] of controls){$(id).value=profile?.lens[id]??def
 for(const [id,label,min,max,step] of controls){let l=document.createElement('label');l.className='sliderlabel';l.innerHTML=`${label}<output id="${id}Value"></output><input type="range" id="${id}" min="${min}" max="${max}" step="${step}">`;$('lensControls').append(l);$(id).oninput=()=>{if(sessionBusy){lensUI();return;}if(!media)return;profile.lens[id]=Number($(id).value);$(id+'Value').textContent=Number($(id).value).toFixed(3);invalidateLens();};}
 lensUI();
 function invalidateLens(){playing=false;profile.polygon=[];profile.references=[];profile.metric_rulers=[];profile.survey_calibration=null;profile.measurement_line_x=null;draft=[];detections=[];selected=-1;revision++;setMode('select');renderReferences();inspect();clearTimeout(timer);timer=setTimeout(()=>refresh(false),180);}
-async function refresh(detect=false){if(!media)return;if(busy){clearTimeout(timer);timer=setTimeout(()=>refresh(detect),200);return;}busy=true;const rev=revision;const frame=Number($('timeline').value);$('detect').disabled=true;try{status(detect?`Running ${profile.detector_model??'yolo26n'} on the corrected frame… First use downloads the model.`:'Updating corrected frame…');const data=await api('/frame/'+media.id,{profile,frame,detect,confidence:Number($('confidence').value),boxes:detect?[]:detections.map(d=>d.bbox)});const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src='data:image/jpeg;base64,'+data.image;});if(rev!==revision)return;picture=img;const previous=detections;detections=data.detections.map((d,i)=>detect?{...d,source:profile.detector_model??'yolo26n'}:{...d,label:previous[i]?.label??d.label,confidence:previous[i]?.confidence??null,source:previous[i]?.source??'manual'});selected=Math.min(selected,detections.length-1);if(selected<0&&detections.length)selected=0;canvas.width=img.width;canvas.height=img.height;$('empty').hidden=true;$('frameLabel').textContent=media.frames===1?`Снимок · ${profile.image_size.join(' × ')} px`:`Frame ${frame} / ${media.frames-1}`;draw();inspect();renderReferences();status(data.scale?.status==='ruler_calibrated'?'Metric rulers active. Length integrates each marked interval; outside coverage is not measured.':data.scale?.status==='verified_local'?'Проверенные автомобили: местный масштаб только в полосе эталонов.':data.scale?.status==='depth_calibrated'?'Depth calibration active. Select a car to inspect the scale.':data.scale?'One reference: constant scale only. Add another car at a different depth.':detect?`Found ${detections.length} vehicles. Select one and set its known length.`:'Draw the road, then add known-length reference cars.');showCalibrationDiagnostics(data.scale);}catch(e){status(e.message,true);playing=false;}finally{busy=false;$('detect').disabled=false;}}
+async function refresh(detect=false){if(!media)return;if(busy){clearTimeout(timer);timer=setTimeout(()=>refresh(detect),200);return;}busy=true;detectorUI();const rev=revision;const frame=Number($('timeline').value);$('detect').disabled=true;try{status(detect?`Running ${profile.detector_model??'yolo26n'} on the corrected frame… First use downloads the model.`:'Updating corrected frame…');const data=await api('/frame/'+media.id,{profile,frame,detect,confidence:Number($('confidence').value),boxes:detect?[]:detections.map(d=>d.bbox)});const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src='data:image/jpeg;base64,'+data.image;});if(rev!==revision)return;picture=img;const previous=detections;detections=data.detections.map((d,i)=>detect?{...d,source:profile.detector_model??'yolo26n'}:{...d,label:previous[i]?.label??d.label,confidence:previous[i]?.confidence??null,source:previous[i]?.source??'manual'});selected=Math.min(selected,detections.length-1);if(selected<0&&detections.length)selected=0;canvas.width=img.width;canvas.height=img.height;$('empty').hidden=true;$('frameLabel').textContent=media.frames===1?`Снимок · ${profile.image_size.join(' × ')} px`:`Frame ${frame} / ${media.frames-1}`;draw();inspect();renderReferences();status(data.scale?.status==='ruler_calibrated'?'Metric rulers active. Length integrates each marked interval; outside coverage is not measured.':data.scale?.status==='verified_local'?'Проверенные автомобили: местный масштаб только в полосе эталонов.':data.scale?.status==='depth_calibrated'?'Depth calibration active. Select a car to inspect the scale.':data.scale?'One reference: constant scale only. Add another car at a different depth.':detect?`Found ${detections.length} vehicles. Select one and set its known length.`:'Draw the road, then add known-length reference cars.');showCalibrationDiagnostics(data.scale);}catch(e){status(e.message,true);playing=false;}finally{busy=false;$('detect').disabled=false;detectorUI();}}
 
 function showCalibrationDiagnostics(scale){
   const d=scale?.diagnostics;
@@ -46,13 +47,13 @@ function renderReferences(){
 }
 async function editProfile(change){
   if(busy||!profile)return;
-  busy=true;
+  busy=true;detectorUI();
   try{const next=structuredClone(profile);change(next);profile=await api('/validate-profile',next);revision++;renderReferences();}
   catch(e){status(e.message,true);renderReferences();return;}
-  finally{busy=false;}
+  finally{busy=false;detectorUI();}
   if(media)await refresh();
 }
-function newProfile(size){return {version:1,image_size:size,lens:{...defaults},polygon:[],references:[],metric_rulers:[],measurement_line_x:null,line_tolerance_px:10,accuracy_tolerance_m:.1,detector_model:'yolo26m',detector_imgsz:640};}
+function newProfile(size){return {version:1,image_size:size,lens:{...defaults},polygon:[],references:[],metric_rulers:[],measurement_line_x:null,line_tolerance_px:10,accuracy_tolerance_m:.1,...detectorPreferences};}
 function updateProfileInfo(){
   $('profileInfo').textContent=profile?`${profileName} · ${profile.image_size.join(' × ')} px · ${profile.polygon.length} точек дороги · ${profile.references.length} эталонов · ${(profile.metric_rulers||[]).length} мерных линий`:'Калибровка не загружена. Откройте кадр или продолжите сохранённый JSON.';
   const still=!media||media.frames===1;
@@ -80,11 +81,11 @@ function adoptMedia(item){
 }
 async function sessionTask(task){
   if(busy){status('Дождитесь завершения текущей операции.');return;}
-  busy=true;sessionBusy=true;playing=false;clearTimeout(timer);
+  busy=true;sessionBusy=true;playing=false;clearTimeout(timer);detectorUI();
   let redraw=false;
   try{redraw=await task();}
   catch(e){status(e.message,true);}
-  finally{busy=false;sessionBusy=false;}
+  finally{busy=false;sessionBusy=false;detectorUI();}
   if(redraw&&media)await refresh();
 }
 $('media').onchange=async e=>{
@@ -328,14 +329,21 @@ $('cancelRuler').onclick=()=>{if(mode==='ruler'){draft=[];setMode('select');}};
 updateProfileInfo();
 
 function detectorUI(){
-  const name=profile?(profile.detector_model??'yolo26n'):'yolo26m';
-  $('detectorModel').value=name;$('detectorSize').value=profile?.detector_imgsz??640;
+  if(profile)detectorPreferences={detector_model:profile.detector_model??'yolo26n',detector_imgsz:profile.detector_imgsz??640};
+  const {detector_model:name,detector_imgsz:size}=detectorPreferences;
+  $('detectorModel').value=name;$('detectorSize').value=size;
+  $('detectorModel').disabled=$('detectorSize').disabled=busy||sessionBusy;
   $('detect').textContent='Detect · '+name.toUpperCase();
+  $('detectorStatus').textContent=busy||sessionBusy
+    ?'Дождитесь завершения текущей операции — затем модель снова можно будет изменить.'
+    :profile?'Для использования выбранной модели в измерении нажмите «Применить к станции».'
+    :'Модель можно выбрать до открытия кадра. При загрузке JSON будут использованы настройки из него.';
 }
 for(const id of ['detectorModel','detectorSize'])$(id).onchange=async()=>{
-  if(!profile||sessionBusy||busy){detectorUI();return;}
-  profile.detector_model=$('detectorModel').value;
-  profile.detector_imgsz=Number($('detectorSize').value);
+  if(sessionBusy||busy){detectorUI();status('Дождитесь завершения текущей операции, затем выберите модель.');return;}
+  detectorPreferences={detector_model:$('detectorModel').value,detector_imgsz:Number($('detectorSize').value)};
+  if(!profile){detectorUI();status('Модель выбрана. Откройте кадр или видео, чтобы начать новую калибровку.');return;}
+  Object.assign(profile,detectorPreferences);
   revision++;detections=[];selected=-1;detectorUI();inspect();draw();
   status('Детектор изменён. Повторите обнаружение и проверьте калибровку: другая модель может иначе определять границы автомобиля.');
 };

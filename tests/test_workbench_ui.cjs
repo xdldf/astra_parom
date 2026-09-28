@@ -287,3 +287,48 @@ test('RT-DETR selection survives profile import and clears stale YOLO boxes',asy
   assert.equal(ui.run('profile.detector_model'),'rtdetr-l');
   assert.equal(ui.run('detections.length'),0);
 });
+
+test('RT-DETR can be selected before opening media and reaches the first detection request',async()=>{
+  const ui=studio();
+  ui.run('media=null;profile=null;picture=null;draft=[];mode="select";detectorUI();');
+  ui.elements.get('detectorModel').value='rtdetr-x';
+  await ui.elements.get('detectorModel').onchange();
+  ui.elements.get('detectorSize').value='1280';
+  await ui.elements.get('detectorSize').onchange();
+  assert.equal(ui.elements.get('detectorModel').value,'rtdetr-x');
+  assert.equal(ui.run('profile'),null);
+  assert.match(ui.elements.get('detect').textContent,/RTDETR-X/);
+  ui.run('adoptMedia({id:"new",name:"new.mp4",frames:20,image_size:[600,500]});');
+  assert.equal(ui.run('profile.detector_model'),'rtdetr-x');
+  assert.equal(ui.run('profile.detector_imgsz'),1280);
+  ui.run('var requestBody;fetch=async(url,options)=>{requestBody=JSON.parse(options.body);return {ok:true,json:async()=>({image:"test",detections:[],scale:null})}};');
+  await ui.elements.get('detect').onclick();
+  assert.equal(ui.run('requestBody.profile.detector_model'),'rtdetr-x');
+  assert.equal(ui.run('requestBody.profile.detector_imgsz'),1280);
+});
+
+test('detector controls show processing state and recover after a failed request',async()=>{
+  const ui=studio();
+  ui.run('var rejectFrame;api=()=>new Promise((resolve,reject)=>{rejectFrame=reject});');
+  const request=ui.run('refresh(true)');
+  assert.equal(ui.elements.get('detectorModel').disabled,true);
+  assert.equal(ui.elements.get('detectorSize').disabled,true);
+  assert.match(ui.elements.get('detectorStatus').textContent,/Дождитесь/);
+  ui.run('rejectFrame(Error("Model unavailable"))');
+  await request;
+  assert.equal(ui.elements.get('detectorModel').disabled,false);
+  assert.equal(ui.elements.get('detectorSize').disabled,false);
+  ui.elements.get('detectorModel').value='rtdetr-l';
+  await ui.elements.get('detectorModel').onchange();
+  assert.equal(ui.run('profile.detector_model'),'rtdetr-l');
+});
+
+test('imported detector settings take priority over an unbound selection',async()=>{
+  const ui=studio();
+  ui.run('media=null;profile=null;picture=null;draft=[];mode="select";detectorUI();');
+  ui.elements.get('detectorModel').value='rtdetr-x';
+  await ui.elements.get('detectorModel').onchange();
+  await ui.run(`loadProfile(${JSON.stringify({...continuedProfile,detector_model:'yolo26l',detector_imgsz:640})},'saved.json')`);
+  assert.equal(ui.elements.get('detectorModel').value,'yolo26l');
+  assert.equal(ui.run('profile.detector_model'),'yolo26l');
+});

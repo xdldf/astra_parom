@@ -1,3 +1,9 @@
+## Detector selector fix — 2026-09-28
+
+- Reproduced in the browser: selecting RT-DETR before opening media silently reverted to YOLO26 M because no profile existed. The selected model and resolution now carry into the next new media profile and its first detection request. Imported profiles keep their own detector settings.
+- During frame processing, profile loading and saving, detector controls are visibly disabled with an explanation; they become available again after completion or failure. Updated the frontend asset version to load the fix after refresh.
+- **37 frontend tests passed**, including regressions for selection before media, request parameters, error recovery and imported settings. Browser verification confirmed RT-DETR X and resolution remain selected on an empty calibration page. JavaScript syntax and whitespace checks passed.
+
 ## Additional September 7 recordings — 2026-09-28
 
 - Final pre-push verification: **210 Python tests and 34 frontend tests passed**; Python compilation, JavaScript syntax and staged whitespace checks passed.
