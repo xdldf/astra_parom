@@ -33,8 +33,9 @@ def test_road_depth_uses_local_edges_and_rejects_outside():
 def test_unsupported_and_invalid_calibration():
     assert measure_box([100,100,50,40],POLY,None,(600,500))['length_m'] is None
     assert fit_scale(POLY,REFS[:1])['status'] == 'single_reference'
+    assert fit_scale(POLY,[REFS[0],REFS[0]])['status'] == 'single_reference'
     with pytest.raises(ValueError,match='too close'):
-        fit_scale(POLY,[REFS[0],REFS[0]])
+        fit_scale(POLY,[REFS[0],dict(REFS[0],frame=1)])
     with pytest.raises(ValueError,match='invalid perspective'):
         fit_scale(POLY,[dict(REFS[0],length_m=1),REFS[1]])
     assert measure_box([0,300,100,100],POLY,fit_scale(POLY,REFS),(600,500))['status']=='clipped'
@@ -91,6 +92,7 @@ def test_inference_uses_corrected_frame_and_preserves_geometry(tmp_path,monkeypa
     assert np.array_equal(actual,workbench.corrected(image,workbench.Lens(k1=-.2,tilt_deg=7.5)))
     assert detector.predict.call_args.kwargs['classes']==[2,3,5,7]
     assert detector.predict.call_args.kwargs['device']==0
+    assert detector.predict.call_args.kwargs['agnostic_nms'] is True
     d=response.json()['detections'][0]
     assert d['label']=='car'
     assert d['bbox']==[100,150,100,75]
@@ -115,6 +117,23 @@ def test_measurement_line_uses_center_not_bbox_edge():
     assert measure_box(bbox, POLY, scale, (600,500),156,5)['length_m'] is None
 
 
+def test_larger_detector_and_resolution_are_profile_owned(monkeypatch):
+    from unittest.mock import Mock
+    from types import SimpleNamespace
+    model=Mock()
+    model.predict.return_value=[SimpleNamespace(boxes=[],names={2:'car'})]
+    monkeypatch.setattr(workbench,'larger_models',{'yolo26m':model})
+    monkeypatch.setattr(workbench,'require_gpu',lambda:0)
+    profile=workbench.Profile(image_size=(600,500),polygon=POLY,references=REFS,
+                              detector_model='yolo26m',detector_imgsz=1280,accuracy_tolerance_m=.1)
+    result=workbench.render_raw(np.zeros((500,600,3),np.uint8),workbench.FrameRequest(profile=profile,detect=True),include_image=False)
+    assert model.predict.call_args.kwargs['imgsz']==1280
+    assert result['scale']['diagnostics']['target_tolerance_m']==.1
+    assert result['scale']['diagnostics']['accuracy_validated'] is False
+    with pytest.raises(ValueError):
+        workbench.Profile(image_size=(600,500),detector_model='/untrusted/model.pt')
+
+
 def test_line_profile_round_trip_and_validation():
     client = TestClient(app)
     data = dict(image_size=[600,500],polygon=POLY,references=REFS,
@@ -126,6 +145,32 @@ def test_line_profile_round_trip_and_validation():
     assert result.json()['measurement_line_x'] == 300
     data['measurement_line_x']=600
     assert client.post('/api/workbench/validate-profile',json=data).status_code == 422
+
+
+@pytest.mark.parametrize('name',['rtdetr-l','rtdetr-x'])
+def test_rtdetr_uses_correct_factory_and_capture_source(name,monkeypatch,tmp_path):
+    from unittest.mock import Mock
+    from types import SimpleNamespace
+    import ultralytics
+    from web_app.station import Capture
+    model=Mock();model.predict.return_value=[SimpleNamespace(boxes=[],names={2:'car'})]
+    factory=Mock(return_value=model);yolo=Mock(side_effect=AssertionError('Wrong model factory'))
+    monkeypatch.setattr(ultralytics,'RTDETR',factory);monkeypatch.setattr(ultralytics,'YOLO',yolo)
+    monkeypatch.setattr(workbench,'larger_models',{})
+    monkeypatch.setattr(workbench,'DATA',tmp_path)
+    monkeypatch.setattr(workbench,'require_gpu',lambda:0)
+    profile=workbench.Profile(image_size=(600,500),detector_model=name,detector_imgsz=640)
+    result=workbench.render_raw(np.zeros((500,600,3),np.uint8),
+        workbench.FrameRequest(profile=profile,detect=True),include_image=False)
+    assert result['detections']==[]
+    factory.assert_called_once_with(str(tmp_path/(name+'.pt')))
+    assert model.predict.call_args.kwargs['device']==0
+    assert model.predict.call_args.kwargs['classes']==[2,3,5,7]
+    payload=Capture(media_id='test',profile=profile,bbox=[100,100,200,100],source=name)
+    assert payload.source==name
+    # Later frames reuse the selected detector instead of downloading/reloading it.
+    workbench.detect_vehicles(np.zeros((500,600,3),np.uint8),detector_model=name)
+    assert factory.call_count==1
 
 
 def test_uploaded_image_survives_server_restart(tmp_path,monkeypatch):
@@ -231,6 +276,50 @@ def test_ruler_measurement_is_invariant_under_preview_resizing():
 
 def test_long_vehicle_warns_when_calibration_uses_short_reference():
     scale=fit_scale(POLY,REFS[:1])
-    measured=measure_box([50,100,450,150],POLY,scale,(600,500))
+    measured=measure_box([50,100,450,125],POLY,scale,(600,500))
     assert measured['length_m'] is not None
     assert measured['warnings']
+
+
+def test_duplicate_reference_does_not_reweight_calibration():
+    references=REFS+[dict(bbox=[100,200,150,125],length_m=5.2,frame=5)]
+    original=fit_scale(POLY,references)
+    repeated=fit_scale(POLY,references+[references[2]]*12)
+    assert repeated['intercept']==pytest.approx(original['intercept'])
+    assert repeated['slope']==pytest.approx(original['slope'])
+    assert repeated['diagnostics']['duplicates_ignored']==12
+    assert repeated['diagnostics']['unique_reference_count']==3
+    assert not repeated['diagnostics']['accuracy_validated']
+    with pytest.raises(ValueError,match='conflicting lengths'):
+        fit_scale(POLY,[REFS[0],dict(REFS[0],length_m=6)])
+
+
+def test_scale_never_extrapolates_beyond_reference_depth():
+    for references in [REFS,REFS[:1]]:
+        scale=fit_scale(POLY,references)
+        for box in ([100,150,100,51],[100,350,200,99]):
+            result=measure_box(box,POLY,scale,(600,500))
+            assert result['length_m'] is None
+            assert result['status']=='outside_calibration'
+
+
+def test_inconsistent_references_are_exposed_in_measurements():
+    refs=REFS+[dict(bbox=[100,200,150,125],length_m=6,frame=8)]
+    scale=fit_scale(POLY,refs)
+    assert scale['diagnostics']['reference_max_abs_error_m']>.05
+    result=measure_box(REFS[0]['bbox'],POLY,scale,(600,500))
+    assert result['calibration_diagnostics']==scale['diagnostics']
+    assert any('5 см' in warning for warning in result['warnings'])
+
+
+def test_position_inspector_uses_local_polygon_edges_not_metric_camera_distance():
+    from vehicle_metrology.bbox_scale import road_cross_section
+    polygon=[[100,200],[500,100],[500,400],[100,500]]
+    box=[200,150,200,150]
+    result=measure_box(box,polygon,None,(600,600))
+    assert result['road_cross_section']==road_cross_section(polygon,300,300)
+    assert result['road_cross_section']['far']==[300.,150.]
+    assert result['road_cross_section']['near']==[300.,450.]
+    assert result['depth']==pytest.approx(.5)
+    assert result['camera_distance_m'] is None
+    assert result['position_model']=='bbox_bottom_center_relative_road_depth'

@@ -1,5 +1,4 @@
 """Install bundled models, verify GPU inference and supply installation calibration."""
-import os
 from pathlib import Path
 import shutil
 import sys
@@ -21,15 +20,15 @@ def main():
         raise RuntimeError('NVIDIA GPU unavailable. Install/update the NVIDIA driver; CPU mode is disabled.')
     print('GPU:',torch.cuda.get_device_name(0),flush=True)
     wb.DATA.mkdir(parents=True,exist_ok=True)
-    from ultralytics import YOLO
-    previous=Path.cwd()
-    try:
-        os.chdir(wb.DATA)
-        model=YOLO('yolo26n.pt')
-        import numpy as np
-        model.predict(np.zeros((640,640,3),np.uint8),device=0,verbose=False)
-    finally:
-        os.chdir(previous)
+    supplied=ROOT/'config'/'st-calibration.json'
+    target=wb.DATA.parent/'operator-calibration.json'
+    profile_path=target if target.exists() else supplied
+    profile=wb.Profile.model_validate_json(profile_path.read_text(encoding='utf-8'))
+    import numpy as np
+    # N still serves front-camera association; initialize the configured side model too.
+    for name in dict.fromkeys(['yolo26n',profile.detector_model]):
+        print('Checking detector:',name,flush=True)
+        wb.detect_vehicles(np.zeros((640,640,3),np.uint8),detector_model=name,imgsz=profile.detector_imgsz)
     socket.setdefaulttimeout(30)
     for attempt in range(3):
         try:
@@ -39,8 +38,6 @@ def main():
             if attempt==2:raise
             print('Model download interrupted; retrying...',flush=True)
             time.sleep(2)
-    supplied=ROOT/'config'/'st-calibration.json'
-    target=wb.DATA.parent/'operator-calibration.json'
     if supplied.exists() and not target.exists():
         wb.Profile.model_validate_json(supplied.read_text(encoding='utf-8'))
         shutil.copyfile(supplied,target)

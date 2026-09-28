@@ -1,3 +1,44 @@
+## Additional September 7 recordings — 2026-09-28
+
+- Final pre-push verification: **210 Python tests and 34 frontend tests passed**; Python compilation, JavaScript syntax and staged whitespace checks passed.
+- Scouted 1,081 frames across all three new recordings; selected 20 two-second passages. YOLO26 M, RT-DETR X and RF-DETR Large processed the same 1,000 original frames (3,000 timed inferences). Stable benchmark estimates: 6/20, 9/20 and 7/20 respectively, not accuracy percentages.
+- Actual isolated saved-capture replay: YOLO produced 6 numeric estimates; RT-DETR produced 10, including a trailer-only component that must not be treated as whole-combination length. All saved records retain operator review. Three provisional catalogue pairs give RT-DETR mean absolute difference 10.79 cm and maximum 26.44 cm; four other catalogue candidates have no accepted length.
+- Fixed benchmark target association so a neighbouring car cannot supply the selected vehicle's missing length. **16 targeted regression tests passed** across benchmark, detector backends, temporal estimation and capture. The active calibration and production records were not changed by this evaluation.
+- [Full report, timestamps, images, limitations and reproduction](docs/ADDITIONAL_VIDEOS_2026-09-28.md). ±10 cm physical accuracy remains unestablished.
+
+## RT-DETR / RF-DETR comparison and selectable RT-DETR — 2026-09-28
+
+- **209 Python tests and 34 frontend tests passed**; syntax, compilation and whitespace checks passed.
+- Five models processed the same 300 original frames from all three videos (1,500 timed inferences). RT-DETR X 640 passed temporal checks on five moving examples, including the truck; RF-DETR M/L truck residuals were 33.34/31.10 cm. No absolute length accuracy is established.
+- Added RT-DETR L/X to profile validation, the correct Ultralytics factory, model cache, calibration selector and saved-source schema. YOLO26 M remains the default. RF-DETR uses an isolated optional benchmark environment.
+- Actual saved-capture replay with RT-DETR X persisted five estimates with operator-review status and complete source evidence; stationary van had no crossing. Live CUDA requirement retained; GPU throughput not measured. [Full evidence and reproduction](docs/DETR_COMPARISON_2026-09-28.md).
+
+## Road position and multi-frame landmark reconstruction — 2026-09-28
+
+- **202 Python tests and 33 frontend tests passed**; JavaScript syntax and whitespace checks passed.
+- Workbench inspection now shows the local near/far road cross-section and survey span. Relative road depth is explicitly distinguished from metric camera distance.
+- Added an offline 3D projection/landmark alternative. Independent synthetic cases recover physical length across depths and headings; failed calibration, occlusion and inconsistent landmarks reject measurements.
+- Actual SUV tests at 7 and 10 original frames reject: alternating frame sets disagree by 73.6 and 61.3 cm. Longer movement did not establish ±10 cm. No production calibration or records changed in this follow-up. [Evidence and reproduction](docs/ROAD_POSITION_AND_MULTIVIEW_2026-09-28.md).
+
+## Road marks and lens correction — 2026-09-28
+
+- User confirmed 1 m barrier marks and 5.80/5.50 m widths; heights above road are unknown. Added a raw-coordinate survey, fitted correction, held-out ruler/post checks and a projective measurement path.
+- 300 original frames from all three videos rerun with the new lens. The candidate fails geometry acceptance (9.71 cm maximum held-out ruler error, 19.86 cm maximum all-mark residual, 43.78 cm maximum held-out post-transfer disagreement). Numeric lengths are withheld; this is not ±10 cm vehicle validation.
+- Python: **192 passed**; frontend: **32 passed**. Existing preset retained; failed candidate exported for review. [Details and artifacts](docs/ROAD_MARK_CALIBRATION_2026-09-28.md).
+
+## ±10 cm larger-model and temporal follow-up — 2026-09-28
+
+- Python suite: **186 passed**; frontend: **31 passed**. Added tests for model/resolution routing, original-video neighbourhoods, saved temporal evidence, insufficient frames, camera reconnects, delayed/stale capture, uncalibrated review records, and preservation of the original line gate.
+- N/M/L at 640/1280 ran on **300 identical original frames across six clips from all three videos** (1,800 inferences). M 640 reduced the black SUV raw length range from 11.31 to 2.40 cm. The four passenger-car examples had temporal maximum residuals of 1.21–2.96 cm. These are repeatability metrics, not physical errors.
+- Real saved-capture replay with M 640, confidence 0.30 and original video decoding persisted four approximate multi-frame lengths, one truck review with no length, and no false crossing for the stationary off-line van. Used an isolated database and explicit offline CPU override; live CUDA throughput was not tested.
+- **Absolute ±10 cm is not established**: no independently measured lengths; the eight legacy references still disagree with their fitted curve by up to 16.21 cm. The loaded truck is unresolved. See [full evidence and reproduction](docs/ACCURACY_10CM_2026-09-28.md).
+
+## Supplied-video accuracy audit — 2026-09-28
+
+- Python suite: **175 passed**; frontend tests: **30 passed**. New checks cover duplicate reference weighting, conflicting lengths, calibration depth support, final detector duplicate suppression, explicit ±5 cm acceptance accounting and offline audit outputs with blank independent truth.
+- Actual CPU inference on all three supplied ST recordings: 540 distributed frames, 150 dense crossing frames with the final path, plus preliminary sparse/sequence comparisons. Video originals were not modified. See [the full audit](docs/ACCURACY_AUDIT_2026-09-28.md) for hashes, sampling scope, catalogue checks and reproduction commands.
+- One SUV varies by **11.31 cm over 0.12 s** with the updated system; the ±5 cm target is therefore **not met**. Physical accuracy remains unvalidated because no independently measured vehicle lengths or surveyed road distances were available. Regression success is not metrology validation.
+
 ## Human-approved calibration references — 2026-09-21
 
 - Full Python suite: **167 passed**. Station UI: **11 passed**; workbench UI: **15 passed**.

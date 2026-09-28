@@ -13,12 +13,14 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, ConfigDict, model_validator, model_serializer
 from vehicle_metrology.bbox_scale import fit_scale, measure_box
+from vehicle_metrology.detection import predict_vehicle_boxes
 
 router = APIRouter(prefix='/api/workbench')
 DATA = Path(__file__).parent / 'data' / 'workbench'
 DATA.mkdir(parents=True, exist_ok=True)
 media = {}
 model = None
+larger_models = {}
 model_lock = threading.Lock()
 
 
@@ -66,6 +68,29 @@ class MetricRuler(BaseModel):
     step_m: float = Field(1, gt=0, le=20)
 
 
+class SurveyCalibration(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+    projection: tuple[tuple[float,float,float],tuple[float,float,float],tuple[float,float,float]]
+    support_world: list[tuple[float,float]] = Field(min_length=4,max_length=100)
+    lens: Lens
+    ruler_check_error_m: float = Field(ge=0)
+    ground_check_error_m: float = Field(ge=0)
+    source: Literal['visible_barrier_marks_and_posts'] = 'visible_barrier_marks_and_posts'
+
+    @model_validator(mode='after')
+    def usable(self):
+        H=np.asarray(self.projection)
+        if abs(np.linalg.det(H))<1e-9 or np.linalg.cond(H)>1e9:
+            raise ValueError('Singular survey projection')
+        support=np.asarray(self.support_world,np.float32)
+        if not cv2.isContourConvex(support) or abs(cv2.contourArea(support))<1:
+            raise ValueError('Survey support must be a convex metric polygon')
+        z=np.c_[support,np.ones(len(support))]@H[2]
+        if np.min(z)*np.max(z)<=0:
+            raise ValueError('Survey support crosses the projection horizon')
+        return self
+
+
 class Profile(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     version: Literal[1] = 1
@@ -74,8 +99,12 @@ class Profile(BaseModel):
     polygon: list[tuple[float, float]] = Field(default_factory=list, max_length=100)
     references: list[Reference] = Field(default_factory=list, max_length=100)
     metric_rulers: list[MetricRuler] = Field(default_factory=list, max_length=20)
+    survey_calibration: SurveyCalibration | None = None
     measurement_line_x: float | None = Field(None, ge=0)
     line_tolerance_px: float = Field(10, ge=1, le=100)
+    accuracy_tolerance_m: float = Field(.1, gt=0, le=1)
+    detector_model: Literal['yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x'] = 'yolo26n'
+    detector_imgsz: Literal[640,1280] = 640
 
     @model_validator(mode='after')
     def geometry(self):
@@ -113,6 +142,11 @@ class Profile(BaseModel):
                 raise ValueError('Ruler marks must be inside the original image')
         if (self.references or self.metric_rulers) and not self.polygon:
             raise ValueError('Draw the road before adding reference cars')
+        if self.survey_calibration:
+            if self.survey_calibration.lens != self.lens:
+                raise ValueError('Survey projection belongs to different lens settings; recalibrate it')
+            if self.references or self.metric_rulers or not self.polygon:
+                raise ValueError('Survey calibration needs its road polygon and cannot mix with empirical references')
         profile_scale(self)
         return self
 
@@ -126,16 +160,26 @@ class FrameRequest(BaseModel):
 
 
 def profile_scale(profile):
+    if profile.survey_calibration:
+        s=profile.survey_calibration
+        error=max(s.ruler_check_error_m,s.ground_check_error_m)
+        return dict(status='survey_calibrated' if error<=profile.accuracy_tolerance_m else 'survey_review',
+            projection=s.projection,support_world=s.support_world,
+            diagnostics=dict(survey=True,target_tolerance_m=profile.accuracy_tolerance_m,
+                ruler_check_error_m=s.ruler_check_error_m,ground_check_error_m=s.ground_check_error_m,
+                accuracy_validated=False,source=s.source,
+                note='Raised barrier marks; ground inferred from visible posts. Vehicle accuracy is unvalidated.'))
     from web_app.calibration_references import eligible
     return cached_scale(tuple(profile.polygon),
-                        tuple((r.bbox, r.length_m, bool(r.vehicle_id)) for r in eligible(profile)),
-                        tuple((tuple(r.points), r.step_m) for r in profile.metric_rulers))
+                        tuple((r.bbox, r.length_m, bool(r.vehicle_id), r.frame) for r in eligible(profile)),
+                        tuple((tuple(r.points), r.step_m) for r in profile.metric_rulers),
+                        profile.accuracy_tolerance_m)
 
 
 @lru_cache(maxsize=64)
-def cached_scale(polygon, references, rulers):
-    return fit_scale(polygon, [dict(bbox=bbox, length_m=length, vehicle_id=verified) for bbox,length,verified in references],
-                     [dict(points=points, step_m=step) for points,step in rulers])
+def cached_scale(polygon, references, rulers, tolerance_m=.1):
+    return fit_scale(polygon, [dict(bbox=bbox, length_m=length, vehicle_id=verified, frame=frame) for bbox,length,verified,frame in references],
+                     [dict(points=points, step_m=step) for points,step in rulers], tolerance_m=tolerance_m)
 
 
 @lru_cache(maxsize=6)
@@ -254,22 +298,28 @@ def camera_frame():
                 captured_at=datetime.now(timezone.utc).isoformat(),name='Боковая камера · кадр для калибровки')
 
 
-def detect_vehicles(frame, confidence=.35):
+def detect_vehicles(frame, confidence=.35, *, detector_model='yolo26n', imgsz=640):
     global model
-    detections=[]
     device = require_gpu()
     try:
-        from ultralytics import YOLO
+        from ultralytics import YOLO, RTDETR
         with model_lock:
-            if model is None:
-                model = YOLO(str(DATA/'yolo26n.pt'))
-            results = model.predict(frame, conf=confidence, classes=[2,3,5,7],
-                                    device=device, verbose=False)[0]
-            for b in results.boxes:
-                x1,y1,x2,y2 = b.xyxy[0].tolist()
-                detections.append(dict(bbox=[x1,y1,x2-x1,y2-y1], confidence=float(b.conf[0]), label=results.names[int(b.cls[0])]))
+            if detector_model not in {'yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x'} or imgsz not in {640,1280}:
+                raise ValueError('Unsupported detector configuration')
+            if detector_model == 'yolo26n':
+                if model is None:
+                    bundled = Path(__file__).resolve().parents[1]/'models/workbench/yolo26n.pt'
+                    model = YOLO(str(bundled if bundled.exists() else DATA/'yolo26n.pt'))
+                selected_model = model
+            else:
+                if detector_model not in larger_models:
+                    # Ultralytics resolves only these allowlisted official model names.
+                    factory = RTDETR if detector_model.startswith('rtdetr-') else YOLO
+                    larger_models[detector_model] = factory(str(DATA/(detector_model+'.pt')))
+                selected_model = larger_models[detector_model]
+            detections = predict_vehicle_boxes(selected_model, frame, confidence, device=device, imgsz=imgsz)
     except Exception as exc:
-        raise HTTPException(503, f'YOLO26n GPU inference failed: {exc}. CPU fallback is disabled.') from exc
+        raise HTTPException(503, f'{detector_model} GPU inference failed: {exc}. CPU fallback is disabled.') from exc
     return detections
 
 
@@ -280,7 +330,11 @@ def render_raw(raw, request, include_image=True, include_frame=False):
     frame = corrected(raw, request.profile.lens)
     detections = []
     if request.detect:
-        detections = detect_vehicles(frame, request.confidence)
+        detections = detect_vehicles(frame, request.confidence,
+                                     detector_model=request.profile.detector_model,
+                                     imgsz=request.profile.detector_imgsz)
+        for detection in detections:
+            detection.update(source=request.profile.detector_model, imgsz=request.profile.detector_imgsz)
     else:
         for b in request.boxes:
             x,y,w,h = b

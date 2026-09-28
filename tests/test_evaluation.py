@@ -25,3 +25,27 @@ def test_errors_cover_rejections_positions_and_repeated_vehicles(tmp_path):
     truth.write_text('track_id,length_m\na,4\na,5\n')
     with pytest.raises(ValueError,match='duplicate'):
         evaluate(tracks,truth)
+
+
+def test_five_centimetre_acceptance_counts_missed_and_rejected_vehicles(tmp_path):
+    from vehicle_metrology.evaluation import evaluate
+    truth=tmp_path/'truth.csv'
+    truth.write_text('track_id,length_m\na,4\nb,4\nc,4\nd,4\n')
+    tracks=[dict(track_id='a',length_m=4.05),dict(track_id='b',length_m=4.051),
+            dict(track_id='c',length_m=None,reasons=['occluded'])]
+    report=evaluate(tracks,truth)
+    assert report['acceptance']['passed_tracks']==1
+    assert report['acceptance']['failed_track_ids']==['b']
+    assert report['acceptance']['fraction_of_measured_within_tolerance']==.5
+    assert report['acceptance']['fraction_of_ground_truth_within_tolerance']==.25
+    assert not report['acceptance']['all_ground_truth_tracks_within_tolerance']
+    assert evaluate([dict(track_id=x,length_m=4) for x in 'abcd'],truth)['acceptance']['all_ground_truth_tracks_within_tolerance']
+    with pytest.raises(ValueError,match='duplicate prediction'):
+        evaluate([tracks[0],tracks[0]],truth)
+    for value in [float('nan'),float('inf'),0,-1]:
+        with pytest.raises(ValueError,match='Prediction'):
+            evaluate([dict(track_id='a',length_m=value)],truth)
+        with pytest.raises(ValueError,match='tolerance_m'):
+            evaluate([],truth,tolerance_m=value)
+    truth.write_text('track_id,length_m\n')
+    assert not evaluate([],truth)['acceptance']['all_ground_truth_tracks_within_tolerance']

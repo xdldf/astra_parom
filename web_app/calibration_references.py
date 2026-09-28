@@ -51,6 +51,9 @@ def geometry_key(profile):
 
 
 def merge(profile):
+    if profile.survey_calibration:
+        # Vehicle-derived scale must not silently enter a ruler/road-plane fit.
+        return profile
     from web_app import station, workbench
     references = [r for r in profile.references if not r.vehicle_id]
     key = geometry_key(profile)

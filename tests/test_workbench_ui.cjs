@@ -65,6 +65,47 @@ test('setting a reference preserves the saved road',async()=>{
   assert.equal(ui.run('profile.references[0].length_m'),5);
 });
 
+test('repeated Add reference updates one observation without changing its weight',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');
+  ui.run('refresh=async()=>{};detections=[{bbox:[100,150,100,75],label:"car"}];selected=0;');
+  ui.elements.get('length').value='5';await ui.elements.get('addRef').onclick();
+  ui.elements.get('length').value='5.1';await ui.elements.get('addRef').onclick();
+  assert.equal(ui.run('profile.references.length'),1);
+  assert.equal(ui.run('profile.references[0].length_m'),5.1);
+});
+
+test('calibration inconsistency is visible and never labelled validated',()=>{
+  const ui=studio();
+  ui.run('showCalibrationDiagnostics({diagnostics:{reference_max_abs_error_m:.162,references_within_target:3,unique_reference_count:8,duplicates_ignored:8}})');
+  assert.match(ui.elements.get('status').textContent,/16.2 см/);
+  assert.match(ui.elements.get('status').textContent,/не подтверждена/);
+  assert.equal(ui.elements.get('status').className,'error');
+});
+
+test('raised-barrier geometry failure is visible separately from detector stability',()=>{
+  const ui=studio();
+  ui.run('showCalibrationDiagnostics({diagnostics:{survey:true,ruler_check_error_m:.097,ground_check_error_m:.438,target_tolerance_m:.1}})');
+  assert.match(ui.elements.get('status').textContent,/43.8 см/);
+  assert.match(ui.elements.get('status').textContent,/не подтверждена/);
+  assert.equal(ui.elements.get('status').className,'error');
+  ui.run('profile.survey_calibration={};refresh=async()=>{};invalidateLens();');
+  assert.equal(ui.run('profile.survey_calibration'),null);
+});
+
+test('model selection survives export profile and discards stale detector boxes',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');
+  ui.run('profile.references=[{bbox:[100,150,100,75],length_m:5}];detections=[{bbox:[100,150,100,75]}];selected=0;detectorUI();');
+  assert.equal(ui.elements.get('detectorModel').value,'yolo26n');
+  ui.elements.get('detectorModel').value='yolo26m';
+  ui.elements.get('detectorSize').value='1280';
+  await ui.elements.get('detectorModel').onchange();
+  assert.equal(ui.run('profile.detector_model'),'yolo26m');
+  assert.equal(ui.run('profile.detector_imgsz'),1280);
+  assert.equal(ui.run('profile.references.length'),1);
+  assert.equal(ui.run('detections.length'),0);
+  assert.match(ui.elements.get('status').textContent,/проверьте калибровку/);
+});
+
 test('an incomplete road is retained instead of hidden on detection',async()=>{
   const ui=studio();
   ui.run('draft.pop()');
@@ -222,4 +263,27 @@ test('apply saves edited calibration without discarding it on a running-camera c
   ui.run("stationProfileRequest=async(method,body)=>{if(method!=='POST'||body.measurement_line_x!==350)throw Error('Wrong profile');return {saved:true}};");
   await ui.elements.get('applyCalibration').onclick();
   assert.match(ui.elements.get('status').textContent,/Калибровка сохранена/);
+});
+
+
+test('position inspector draws the local road cross-section instead of a global horizontal line',()=>{
+  const ui=studio();
+  ui.run(`detections=[{bbox:[200,150,200,150],label:'car',depth:.5,road_cross_section:{far:[300,150],near:[300,450]}}];selected=0;draw();inspect();`);
+  assert.ok(ui.strokes.some(s=>s[0]==='moveTo'&&s[1]===300&&s[2]===150));
+  assert.ok(ui.strokes.some(s=>s[0]==='lineTo'&&s[1]===300&&s[2]===450));
+  assert.equal(ui.elements.get('depth').textContent,'50.0% across road');
+});
+
+
+test('RT-DETR selection survives profile import and clears stale YOLO boxes',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');
+  ui.run('profile.detector_model="rtdetr-x";profile.detector_imgsz=640;detectorUI();');
+  assert.equal(ui.elements.get('detectorModel').value,'rtdetr-x');
+  assert.equal(ui.elements.get('detect').textContent,'Detect · RTDETR-X');
+  ui.run('detections=[{bbox:[100,150,100,75],source:"yolo26m"}];selected=0;');
+  ui.elements.get('detectorModel').value='rtdetr-l';
+  ui.elements.get('detectorSize').value='640';
+  await ui.elements.get('detectorModel').onchange();
+  assert.equal(ui.run('profile.detector_model'),'rtdetr-l');
+  assert.equal(ui.run('detections.length'),0);
 });

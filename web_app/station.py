@@ -167,7 +167,8 @@ class Capture(BaseModel):
     frame: int=Field(0,ge=0)
     bbox: tuple[float,float,float,float]
     label: Literal['car','truck','bus','motorcycle','manual car','selected car']='car'
-    source: Literal['manual','yolo26x','yolo26n']='manual'
+    source: Literal['manual','yolo26x','yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x']='manual'
+    temporal: bool = False
     actor: str=Field('Оператор',min_length=1,max_length=100)
     front_media_id: str | None = None
     front_session_id: str | None = None
@@ -196,7 +197,7 @@ def health():
     import torch
     available=torch.cuda.is_available()
     return dict(online=True,gpu_available=available,gpu=torch.cuda.get_device_name(0) if available else None,
-                detector='YOLO26n',front_camera=(workbench.DATA.parent/'camera-pair.json').exists(),camera_source='recorded_video_pair',plate_recognition=True)
+                detector='YOLO26 N / M / L; RT-DETR L / X',front_camera=(workbench.DATA.parent/'camera-pair.json').exists(),camera_source='recorded_video_pair',plate_recognition=True)
 
 
 @router.post('/quote')
@@ -224,6 +225,9 @@ def capture(payload: Capture):
     result=workbench.render_raw(workbench.read_frame(payload.media_id,payload.frame),
             workbench.FrameRequest(profile=payload.profile,frame=payload.frame,boxes=[payload.bbox]),
             include_image=False,include_frame=True)
+    if payload.temporal:
+        from web_app.temporal_capture import refine_video
+        refine_video(payload, result)
     front_image=None
     paired=None
     evidence=[]
@@ -257,6 +261,13 @@ def capture(payload: Capture):
 
 def persist_capture(payload,result,front_image=None,paired=None,front_samples=None,camera_note=None,front_evidence=None):
     measured=result['detections'][0]
+    if payload.temporal and measured['status']=='outside_calibration' and measured['at_measurement_line']:
+        from vehicle_metrology.temporal import apply_passage
+        measured=apply_passage(measured,dict(status='temporal_review',length_m=None,
+            reasons=['anchor_outside_calibration'],samples=[],accuracy_validated=False,
+            target_tolerance_m=payload.profile.accuracy_tolerance_m))
+        measured['warnings'].append('Проезд у линии сохранён без длины: автомобиль вне области калибровки.')
+        result['detections'][0]=measured
     if measured['status'] in {'outside_road','clipped','waiting_for_line','outside_calibration'}:
         raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге, в области калибровки и у линии измерения (если она включена).')
     category={'car':'car','bus':'bus','truck':'truck','motorcycle':'motorcycle'}.get(payload.label,'car')

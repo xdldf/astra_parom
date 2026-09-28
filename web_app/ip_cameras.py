@@ -67,10 +67,11 @@ class Packet:
 
 
 class Receiver:
-    def __init__(self,url,stop,opener=None):
+    def __init__(self,url,stop,opener=None,save_fps=15):
         self.url=url
         self.stop=stop
         self.opener=opener or self.open
+        self.save_fps=save_fps
         self.lock=threading.Lock()
         self.packets=deque(maxlen=100)
         self.size=0
@@ -104,8 +105,8 @@ class Receiver:
                         raise RuntimeError()
                     self.last_seen=stamp
                     self.status='Камера работает'
-                    # Always drain the decoder. Keep at most 15 full resolution frames/s.
-                    if stamp-last_saved<1/15:
+                    # Side evidence needs adjacent frames; both buffers stay byte bounded.
+                    if stamp-last_saved<1/self.save_fps:
                         continue
                     last_saved=stamp
                     ok,jpeg=cv2.imencode('.jpg',raw,[cv2.IMWRITE_JPEG_QUALITY,90])
@@ -151,7 +152,7 @@ class Station:
         self.profile=profile
         self.id=uuid.uuid4().hex
         self.stop=threading.Event()
-        self.side=Receiver(cfg.side_url,self.stop)
+        self.side=Receiver(cfg.side_url,self.stop,save_fps=30)
         self.front=Receiver(cfg.front_url,self.stop)
         self.condition=threading.Condition()
         self.latest=None
@@ -233,6 +234,7 @@ class Station:
                     self.sequence+=1;self.condition.notify_all()
 
     def infer(self):
+        from web_app.temporal_capture import capture_candidate
         last=-1
         epoch=None
         while not self.stop.wait(.015):
@@ -246,6 +248,7 @@ class Station:
             if epoch!=current_epoch:
                 self.tracks=[];epoch=current_epoch
             try:
+                self.flush_pending(a.stamp)
                 result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,detect=True),include_image=False)
                 if self.stop.is_set() or time.monotonic()-a.stamp>3:continue
                 result.update(frame=a.seq,stamp=a.stamp)
@@ -258,10 +261,10 @@ class Station:
                     if not matches:self.tracks.append(track)
                     previous=track['box'];previous_time=track['stamp']
                     track.update(box=d['bbox'],stamp=a.stamp);used.add(track['id'])
-                    if not self.cfg.auto_measure or track['sent']:continue
+                    if not self.cfg.auto_measure or track['sent'] or track.get('pending'):continue
                     candidate=d;capture_pair=pair
                     line=self.profile.measurement_line_x
-                    if d['length_m'] is None and line is not None:
+                    if not capture_candidate(d) and line is not None:
                         before=previous[0]+previous[2]/2-line;after=d['bbox'][0]+d['bbox'][2]/2-line
                         if before*after<0 and a.stamp-previous_time<2:
                             when=previous_time+(a.stamp-previous_time)*abs(before)/(abs(before)+abs(after))
@@ -269,15 +272,28 @@ class Station:
                                 pp=pair_packets([packet],self.front.snapshot(),self.cfg.offset_seconds,self.cfg.tolerance_ms/1000,time.monotonic())
                                 if not pp:pp=(packet,None,None)
                                 rr=wb.render_raw(packet.image(),wb.FrameRequest(profile=self.profile,frame=packet.seq,detect=True),include_image=False)
-                                choices=[v for v in rr['detections'] if v['length_m'] is not None and iou(v['bbox'],d['bbox'])>.2]
+                                choices=[v for v in rr['detections'] if capture_candidate(v) and iou(v['bbox'],d['bbox'])>.2]
                                 if choices:
                                     candidate=max(choices,key=lambda v:iou(v['bbox'],d['bbox']));capture_pair=pp;break
-                    if candidate['length_m'] is not None:
-                        self.capture(capture_pair,candidate,track['id']);track['sent']=True
+                    if capture_candidate(candidate):
+                        track['pending']=(capture_pair,candidate,current_epoch)
             except Exception:
                 self.error='Измерение не выполнено. Проверьте камеры и настройку.'
 
-    def capture(self,pair,d,track_id):
+    def flush_pending(self, stamp):
+        from web_app.temporal_capture import WINDOW_SECONDS
+        for track in self.tracks:
+            pending=track.get('pending')
+            if not pending or stamp-pending[0][0].stamp < WINDOW_SECONDS:
+                continue
+            pair, candidate, epoch=pending
+            if epoch != self.side.epoch or not self.cfg.auto_measure or stamp-pair[0].stamp>3:
+                track.pop('pending',None)
+                continue
+            self.capture(pair,candidate,track['id'],temporal=True,epoch=epoch)
+            track.update(sent=True,pending=None)
+
+    def capture(self,pair,d,track_id,*,temporal=False,epoch=None):
         from web_app import station as st
         a,b,delta=pair
         if self.stop.is_set() or self.fresh(self.side) is None or time.monotonic()-a.stamp>3:
@@ -286,7 +302,21 @@ class Station:
             if track_id in self.saved:return self.saved[track_id]
             result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,boxes=[d['bbox']]),
                                  include_image=False,include_frame=True)
-            payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source='yolo26n',actor='Камеры')
+            if temporal and result['detections'][0]['length_m'] is not None:
+                from web_app.temporal_capture import refine, WINDOW_SECONDS, MAX_FRAMES
+                from vehicle_metrology.temporal import apply_passage
+                expected_epoch=self.side.epoch if epoch is None else epoch
+                packets=[p for p in self.side.snapshot() if abs(p.stamp-a.stamp)<=WINDOW_SECONDS]
+                packets=sorted(sorted(packets,key=lambda p:abs(p.stamp-a.stamp))[:MAX_FRAMES],key=lambda p:p.seq)
+                if expected_epoch != self.side.epoch:
+                    raise HTTPException(409,'Камера переподключилась во время измерения')
+                passage=refine(self.profile,d['bbox'],((p.seq,p.image()) for p in packets))
+                if expected_epoch != self.side.epoch or self.stop.is_set():
+                    raise HTTPException(409,'Измерение прервано переподключением или остановкой камеры')
+                passage.update(detector_model=self.profile.detector_model,imgsz=self.profile.detector_imgsz,
+                               anchor_frame=a.seq,window_seconds=WINDOW_SECONDS)
+                result['detections'][0]=apply_passage(result['detections'][0],passage)
+            payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source=self.profile.detector_model,actor='Камеры',temporal=temporal)
             paired=None;samples=[]
             if b is not None:
                 paired=dict(kind='ip',frame=b.seq,side_seconds=a.stamp,front_seconds=b.stamp,
@@ -384,7 +414,7 @@ def start():
         if not cfg.side_url or not cfg.front_url:raise HTTPException(422,'Сначала настройте адреса камер')
         profile=cfg.profile or wb.operator_calibration()
         if not isinstance(profile,wb.Profile):profile=wb.Profile.model_validate(profile)
-        if not (profile.references or profile.metric_rulers) or len(profile.polygon)<4:raise HTTPException(422,'Сначала загрузите настройку измерения')
+        if not (profile.references or profile.metric_rulers or profile.survey_calibration) or len(profile.polygon)<4:raise HTTPException(422,'Сначала загрузите настройку измерения')
         wb.require_gpu()
         active=Station(cfg,profile);active.start()
         return {'running':True,'id':active.id}

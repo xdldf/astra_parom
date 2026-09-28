@@ -309,7 +309,7 @@ start().catch(e=>{toast(e.message);$('systemStatus').textContent='⚠ Ошибк
 let ipMode=false,ipRunning=false,ipPollTimer=null;
 let liveSource=null, liveGeneration=0, liveSnapshot=null, importedProfile=null;
 let liveTracks=new LiveTracks(), streamId=null, streamFrame=0, streamTimer=null, streamStarting=false;
-function calibrationLabel(){const p=liveSource?.profile||importedProfile;$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
+function calibrationLabel(){const p=liveSource?.profile||importedProfile;if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
 async function workbench(path,body){const response=await fetch('/api/workbench'+path,body instanceof FormData?{method:'POST',body}:body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
 async function stopStream(){const id=streamId;streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
 async function startStream(){
@@ -328,7 +328,7 @@ async function pollStream(id,generation){
  $('liveCar').replaceChildren();result.detections.forEach((d,i)=>{const option=document.createElement('option');option.value=i;option.textContent=(i+1)+': '+d.label+' · '+(d.length_m==null?'длина не измерена':d.length_m.toFixed(2)+' м');$('liveCar').append(option);});$('captureLive').disabled=!result.detections.length;
       const tracks=liveTracks.update(result.detections,frame/source.media.fps);
       if($('autoMeasure').checked){for(let i=0;i<result.detections.length;i++){const d=result.detections[i],t=tracks[i];if(t.sent)continue;
-        if(d.length_m!=null){t.sent=true;queueLive({source,frame},d).catch(e=>{t.sent=false;toast(e.message);});continue;}
+        if(captureCandidate(d)){t.sent=true;queueLive({source,frame},d).catch(e=>{t.sent=false;toast(e.message);});continue;}
         const line=source.profile.measurement_line_x,prev=t.previous;
         if(line!=null&&prev&&d.depth!=null){const before=prev.box[0]+prev.box[2]/2-line,after=d.bbox[0]+d.bbox[2]/2-line;
           if(before*after<0&&frame/source.media.fps-prev.time<2){t.sent=true;const crossFrame=Math.round((prev.time+(frame/source.media.fps-prev.time)*Math.abs(before)/(Math.abs(before)+Math.abs(after)))*source.media.fps);
@@ -347,8 +347,9 @@ window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===
 $('captureLive').onclick=()=>action(async()=>{const snapshot=structuredClone(liveSnapshot),d=snapshot?.detections[Number($('liveCar').value)];if(d)await queueLive(snapshot,d);});
 try{const saved=JSON.parse(localStorage.getItem('ferryVideo'));if(saved?.media&&saved?.profile){liveSource=saved;calibrationLabel();$('liveStatus').textContent=saved.media.name;}}catch{}
 window.addEventListener('pagehide',()=>{if(streamId)fetch('/api/stream/'+streamId,{method:'DELETE',keepalive:true});});
+function captureCandidate(d){return d.length_m!=null||(d.at_measurement_line&&['outside_calibration','calibration_review'].includes(d.status));}
 async function queueLive(snapshot,d){
-  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:'yolo26n',actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
+  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:snapshot.source.profile.detector_model??'yolo26n',temporal:true,actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
   await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+record.id));return record;
 }
 $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
@@ -363,7 +364,7 @@ workbench('/operator-calibration').then(profile=>{importedProfile=profile;if(liv
 
 async function captureCrossing(source,frame,original){
   const result=await workbench('/frame/'+source.media.id,{profile:source.profile,frame,detect:true,confidence:.3,boxes:[]});
-  const eligible=result.detections.filter(d=>d.length_m!=null&&Math.abs(d.bottom[1]-original.bottom[1])<original.bbox[3]);
+  const eligible=result.detections.filter(d=>captureCandidate(d)&&Math.abs(d.bottom[1]-original.bottom[1])<original.bbox[3]);
   eligible.sort((a,b)=>Math.abs(a.bottom[1]-original.bottom[1])-Math.abs(b.bottom[1]-original.bottom[1]));
   if(!eligible.length)return false;await queueLive({source,frame},eligible[0]);return true;
 }

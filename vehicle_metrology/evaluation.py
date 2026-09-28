@@ -19,7 +19,19 @@ def metrics(rows):
         tail_warning='Descriptive sample percentiles, not population guarantees; small samples cannot establish tails.')
 
 
-def evaluate(tracks, ground_truth):
+def evaluate(tracks, ground_truth, tolerance_m=.05):
+    if not math.isfinite(tolerance_m) or tolerance_m <= 0:
+        raise ValueError('tolerance_m must be finite and positive')
+    tracks = list(tracks)
+    seen = set()
+    for track in tracks:
+        key = track.get('track_id')
+        if not key or key in seen:
+            raise ValueError('Empty or duplicate prediction track_id')
+        seen.add(key)
+        length = track.get('length_m')
+        if length is not None and (not math.isfinite(length) or length <= 0):
+            raise ValueError('Prediction length_m must be finite and positive, or null for rejection')
     truth={}
     with open(ground_truth,newline='',encoding='utf-8-sig') as stream:
         for row in csv.DictReader(stream):
@@ -44,7 +56,7 @@ def evaluate(tracks, ground_truth):
         error=float(track['length_m'])-gt['length_m']
         row=dict(track_id=key,vehicle_id=gt['vehicle_id'],truth_m=gt['length_m'],
             prediction_m=track['length_m'],error_m=error,absolute_error_m=abs(error),
-            relative_abs_error=abs(error)/gt['length_m'])
+            relative_abs_error=abs(error)/gt['length_m'],within_tolerance=abs(error) <= tolerance_m+1e-12)
         rows.append(row)
         vehicles[gt['vehicle_id']].append(row)
         interval=track.get('diagnostics',{}).get('uncertainty',{}).get('conditional_p95_m')
@@ -69,7 +81,15 @@ def evaluate(tracks, ground_truth):
                     error_m=frame['window_length_m']-gt['length_m'],x_m=frame['x_m'],y_m=frame['y_m'],heading_deg=heading))
     present={t['track_id'] for t in tracks}
     rejected=[t for t in tracks if t.get('length_m') is None]
+    passed = sum(row['within_tolerance'] for row in rows)
+    acceptance = dict(tolerance_m=tolerance_m, passed_tracks=passed,
+        failed_track_ids=[row['track_id'] for row in rows if not row['within_tolerance']],
+        fraction_of_measured_within_tolerance=passed/len(rows) if rows else None,
+        fraction_of_ground_truth_within_tolerance=passed/len(truth) if truth else None,
+        all_ground_truth_tracks_within_tolerance=bool(truth) and passed == len(truth),
+        note='Observed sample only. Missed and rejected vehicles do not count as passes; this is not a population guarantee.')
     return dict(metrics=metrics(rows),per_track=rows,per_vehicle={k:metrics(v) for k,v in sorted(vehicles.items())},
+        acceptance=acceptance,
         coverage=dict(ground_truth_tracks=len(truth),detected_tracks=len(tracks),accepted_matched=len(rows),
             fraction_of_ground_truth_measured=len(rows)/len(truth) if truth else None,
             missed_track_ids=sorted(set(truth)-present),unmatched_prediction_ids=sorted(present-set(truth)),

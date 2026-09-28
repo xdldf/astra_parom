@@ -1,0 +1,4 @@
+# Optional comparison tools. Install alongside the project dependencies in a
+# separate environment; RT-DETR in the app already uses Ultralytics.
+ultralytics==8.4.150
+rfdetr==1.11.0
