@@ -21,8 +21,9 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
     """Associate a short neighbourhood with one box and fit length at the line.
 
     Input frames are decoded observations, not repeated browser polls. At least
-    one actual box must satisfy the original measurement-line gate. Adjacent
-    evidence may extend to three line tolerances, capped at 60 original pixels.
+    one actual box must satisfy the original measurement-line gate.
+    Prefer the original narrow band. For fast passages with fewer than five
+    samples, use up to 20% of the anchor width, capped at 120 original pixels.
     No ground-depth extrapolation, imputed observations or catalogue dimensions.
     """
     if not math.isfinite(tolerance_m) or tolerance_m <= 0 or min_samples < 5:
@@ -32,8 +33,8 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
                   target_tolerance_m=tolerance_m, samples=[], diagnostics={})
     seen = set()
     rejected = []
-    has_line = False
     half_band = min(60., max(30., 3*line_tolerance_px))
+    extended_band = max(half_band, min(120., .2*anchor_box[2]))
     for frame in sorted(frames, key=lambda row: row['frame']):
         index = frame['frame']
         if type(index) is not int or index < 0 or index in seen:
@@ -50,18 +51,26 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
             continue
         box = matches[0][1]['bbox']
         offset = 0. if line_x is None else box[0]+box[2]/2-line_x
-        if abs(offset) > half_band:
+        if abs(offset) > extended_band:
             rejected.append(dict(frame=index, reason='outside_temporal_band'))
             continue
         measured = measure_box(box, polygon, scale, image_size)
         if measured['length_m'] is None:
             rejected.append(dict(frame=index, reason=measured['status']))
             continue
-        has_line |= abs(offset) <= line_tolerance_px
         result['samples'].append(dict(frame=index, bbox=list(box),
                                       line_offset_px=offset, length_m=measured['length_m']))
+    narrow = [s for s in result['samples'] if abs(s['line_offset_px']) <= half_band]
+    expanded = len(narrow) < min_samples
+    if not expanded:
+        rejected.extend(dict(frame=s['frame'],reason='outside_temporal_band')
+                        for s in result['samples'] if abs(s['line_offset_px']) > half_band)
+        result['samples'] = narrow
     samples = result['samples']
+    has_line = any(abs(s['line_offset_px']) <= line_tolerance_px for s in samples)
     result['diagnostics'].update(requested_frames=len(frames), used_frames=len(samples),
+                                 temporal_band_px=extended_band if expanded else half_band,
+                                 expanded_for_fast_passage=expanded and extended_band>half_band,
                                  excluded_frames=rejected,
                                  warning='Temporal consistency only; shared calibration and boundary bias remain unvalidated.')
     if len(samples) < min_samples:
@@ -96,6 +105,9 @@ def apply_passage(measurement, passage):
     result = dict(measurement, single_frame_length_m=measurement['length_m'], single_frame_status=measurement['status'],
                   temporal=passage, length_m=passage['length_m'])
     result['warnings'] = list(measurement.get('warnings', []))
+    counts=passage.get('diagnostics',{})
+    if 'requested_frames' in counts:
+        result['warnings'].append(f"Проверено кадров: {counts['requested_frames']}; использовано для длины: {counts['used_frames']}.")
     if passage['length_m'] is None:
         result['status'] = 'temporal_review'
         result['warnings'].append('Недостаточно устойчивых кадров одного автомобиля. Длина не назначена; требуется проверка.')

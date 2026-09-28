@@ -59,3 +59,21 @@ def test_stationary_vehicle_has_no_undefined_slope():
     result=measure(passage(offsets=[2]*7))
     assert np.isfinite(result['length_m'])
     assert result['diagnostics']['slope_m_per_px']==0
+
+
+def test_fast_passage_uses_bounded_neighbours_but_still_requires_line_evidence():
+    rows=passage(errors=[0]*5,offsets=[36,18,0,-18,-36])
+    result=measure(rows)
+    assert result['length_m']==pytest.approx(4,abs=.01)
+    assert len(result['samples'])==5
+    assert result['diagnostics']['expanded_for_fast_passage']
+    assert result['diagnostics']['temporal_band_px']==40
+    # No extrapolation from five observations on the same side of the line.
+    assert measure(passage(errors=[0]*5,offsets=[39,35,30,25,20]))['length_m'] is None
+    assert measure(passage(errors=[0]*5,offsets=[80,40,0,-40,-80]))['length_m'] is None
+
+
+def test_extended_window_keeps_bad_frames_visible():
+    result=measure(passage(errors=[0,0,.4,0,0],offsets=[36,18,0,-18,-36]))
+    assert result['length_m'] is None
+    assert 'unstable_temporal_length' in result['reasons']

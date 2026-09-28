@@ -5,6 +5,7 @@ import time
 import uuid
 import json
 import os
+from collections import deque
 from pathlib import Path
 from functools import lru_cache
 import numpy as np
@@ -72,6 +73,8 @@ class Camera:
         self.front_frame = None
         self.sequence = 0
         self.result = None
+        self.result_sequence = 0
+        self.results = deque(maxlen=128)
         self.error = None
         self.ended = False
         self.touched = time.monotonic()
@@ -197,13 +200,20 @@ class Camera:
                 index,raw=self.latest
             try:
                 result=wb.render_raw(raw,wb.FrameRequest(profile=self.request.profile,frame=index,detect=True),include_image=False)
-                self.result={**result,'frame':index}
+                self.publish_result(result,index)
                 self.inference_count+=1
                 last=index
                 self.error=None
             except Exception as exc:
                 self.error=str(exc)
                 self.stop.wait(1)
+
+    def publish_result(self, result, index):
+        # Browser polling must not erase intermediate crossing observations.
+        with self.condition:
+            self.result_sequence += 1
+            self.result = {**result,'frame':index,'sequence':self.result_sequence}
+            self.results.append(self.result)
 
     def recognize_plates(self):
         if not self.front:
@@ -281,10 +291,14 @@ def front_video(key: str):
 
 
 @router.get('/{key}/state')
-def state(key: str):
+def state(key: str, after_sequence: int = 0):
     c=get(key)
     elapsed=max(.001,time.monotonic()-c.started)
-    return {'result':c.result,'frame':c.display_frame,'error':c.error,'ended':c.ended,
+    with c.condition:
+        results=[r for r in c.results if r['sequence']>after_sequence]
+        gap=bool(c.results and after_sequence<c.results[0]['sequence']-1)
+        result=c.result
+    return {'result':result,'results':results,'result_gap':gap,'frame':c.display_frame,'error':c.error,'ended':c.ended,
             'plates':c.plate_result,'plate_error':c.plate_error,
             'front_frame':c.front_frame,
             'front_seconds':None if c.front_frame is None else c.front_frame/c.front['fps'],

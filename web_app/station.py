@@ -175,6 +175,12 @@ class Capture(BaseModel):
     front_offset_seconds: float=Field(3,ge=-3600,le=3600,allow_inf_nan=False)
 
 
+class CrossingCapture(Capture):
+    before_frame: int = Field(ge=0)
+    before_bbox: tuple[float,float,float,float]
+    temporal: Literal[True] = True
+
+
 def new_record(fields,source=None,tariffs=True):
     stamp=now()
     tariff=station_quote(fields,tariffs)
@@ -217,6 +223,25 @@ def create(fields: Fields):
         db.execute('INSERT INTO vehicles VALUES(?,?,?,?)',(record['id'],None,1,json.dumps(record,ensure_ascii=False)))
         event(db,record,fields.actor,'create',fields.reason)
     return record
+
+
+@router.post('/capture-crossing')
+def capture_crossing(payload: CrossingCapture):
+    from web_app.temporal_capture import find_video_crossing
+    workbench.read_frame(payload.media_id,payload.frame)
+    try:
+        found = find_video_crossing(payload.profile,workbench.media[payload.media_id],
+            payload.before_frame,payload.before_bbox,payload.frame,payload.bbox)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
+    if found['frame'] is None:
+        return dict(captured=False,**found)
+    detection = found.pop('detection')
+    values = payload.model_dump(exclude={'before_frame','before_bbox'})
+    values.update(frame=found['frame'],bbox=detection['bbox'],label=detection['label'],
+                  source=payload.profile.detector_model,temporal=True)
+    record = capture(Capture.model_validate(values))
+    return dict(captured=True,record=record,**found)
 
 
 @router.post('/capture')

@@ -1,3 +1,9 @@
+## Working-mode multi-frame crossing recovery — 2026-09-28
+
+- **216 Python tests and 39 frontend tests passed.** Added regression coverage for intermediate detections between browser polls, bounded per-viewer result history, real-frame crossing search through the API, duplicate persistence, ambiguous neighbours, adaptive temporal bands and IP recovery beyond the three nearest packets.
+- Working video capture searches neighbouring original frames after a skipped crossing. IP recovery searches a bounded packet window. Temporal evidence expands only when the original narrow band lacks five samples; the actual line gate, depth support, association and stability checks remain required.
+- Recomputed existing detections on 20 passages: RT-DETR X gives 19 numeric temporal estimates versus 9 before. Actual original-video replay saved three formerly rejected passenger estimates using 7–14 frames; an out-of-calibration truck anchor stayed unmeasured. These results are coverage/consistency evidence, not ±10 cm validation or measured live GPU throughput. [Details](docs/CROSSING_RECOVERY_2026-09-28.md).
+
 ## Detector selector fix — 2026-09-28
 
 - Reproduced in the browser: selecting RT-DETR before opening media silently reverted to YOLO26 M because no profile existed. The selected model and resolution now carry into the next new media profile and its first detection request. Imported profiles keep their own detector settings.

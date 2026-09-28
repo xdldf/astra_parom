@@ -3,11 +3,71 @@ import math
 
 import cv2
 
+from vehicle_metrology.detection import box_iou
 from vehicle_metrology.temporal import measure_passage, apply_passage
 from web_app import workbench as wb
 
 WINDOW_SECONDS = .45
 MAX_FRAMES = 31
+
+
+def crossing_fraction(profile, before_box, after_box):
+    line = profile.measurement_line_x
+    if line is None:
+        raise ValueError('A measurement line is required')
+    width, height = profile.image_size
+    for box in (before_box, after_box):
+        x, y, w, h = box
+        if (not all(math.isfinite(v) for v in box) or min(x,y)<0 or min(w,h)<=2
+                or x+w>width or y+h>height):
+            raise ValueError('Invalid crossing box')
+    before = before_box[0]+before_box[2]/2-line
+    after = after_box[0]+after_box[2]/2-line
+    if before*after >= 0:
+        raise ValueError('Observed boxes must straddle the measurement line')
+    return abs(before)/(abs(before)+abs(after))
+
+
+def crossing_match(detections, expected_box):
+    """Recover the same vehicle, never a neighbour merely close to the line."""
+    matches = sorted(((box_iou(expected_box,d['bbox']),d) for d in detections),
+                     key=lambda pair:pair[0],reverse=True)
+    if not matches or matches[0][0]<.5 or (len(matches)>1 and matches[1][0]>.4):
+        return None
+    candidate = matches[0][1]
+    return candidate if candidate.get('at_measurement_line') and capture_candidate(candidate) else None
+
+
+def find_video_crossing(profile, item, before_frame, before_box, after_frame, after_box):
+    """Search actual neighbours of a skipped crossing; keep the original line gate."""
+    fps = item.get('fps',0)
+    if (item.get('kind')!='video' or not math.isfinite(fps) or fps<=0
+            or not 0<=before_frame<after_frame<item['frames']
+            or (after_frame-before_frame)/fps>2):
+        raise ValueError('Crossing requires two video observations at most two seconds apart')
+    fraction = crossing_fraction(profile,before_box,after_box)
+    predicted = round(before_frame+fraction*(after_frame-before_frame))
+    radius = min((MAX_FRAMES-1)//2,max(2,round(fps*WINDOW_SECONDS)))
+    first,last = max(before_frame,predicted-radius),min(after_frame,predicted+radius)
+    capture = cv2.VideoCapture(str(item['path']))
+    examined = 0
+    try:
+        capture.set(cv2.CAP_PROP_POS_FRAMES,first)
+        for index in range(first,last+1):
+            ok,raw = capture.read()
+            if not ok:
+                break
+            result = wb.render_raw(raw,wb.FrameRequest(profile=profile,frame=index,detect=True),include_image=False)
+            examined += 1
+            t = (index-before_frame)/(after_frame-before_frame)
+            expected = [a+t*(b-a) for a,b in zip(before_box,after_box)]
+            candidate = crossing_match(result['detections'],expected)
+            if candidate is not None:
+                return dict(frame=index,detection=candidate,examined_frames=examined,predicted_frame=predicted)
+    finally:
+        capture.release()
+    return dict(frame=None,examined_frames=examined,predicted_frame=predicted,
+                reason='Не найден кадр этого автомобиля у линии. Проверьте проезд вручную.')
 
 
 def capture_candidate(detection):

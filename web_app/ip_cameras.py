@@ -234,7 +234,7 @@ class Station:
                     self.sequence+=1;self.condition.notify_all()
 
     def infer(self):
-        from web_app.temporal_capture import capture_candidate
+        from web_app.temporal_capture import capture_candidate, crossing_match, WINDOW_SECONDS, MAX_FRAMES
         last=-1
         epoch=None
         while not self.stop.wait(.015):
@@ -268,13 +268,17 @@ class Station:
                         before=previous[0]+previous[2]/2-line;after=d['bbox'][0]+d['bbox'][2]/2-line
                         if before*after<0 and a.stamp-previous_time<2:
                             when=previous_time+(a.stamp-previous_time)*abs(before)/(abs(before)+abs(after))
-                            for packet in sorted(self.side.snapshot(),key=lambda p:abs(p.stamp-when))[:3]:
+                            packets=[p for p in self.side.snapshot() if previous_time<=p.stamp<=a.stamp
+                                     and abs(p.stamp-when)<=WINDOW_SECONDS]
+                            for packet in sorted(packets,key=lambda p:abs(p.stamp-when))[:MAX_FRAMES]:
                                 pp=pair_packets([packet],self.front.snapshot(),self.cfg.offset_seconds,self.cfg.tolerance_ms/1000,time.monotonic())
                                 if not pp:pp=(packet,None,None)
                                 rr=wb.render_raw(packet.image(),wb.FrameRequest(profile=self.profile,frame=packet.seq,detect=True),include_image=False)
-                                choices=[v for v in rr['detections'] if capture_candidate(v) and iou(v['bbox'],d['bbox'])>.2]
-                                if choices:
-                                    candidate=max(choices,key=lambda v:iou(v['bbox'],d['bbox']));capture_pair=pp;break
+                                t=(packet.stamp-previous_time)/(a.stamp-previous_time)
+                                expected=[v+t*(w-v) for v,w in zip(previous,d['bbox'])]
+                                match=crossing_match(rr['detections'],expected)
+                                if match is not None:
+                                    candidate=match;capture_pair=pp;break
                     if capture_candidate(candidate):
                         track['pending']=(capture_pair,candidate,current_epoch)
             except Exception:

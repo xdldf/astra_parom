@@ -4,9 +4,10 @@ import cv2
 import numpy as np
 import pytest
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
 
 from web_app import workbench as wb, station, ip_cameras as ip
-from web_app.temporal_capture import video_frames
+from web_app.temporal_capture import video_frames, crossing_match
 
 
 @pytest.fixture
@@ -120,3 +121,80 @@ def test_uncalibrated_crossing_is_reviewed_without_relaxing_line_gate(setup):
     assert record['source']['measurement']['single_frame_status']=='outside_calibration'
     with pytest.raises(HTTPException):
         camera.capture((packet,None,None),dict(bbox=[350,325,100,75],label='truck'),'off-line',temporal=True)
+
+
+def test_crossing_search_recovers_real_frame_when_interpolation_misses_line(setup,monkeypatch):
+    path,profile=setup
+    video=path/'crossing.avi'
+    writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+    assert writer.isOpened()
+    for i in range(50):writer.write(np.full((500,600,3),i,np.uint8))
+    writer.release()
+    monkeypatch.setitem(wb.media,'crossing',dict(path=video,kind='video',fps=25,frames=50))
+    def detect(image,*args,**kwargs):
+        i=round(float(image.mean()))
+        center=400-(i-10)*100/12 if i<=22 else 300-(i-22)*100/8
+        return [dict(bbox=[center-100,150,200,75],label='car')]
+    monkeypatch.setattr(wb,'detect_vehicles',detect)
+    payload=station.CrossingCapture(media_id='crossing',profile=profile,
+        before_frame=10,before_bbox=[300,150,200,75],frame=30,bbox=[100,150,200,75])
+    from web_app.main import app
+    response=TestClient(app).post('/api/station/capture-crossing',json=payload.model_dump())
+    assert response.status_code==200
+    recovered=response.json()
+    assert recovered['captured']
+    assert recovered['predicted_frame']==20
+    assert 20<recovered['frame']<=23  # MJPG levels may round by one; predicted frame still misses.
+    assert recovered['examined_frames']>1
+    record=recovered['record']
+    assert record['length_m']==pytest.approx(10)
+    assert record['source']['frame']==recovered['frame']
+    assert record['source']['measurement']['at_measurement_line']
+    assert len(record['source']['measurement']['temporal']['samples'])>=5
+    assert record['source']['measurement']['temporal']['accuracy_validated'] is False
+    assert station.capture_crossing(payload)['record']['id']==record['id']
+    with pytest.raises(HTTPException):
+        station.capture_crossing(payload.model_copy(update={'before_frame':31}))
+
+
+def test_crossing_search_does_not_replace_target_with_neighbour():
+    expected=[200,150,200,100]
+    target=dict(bbox=expected,length_m=4,at_measurement_line=True,status='depth_calibrated')
+    neighbour=dict(target,bbox=[200,350,200,100])
+    assert crossing_match([neighbour],expected) is None
+    assert crossing_match([target,neighbour],expected) is target
+    assert crossing_match([target,dict(target,bbox=[210,150,200,100])],expected) is None
+    assert crossing_match([dict(target,at_measurement_line=False)],expected) is None
+
+
+def test_ip_search_recovers_crossing_beyond_three_nearest_packets(setup,monkeypatch):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    start=time.monotonic()-.8
+    jpeg=cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes()
+    packets=[ip.Packet(i+1,start+.04*i,jpeg) for i in range(21)]
+    camera.side.packets.extend(packets)
+    arrivals=iter([packets[0],packets[-1]])
+    class Stop:
+        count=0
+        def wait(self,*args):
+            self.count+=1
+            return self.count>2
+        def is_set(self):return self.count>2
+    camera.stop=Stop()
+    monkeypatch.setattr(camera,'fresh',lambda side:next(arrivals))
+    monkeypatch.setattr(camera,'paired',lambda:None)
+    seen=[]
+    def render(raw,request,**kwargs):
+        from vehicle_metrology.bbox_scale import measure_box
+        seen.append(request.frame)
+        center={1:360,21:240,8:300}.get(request.frame,360)
+        measured=measure_box([center-100,150,200,75],profile.polygon,wb.profile_scale(profile),
+            profile.image_size,profile.measurement_line_x,profile.line_tolerance_px)
+        return dict(detections=[dict(measured,label='car')])
+    monkeypatch.setattr(wb,'render_raw',render)
+    camera.infer()
+    assert len(camera.tracks)==1
+    pending=camera.tracks[0]['pending']
+    assert pending[0][0].seq==8 and pending[1]['at_measurement_line']
+    assert len(seen)>5  # Two live observations plus more than three recovery attempts.

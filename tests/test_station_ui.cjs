@@ -14,7 +14,7 @@ async function stationUI(){
   let responder=()=>({status:404,data:{detail:'Not configured'}});
   const sandbox=vm.createContext({document,console,URLSearchParams,FormData,structuredClone,
     localStorage:{getItem:()=>null,setItem(){}},location:{search:'',origin:'http://station'},
-    window:{addEventListener(){}},LiveTracks:class {},setTimeout:()=>1,clearTimeout(){},setInterval(){},
+    window:{addEventListener(){}},LiveTracks:require('../web_app/static/live-tracks.js'),setTimeout:()=>1,clearTimeout(){},setInterval(){},
     fetch:async(path,options={})=>{
       requests.push({path,options});const {status=200,data,etag='v1'}=await responder(path,options);
       return {ok:status>=200&&status<300,status,json:async()=>data,headers:{get:()=>etag}};
@@ -159,4 +159,34 @@ test('reference submission sends the separately verified length and actual opera
   const request=ui.requests.at(-1);
   assert.equal(request.path,'/api/station/vehicles/old/calibration-reference');
   assert.deepEqual(JSON.parse(request.options.body),{version:3,actor:'Анна',enabled:true,actual_length_m:6.25,verified:true});
+});
+
+test('video polling processes the middle crossing even when the latest frame passed the line',async()=>{
+  const ui=await stationUI();
+  ui.run(`streamId='clip';liveGeneration=1;liveSource={media:{id:'clip',fps:25,frames:100},profile:{measurement_line_x:300}};
+    $('autoMeasure').checked=true;var captures=[];queueLive=async(snapshot,d)=>{captures.push(snapshot.frame)};`);
+  const results=[340,300,260].map((center,i)=>({sequence:i+1,frame:20+2*i,detections:[{
+    bbox:[center-50,150,100,75],bottom:[center,225],depth:.5,label:'car',
+    length_m:center===300?5:null,at_measurement_line:center===300,status:center===300?'depth_calibrated':'waiting_for_line'}]}));
+  ui.respond(path=>({data:{frame:24,result:results[2],results:path.endsWith('=3')?[]:results}}));
+  await ui.run("pollStream('clip',1)");
+  assert.equal(ui.run('JSON.stringify(captures)'),'[22]');
+  assert.equal(ui.run('streamResultCursor'),3);
+  await ui.run("pollStream('clip',1)");
+  assert.ok(ui.requests.at(-1).path.endsWith('after_sequence=3'));
+  assert.equal(ui.run('captures.length'),1);
+});
+
+test('skipped video crossing sends both observed boxes for server-side neighbourhood search',async()=>{
+  const ui=await stationUI();
+  ui.run('loadVehicles=async()=>{};renderRecord=()=>{};');
+  ui.respond(path=>({data:path.endsWith('/capture-crossing')?{captured:true,record:{id:'found'}}:{id:'found'}}));
+  assert.equal(await ui.run(`captureCrossing({media:{id:'clip',fps:25},profile:{detector_model:'rtdetr-x'}},30,
+    {bbox:[200,150,100,75],label:'car'},{box:[300,150,100,75],time:.4})`),true);
+  const request=ui.requests.find(r=>r.path.endsWith('/capture-crossing'));
+  const body=JSON.parse(request.options.body);
+  assert.equal(body.frame,30);assert.equal(body.before_frame,10);
+  assert.deepEqual(body.before_bbox,[300,150,100,75]);
+  assert.equal(body.temporal,true);assert.equal(body.source,'rtdetr-x');
+  assert.ok(ui.requests.every(r=>!r.path.includes('/workbench/frame/')));
 });

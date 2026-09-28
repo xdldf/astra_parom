@@ -308,22 +308,24 @@ async function start(){
 start().catch(e=>{toast(e.message);$('systemStatus').textContent='⚠ Ошибка подключения';});
 let ipMode=false,ipRunning=false,ipPollTimer=null;
 let liveSource=null, liveGeneration=0, liveSnapshot=null, importedProfile=null;
-let liveTracks=new LiveTracks(), streamId=null, streamFrame=0, streamTimer=null, streamStarting=false;
+let liveTracks=new LiveTracks(), streamId=null, streamFrame=0, streamTimer=null, streamStarting=false,streamResultCursor=0;
 function calibrationLabel(){const p=liveSource?.profile||importedProfile;if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
 async function workbench(path,body){const response=await fetch('/api/workbench'+path,body instanceof FormData?{method:'POST',body}:body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
 async function stopStream(){const id=streamId;streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
 async function startStream(){
  if(streamStarting||streamId)return;if(!liveSource){toast('Откройте видео');return;}streamStarting=true;
- try{const response=await fetch('/api/stream/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_id:liveSource.media.id,profile:liveSource.profile,frame:streamFrame,front_media_id:liveSource.frontMedia?.id,front_offset_seconds:liveSource.frontOffset??3})});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));streamId=data.id;liveGeneration++;liveTracks=new LiveTracks();liveSnapshot=null;$('operatorDetection').src='/api/stream/'+streamId+'/video';if(liveSource.frontMedia)$('frontStream').src='/api/stream/'+streamId+'/front';$('streamPlay').textContent='Ⅱ Пауза';pollStream(streamId,liveGeneration);}
+ try{const response=await fetch('/api/stream/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_id:liveSource.media.id,profile:liveSource.profile,frame:streamFrame,front_media_id:liveSource.frontMedia?.id,front_offset_seconds:liveSource.frontOffset??3})});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));streamId=data.id;streamResultCursor=0;liveGeneration++;liveTracks=new LiveTracks();liveSnapshot=null;$('operatorDetection').src='/api/stream/'+streamId+'/video';if(liveSource.frontMedia)$('frontStream').src='/api/stream/'+streamId+'/front';$('streamPlay').textContent='Ⅱ Пауза';pollStream(streamId,liveGeneration);}
  catch(e){toast(e.message);}finally{streamStarting=false;}
 }
 async function pollStream(id,generation){
  if(id!==streamId||generation!==liveGeneration)return;
- try{const response=await fetch('/api/stream/'+id+'/state');if(!response.ok)throw Error('Поток завершён. Нажмите Пуск для повторного запуска.');const state=await response.json();if(id!==streamId||generation!==liveGeneration)return;
+ try{const response=await fetch('/api/stream/'+id+'/state?after_sequence='+streamResultCursor);if(!response.ok)throw Error('Поток завершён. Нажмите Пуск для повторного запуска.');const state=await response.json();if(id!==streamId||generation!==liveGeneration)return;
  streamFrame=state.frame;$('frontStatus').textContent=state.front_seconds==null?'Не подключена':state.plate_error?'Номер временно недоступен':(state.plates?.candidates?.map(p=>p.text).join(', ')||'Камера работает');$('syncStatus').textContent=state.sync_error_ms==null?'Одна камера':'Камеры синхронизированы';$('streamSeek').value=100*streamFrame/(liveSource.media.frames-1);
  $('detectionStatus').textContent=state.error?'Не удалось обработать изображение':'Измерение работает';
- const result=state.result,source=structuredClone(liveSource);
- if(result&&result.frame!==liveSnapshot?.frame){const frame=result.frame;
+ const source=structuredClone(liveSource),results=state.results??(state.result?[state.result]:[]);
+ if(state.result_gap)toast('Обработка кадров отстала. Проверьте последние проезды.');
+ for(const result of results){if(result.frame===liveSnapshot?.frame)continue;const frame=result.frame;
+ streamResultCursor=Math.max(streamResultCursor,result.sequence??0);
  liveSnapshot={source,frame,detections:result.detections};
  $('liveCar').replaceChildren();result.detections.forEach((d,i)=>{const option=document.createElement('option');option.value=i;option.textContent=(i+1)+': '+d.label+' · '+(d.length_m==null?'длина не измерена':d.length_m.toFixed(2)+' м');$('liveCar').append(option);});$('captureLive').disabled=!result.detections.length;
       const tracks=liveTracks.update(result.detections,frame/source.media.fps);
@@ -331,8 +333,8 @@ async function pollStream(id,generation){
         if(captureCandidate(d)){t.sent=true;queueLive({source,frame},d).catch(e=>{t.sent=false;toast(e.message);});continue;}
         const line=source.profile.measurement_line_x,prev=t.previous;
         if(line!=null&&prev&&d.depth!=null){const before=prev.box[0]+prev.box[2]/2-line,after=d.bbox[0]+d.bbox[2]/2-line;
-          if(before*after<0&&frame/source.media.fps-prev.time<2){t.sent=true;const crossFrame=Math.round((prev.time+(frame/source.media.fps-prev.time)*Math.abs(before)/(Math.abs(before)+Math.abs(after)))*source.media.fps);
-          captureCrossing(source,crossFrame,d).then(ok=>{if(!ok)t.sent=false;}).catch(e=>{t.sent=false;toast(e.message);});}}
+          if(before*after<0&&frame/source.media.fps-prev.time<2){t.sent=true;
+          captureCrossing(source,frame,d,prev).then(ok=>{if(!ok)t.sent=false;}).catch(e=>{t.sent=false;toast(e.message);});}}
         }}
 
  }
@@ -362,11 +364,14 @@ $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!fil
 }catch(error){toast(error.message);}e.target.value='';};
 workbench('/operator-calibration').then(profile=>{importedProfile=profile;if(liveSource&&profile.image_size.toString()===liveSource.media.image_size.toString()){liveSource.profile=profile;liveGeneration++;}calibrationLabel();}).catch(()=>calibrationLabel());
 
-async function captureCrossing(source,frame,original){
-  const result=await workbench('/frame/'+source.media.id,{profile:source.profile,frame,detect:true,confidence:.3,boxes:[]});
-  const eligible=result.detections.filter(d=>captureCandidate(d)&&Math.abs(d.bottom[1]-original.bottom[1])<original.bbox[3]);
-  eligible.sort((a,b)=>Math.abs(a.bottom[1]-original.bottom[1])-Math.abs(b.bottom[1]-original.bottom[1]));
-  if(!eligible.length)return false;await queueLive({source,frame},eligible[0]);return true;
+async function captureCrossing(source,frame,original,previous){
+  const result=await api('/capture-crossing',{media_id:source.media.id,profile:source.profile,
+    frame,bbox:original.bbox,label:original.label,source:source.profile.detector_model??'yolo26n',temporal:true,
+    before_frame:Math.round(previous.time*source.media.fps),before_bbox:previous.box,
+    actor:$('actor').value||'Оператор',front_media_id:source.frontMedia?.id,front_session_id:streamId,
+    front_offset_seconds:source.frontOffset??3});
+  if(!result.captured){toast(result.reason||'Не удалось восстановить проезд у линии. Проверьте вручную.');return false;}
+  await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+result.record.id));return true;
 }
 
 $('expandMeasurement').onclick=()=>{if(!current?.side_photo)return;$('measurementTitle').textContent='Фото измеренного автомобиля';$('expandedMeasurement').src=$('selectedMeasurement').src;$('measurementCaption').textContent=`${current.plate||'Номер не указан'} · ${lengthText(current.measured_length_m)}${current.source?' · кадр '+current.source.frame:''}`;$('measurementDialog').showModal();};
