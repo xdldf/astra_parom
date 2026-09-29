@@ -303,6 +303,19 @@ def camera_frame():
                 captured_at=datetime.now(timezone.utc).isoformat(),name='Боковая камера · кадр для калибровки')
 
 
+class DetectorChoice(BaseModel):
+    detector_model: Literal['yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x']
+    detector_imgsz: Literal[640,1280] = 640
+
+
+@router.post('/detector/check')
+def prepare_detector(choice: DetectorChoice):
+    """Load and exercise the requested weights before interrupting a running source."""
+    detect_vehicles(np.zeros((640,640,3),dtype=np.uint8),
+                    detector_model=choice.detector_model,imgsz=choice.detector_imgsz)
+    return {'model':choice.detector_model,'imgsz':choice.detector_imgsz,'ready':True}
+
+
 def detect_vehicles(frame, confidence=.35, *, detector_model='yolo26n', imgsz=640):
     global model
     device = require_gpu()

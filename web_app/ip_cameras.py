@@ -467,13 +467,49 @@ def configure(cfg: Settings):
 
 @router.post('/calibration')
 def calibration(profile: wb.Profile):
+    global active
     with guard:
-        if active:raise HTTPException(409,'Сначала остановите камеры')
         profile=wb.approved_references(profile)
-        cfg=settings();cfg.profile=profile
+        cfg=settings();previous=active
+        if previous:
+            if len(profile.polygon)<4 or not (profile.references or profile.metric_rulers or profile.survey_calibration):
+                raise HTTPException(422,'Нужна дорога и эталоны или мерные линии')
+            if wb.detector_settings(previous.profile)!=wb.detector_settings(profile):
+                wb.prepare_detector(wb.DetectorChoice(**profile.model_dump()))
+        cfg.profile=profile
         temporary=CONFIG.with_suffix('.tmp')
-        temporary.write_text(cfg.model_dump_json(),encoding='utf-8');temporary.replace(CONFIG)
-    return {'saved':True,'image_size':profile.image_size}
+        # Disk and model failures must leave the previous cameras running.
+        temporary.write_text(cfg.model_dump_json(),encoding='utf-8')
+        replacement=Station(cfg,profile) if previous else None
+        if previous:previous.close()
+        try:
+            if replacement:replacement.start()
+            temporary.replace(CONFIG)
+        except Exception as exc:
+            if replacement:replacement.close()
+            temporary.unlink(missing_ok=True)
+            active=None
+            if previous:
+                restored=Station(previous.cfg,previous.profile)
+                try:
+                    restored.start();active=restored
+                except Exception:
+                    restored.close()
+                    raise HTTPException(503,'Настройка не применена; камеры остановлены. Подключите их повторно.') from exc
+            raise HTTPException(503,'Настройка не применена; предыдущая настройка сохранена.') from exc
+        active=replacement
+        return {'saved':True,'image_size':profile.image_size,'profile':profile,
+                'running':active is not None,'restarted':previous is not None,
+                'id':active.id if active else None,'detector':wb.detector_settings(profile)}
+
+
+@router.post('/detector')
+def change_detector(choice: wb.DetectorChoice):
+    # Read the latest source profile under the same lock as apply. Only these
+    # two fields change; a stale browser cannot overwrite the road calibration.
+    with guard:
+        profile=current_calibration().model_copy(update=choice.model_dump())
+        return calibration(profile)
 
 
 @router.get('/calibration')

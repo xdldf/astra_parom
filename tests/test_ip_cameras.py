@@ -284,3 +284,85 @@ def test_calibration_frame_can_open_camera_before_first_calibration(tmp_path,mon
     assert continued['lens']['tilt_deg']==2 and continued['measurement_line_x']==300
     ip.CONFIG.write_text(ip.Settings().model_dump_json())
     assert client.post('/api/workbench/camera-frame').status_code==409
+
+
+@pytest.fixture
+def configured_switch_station(tmp_path,monkeypatch):
+    monkeypatch.setattr(ip,'CONFIG',tmp_path/'ip.json')
+    profile=wb.Profile(image_size=(600,500),detector_model='yolo26m',
+        polygon=[(20,200),(580,200),(580,450),(20,450)],
+        references=[{'bbox':[100,150,100,75],'length_m':5}],measurement_line_x=300)
+    cfg=ip.Settings(side_url='rtsp://user:secret@localhost/side',front_url='rtsp://localhost/front',
+                    offset_seconds=.15,auto_measure=False,profile=profile)
+    ip.CONFIG.write_text(cfg.model_dump_json())
+    old=ip.Station(cfg,profile);monkeypatch.setattr(ip,'active',old)
+    started=[];prepared=[]
+    monkeypatch.setattr(ip.Station,'start',lambda self:started.append(self))
+    monkeypatch.setattr(wb,'prepare_detector',lambda choice:prepared.append(choice))
+    return old,started,prepared,TestClient(app)
+
+
+def test_switch_running_detector_preserves_geometry_and_reconnects(configured_switch_station):
+    old,started,prepared,client=configured_switch_station
+    response=client.post('/api/ip/detector',json={'detector_model':'rtdetr-x','detector_imgsz':1280})
+    assert response.status_code==200,response.text
+    assert response.json()['restarted'] and response.json()['running']
+    assert 'secret' not in response.text
+    assert old.stop.is_set() and ip.active is started[0] and len(started)==1
+    assert len(prepared)==1 and prepared[0].detector_model=='rtdetr-x'
+    p=ip.active.profile
+    assert p.polygon==old.profile.polygon and p.references==old.profile.references
+    assert p.lens==old.profile.lens and p.measurement_line_x==300
+    assert not ip.active.cfg.auto_measure and ip.active.cfg.offset_seconds==.15
+    assert ip.settings().profile==p
+    assert client.get('/api/ip/calibration').json()['detector_model']=='rtdetr-x'
+    assert client.get('/api/ip/state').json()['detector']=={'model':'rtdetr-x','imgsz':1280}
+
+
+def test_failed_model_preflight_does_not_stop_or_save(configured_switch_station,monkeypatch):
+    old,started,prepared,client=configured_switch_station
+    before=ip.CONFIG.read_bytes()
+    def fail(_):raise wb.HTTPException(503,'Weights unavailable')
+    monkeypatch.setattr(wb,'prepare_detector',fail)
+    response=client.post('/api/ip/detector',json={'detector_model':'rtdetr-x'})
+    assert response.status_code==503
+    assert ip.active is old and not old.stop.is_set() and not started
+    assert ip.CONFIG.read_bytes()==before
+
+
+def test_switch_start_failure_restores_old_station(configured_switch_station,monkeypatch):
+    old,started,prepared,client=configured_switch_station
+    before=ip.CONFIG.read_bytes()
+    def start(self):
+        started.append(self)
+        if self.profile.detector_model=='rtdetr-x':raise RuntimeError('Thread failed')
+    monkeypatch.setattr(ip.Station,'start',start)
+    response=client.post('/api/ip/detector',json={'detector_model':'rtdetr-x'})
+    assert response.status_code==503
+    assert len(started)==2 and started[0].stop.is_set()
+    assert ip.active is started[1] and ip.active.profile==old.profile
+    assert ip.CONFIG.read_bytes()==before
+
+
+def test_stopped_detector_can_be_saved_without_gpu_or_image(configured_switch_station,monkeypatch):
+    old,started,prepared,client=configured_switch_station
+    monkeypatch.setattr(ip,'active',None)
+    response=client.post('/api/ip/detector',json={'detector_model':'rtdetr-l'})
+    assert response.status_code==200 and not response.json()['running']
+    assert not prepared and not started
+    assert ip.settings().profile.detector_model=='rtdetr-l'
+    assert ip.settings().profile.polygon==old.profile.polygon
+    assert client.post('/api/ip/detector',json={'detector_model':'random.pt'}).status_code==422
+
+
+def test_running_full_calibration_applies_without_manual_stop(configured_switch_station):
+    old,started,prepared,client=configured_switch_station
+    updated=old.profile.model_dump();updated['line_tolerance_px']=23
+    response=client.post('/api/ip/calibration',json=updated)
+    assert response.status_code==200 and response.json()['restarted']
+    assert ip.active.profile.line_tolerance_px==23 and len(started)==1
+    assert not prepared  # Geometry-only edits reuse the already active detector.
+    invalid=dict(updated,polygon=[],references=[])
+    active_before=ip.active
+    assert client.post('/api/ip/calibration',json=invalid).status_code==422
+    assert ip.active is active_before and not ip.active.stop.is_set()

@@ -237,3 +237,57 @@ test('approximate saved lengths retain their numeric value and visible review re
   assert.match(length.textContent,/^≈ /);assert.match(length.textContent,/4,5/);
   assert.match(length.children[0].textContent,/Приблизительно/);assert.match(length.children[0].textContent,/расходится/);
 });
+
+test('operator detector selection survives polling and applies to running IP source',async()=>{
+ const ui=await stationUI();ui.run("ipMode=true;page='operator';showDetector({model:'yolo26m',imgsz:640},'server');");
+ ui.elements.get('operatorDetectorModel').value='rtdetr-x';ui.elements.get('operatorDetectorModel').onchange();
+ ui.run("showDetector({model:'yolo26m',imgsz:640},'server')");
+ assert.equal(ui.elements.get('operatorDetectorModel').value,'rtdetr-x');
+ ui.respond((path)=>({data:path.endsWith('/detector')?{detector:{model:'rtdetr-x',imgsz:640},running:true,restarted:true}:{running:true,id:'new-session',detector:{model:'rtdetr-x',imgsz:640}}}));
+ await ui.elements.get('applyDetector').onclick();
+ const req=ui.requests.find(r=>r.path==='/api/ip/detector');
+ assert.deepEqual(JSON.parse(req.options.body),{detector_model:'rtdetr-x',detector_imgsz:640});
+ assert.match(ui.elements.get('activeDetector').textContent,/RT-DETR X/);
+ assert.match(ui.elements.get('operatorDetectorStatus').textContent,/переподключены/);
+ assert.equal(ui.run('detectorEditDirty'),false);
+ assert.ok(ui.requests.every(r=>r.path!=='/api/ip/stop'));
+});
+
+test('failed model change preserves the running badge and keeps the requested selection for retry',async()=>{
+ const ui=await stationUI();ui.run("ipMode=true;showDetector({model:'yolo26m',imgsz:640},'server');");
+ ui.elements.get('operatorDetectorModel').value='rtdetr-x';ui.elements.get('operatorDetectorModel').onchange();
+ ui.respond(()=>({status:503,data:{detail:'Weights unavailable'}}));
+ await ui.elements.get('applyDetector').onclick();
+ assert.match(ui.elements.get('activeDetector').textContent,/YOLO26 M/);
+ assert.match(ui.elements.get('operatorDetectorStatus').textContent,/Weights unavailable/);
+ assert.equal(ui.elements.get('operatorDetectorModel').value,'rtdetr-x');
+ assert.equal(ui.run('detectorApplying'),false);
+});
+
+test('server video calibration wins over browser cache after reload, even without a saved camera pair',async()=>{
+ const ui=await stationUI();
+ ui.run("liveSource={media:{id:'local-video',image_size:[600,500]},profile:{detector_model:'yolo26m',image_size:[600,500]}};importedProfile=null;");
+ ui.respond(path=>path==='/api/stream/configuration'?{status:404,data:{}}:{data:{detector_model:'rtdetr-x',detector_imgsz:640,image_size:[600,500]}});
+ await ui.run('restoreVideoSettings()');
+ assert.equal(ui.run('liveSource.profile.detector_model'),'rtdetr-x');
+ assert.match(ui.elements.get('activeDetector').textContent,/RT-DETR X/);
+});
+
+test('late saved-profile response cannot replace a model in a running video',async()=>{
+ const ui=await stationUI();ui.run("liveSource={media:{id:'video',image_size:[600,500]},profile:{detector_model:'rtdetr-x'}};importedProfile=null;streamId='running';");
+ ui.respond(path=>path==='/api/stream/configuration'?{status:404,data:{}}:{data:{detector_model:'yolo26m',image_size:[600,500]}});
+ await ui.run('restoreVideoSettings()');
+ assert.equal(ui.run('liveSource.profile.detector_model'),'rtdetr-x');
+ assert.equal(ui.run('streamId'),'running');
+});
+
+test('video model preflight failure leaves existing video session and profile intact',async()=>{
+ const ui=await stationUI();
+ ui.run("ipMode=false;streamId='old';liveSource={media:{id:'video'},profile:{detector_model:'yolo26m'}};showDetector({model:'yolo26m',imgsz:640},'server');");
+ ui.elements.get('operatorDetectorModel').value='rtdetr-x';ui.elements.get('operatorDetectorModel').onchange();
+ ui.respond(()=>({status:503,data:{detail:'CUDA unavailable'}}));
+ await ui.elements.get('applyDetector').onclick();
+ assert.equal(ui.run('streamId'),'old');assert.equal(ui.run('liveSource.profile.detector_model'),'yolo26m');
+ assert.equal(ui.requests.length,1);assert.equal(ui.requests[0].path,'/api/workbench/detector/check');
+ assert.match(ui.elements.get('operatorDetectorStatus').textContent,/CUDA unavailable/);
+});

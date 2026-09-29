@@ -1,3 +1,9 @@
+## Detector application and practical calibration UI — 2026-09-29
+
+- **236 Python tests and 52 frontend tests passed.** Detector-only IP updates preserve geometry and settings, preflight weights before stopping a running source, reconnect automatically, and restore the old station if replacement startup fails.
+- UI tests cover apply without media, persistence after reload, operator switching, failed preflight, startup response races, separate source drafts, lens undo and image zoom. Existing measurement and queue tests remain unchanged except translated UI labels.
+- Browser verification used real HTTP APIs and isolated JSON/database files with stubbed receivers/model preflight: RT-DETR X apply + reload, RT-DETR L apply from operator, embedded calibration, original ST image correction and polygon. Actual NVIDIA GPU/live-camera operation could not be tested here. See [change notes](docs/SETTINGS_2026-09-29.md).
+
 ## Road-overlap estimates and visible runtime model — 2026-09-29
 
 - **231 Python tests and 43 frontend tests passed.** Working profiles now default to the user-requested estimate mode: bottom-edge overlap first, then any bbox/road overlap; unsupported depth and failed temporal checks can retain a clearly labelled numeric estimate. Strict mode remains available. No independent physical accuracy claim is made.

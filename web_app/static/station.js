@@ -276,7 +276,7 @@ function showPage(name){
   document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===name));
   if(name==='client')action(syncClient);if(name==='reports')action(report);
   if(name==='operator')action(loadVehicles);
-  if(name==='calibration'&&!$('calibrationFrame').getAttribute('src'))$('calibrationFrame').src=$('calibrationFrame').dataset.src;
+  if(name==='calibration'&&!$('calibrationFrame').getAttribute('src'))$('calibrationFrame').src=$('calibrationFrame').dataset.src+'?target='+(ipMode?'ip':'operator');
 }
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 $('filterBtn').onclick=()=>$('filterPanel').classList.toggle('open');$('refresh').onclick=()=>action(async()=>{queueOffset=0;queueSnapshot=null;await loadVehicles();});
@@ -333,12 +333,14 @@ async function start(){
 }
 start().catch(e=>{toast(e.message);$('systemStatus').textContent='⚠ Ошибка подключения';});
 let ipMode=false,ipRunning=false,ipPollTimer=null;
+let detectorEditDirty=false,detectorApplying=false;
 let liveSource=null, liveGeneration=0, liveSnapshot=null, importedProfile=null;
 let liveTracks=new LiveTracks(), streamId=null, streamFrame=0, streamTimer=null, streamStarting=false,streamResultCursor=0;
 function showDetector(detector,context){
  const names={'yolo26n':'YOLO26 N','yolo26m':'YOLO26 M','yolo26l':'YOLO26 L','rtdetr-l':'RT-DETR L','rtdetr-x':'RT-DETR X'};
  $('activeDetector').textContent=detector?.model?`${names[detector.model]||detector.model} · ${detector.imgsz} px`:'Не определена';
  $('activeDetectorContext').textContent=context;
+ if(detector?.model&&!detectorEditDirty&&!detectorApplying){$('operatorDetectorModel').value=detector.model;$('operatorDetectorSize').value=detector.imgsz;}
 }
 function selectedVideoDetector(){
  if(ipMode||streamId)return;
@@ -348,10 +350,10 @@ function selectedVideoDetector(){
 function calibrationLabel(){const p=liveSource?.profile||importedProfile;selectedVideoDetector();if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
 async function workbench(path,body){const response=await fetch('/api/workbench'+path,body instanceof FormData?{method:'POST',body}:body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
 async function stopStream(){const id=streamId;streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';selectedVideoDetector();if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
-async function startStream(){
+async function startStream({throwOnError=false}={}){
  if(streamStarting||streamId)return;if(!liveSource){toast('Откройте видео');return;}streamStarting=true;
  try{const response=await fetch('/api/stream/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_id:liveSource.media.id,profile:liveSource.profile,frame:streamFrame,front_media_id:liveSource.frontMedia?.id,front_offset_seconds:liveSource.frontOffset??3})});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));streamId=data.id;streamResultCursor=0;liveGeneration++;liveTracks=new LiveTracks();liveSnapshot=null;$('operatorDetection').src='/api/stream/'+streamId+'/video';if(liveSource.frontMedia)$('frontStream').src='/api/stream/'+streamId+'/front';$('streamPlay').textContent='Ⅱ Пауза';pollStream(streamId,liveGeneration);}
- catch(e){toast(e.message);}finally{streamStarting=false;}
+ catch(e){toast(e.message);if(throwOnError)throw e;}finally{streamStarting=false;}
 }
 async function pollStream(id,generation){
  if(id!==streamId||generation!==liveGeneration)return;
@@ -394,12 +396,13 @@ async function queueLive(snapshot,d){
 $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
   const parsed=JSON.parse(await file.text());const profile=await workbench('/validate-profile',parsed.profile||parsed);
   if(!ipMode&&liveSource&&profile.image_size.toString()!==liveSource.media.image_size.toString())throw Error('Разрешение калибровки не совпадает с видео');
-  if(ipMode){await ipApi('/calibration',profile);await ipPoll();$('calibrationStatus').textContent='Настройка камер сохранена';toast('Настройка загружена. Подключите камеры снова.');e.target.value='';return;}
-  await workbench('/operator-calibration',profile);importedProfile=profile;
-  if(!ipMode&&liveSource){const running=!!streamId;await stopStream();liveSource.profile=profile;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));if(running)await startStream();}
-  calibrationLabel();toast('Калибровка загружена. Измерение включено.');$('autoMeasure').checked=true;
+  if(ipMode){const result=await ipApi('/calibration',profile);detectorEditDirty=false;await ipPoll();$('calibrationStatus').textContent='Настройка камер сохранена';toast(result.restarted?'Настройка применена. Камеры переподключены.':'Настройка сохранена для подключения камер.');notifyCalibration('ip');e.target.value='';return;}
+  if(streamId)await workbench('/detector/check',detectorChoice(profile));
+  importedProfile=await workbench('/operator-calibration',profile);detectorEditDirty=false;
+  if(!ipMode&&liveSource){const running=!!streamId;await stopStream();liveSource.profile=importedProfile;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));if(running)await startStream({throwOnError:true});}
+  notifyCalibration('operator');calibrationLabel();toast('Калибровка загружена. Измерение включено.');$('autoMeasure').checked=true;
 }catch(error){toast(error.message);}e.target.value='';};
-workbench('/operator-calibration').then(profile=>{importedProfile=profile;if(liveSource&&profile.image_size.toString()===liveSource.media.image_size.toString()){liveSource.profile=profile;liveGeneration++;}calibrationLabel();}).catch(()=>calibrationLabel());
+
 
 async function captureCrossing(source,frame,original,previous){
   const result=await api('/capture-crossing',{media_id:source.media.id,profile:source.profile,
@@ -421,7 +424,26 @@ $('frontOffset').oninput=()=>{$('frontOffsetValue').textContent=(Number($('front
 $('frontOffset').onchange=async()=>{if(!liveSource)return;const running=!!streamId;await stopStream();liveSource.frontOffset=Number($('frontOffset').value);localStorage.setItem('ferryVideo',JSON.stringify(liveSource));if(running)await startStream();};
 $('frontVideoFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const fd=new FormData();fd.append('file',file);const frontMedia=await workbench('/media',fd);if(frontMedia.frames<2)throw Error('Выберите видео');const running=!!streamId;await stopStream();if(!liveSource)throw Error('Сначала выберите боковое видео');liveSource.frontMedia=frontMedia;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));$('frontStatus').textContent=frontMedia.name;if(running)await startStream();}catch(e){toast(e.message);}e.target.value='';};
 $('streamPlay').disabled=true;
-fetch('/api/stream/configuration').then(async response=>{if(!response.ok)return;const pair=await response.json();if(!liveSource?.frontMedia){liveSource=pair;localStorage.setItem('ferryVideo',JSON.stringify(pair));}else if(importedProfile)liveSource.profile=importedProfile;calibrationLabel();$('liveStatus').textContent=liveSource.media.name;$('frontStatus').textContent=liveSource.frontMedia.name;$('frontOffset').value=liveSource.frontOffset??3;$('frontOffset').oninput();}).catch(e=>toast(e.message)).finally(()=>{$('streamPlay').disabled=false;});
+async function restoreVideoSettings(){
+ const [pairResult,profileResult]=await Promise.allSettled([
+  fetch('/api/stream/configuration').then(async response=>response.ok?response.json():null),
+  workbench('/operator-calibration')
+ ]);
+ // A late startup response must never overwrite a selection or active stream.
+ if(streamId||streamStarting||detectorApplying||detectorEditDirty||importedProfile)return;
+ const pair=pairResult.status==='fulfilled'?pairResult.value:null;
+ const stored=profileResult.status==='fulfilled'?profileResult.value:pair?.profile;
+ if(!liveSource&&pair)liveSource=pair;
+ if(stored)importedProfile=stored;
+ if(liveSource){
+  if(stored&&(!liveSource.media.image_size||liveSource.media.image_size.toString()===stored.image_size.toString()))liveSource.profile=stored;
+  localStorage.setItem('ferryVideo',JSON.stringify(liveSource));
+  if(!ipMode){$('liveStatus').textContent=liveSource.media.name;$('frontStatus').textContent=liveSource.frontMedia?.name||'Не подключена';}
+  $('frontOffset').value=liveSource.frontOffset??3;$('frontOffset').oninput();
+ }
+ if(!ipMode)calibrationLabel();
+}
+restoreVideoSettings().catch(e=>toast(e.message)).finally(()=>{if(!detectorApplying)$('streamPlay').disabled=false;});
 
 $('plateInput').addEventListener('input',()=>{const field=$('plateInput'),pos=field.selectionStart;field.value=russianPlate(field.value);field.setSelectionRange(pos,pos);});
 
@@ -436,7 +458,7 @@ async function ipPoll(){
  $('streamPlay').textContent=s.running?'■ Остановить камеры':'▶ Подключить камеры';
  $('ipStatus').textContent=!s.running?'Камеры остановлены':s.error||(!s.side_ready&&!s.front_ready?'Нет связи с камерами':!s.front_ready?'Боковая камера работает · фронтальная недоступна':!s.side_ready?'Фронтальная камера работает · боковая недоступна':'Камеры работают');
  if(s.running){
-  if(!wasRunning||ipSessionId!==s.id||!$('operatorDetection').getAttribute('src')){$('operatorDetection').src='/api/ip/side/video';$('frontStream').src='/api/ip/front/video';ipSessionId=s.id;}
+  if(!wasRunning||ipSessionId!==s.id||!$('operatorDetection').getAttribute('src')){$('operatorDetection').src='/api/ip/side/video?session='+s.id;$('frontStream').src='/api/ip/front/video?session='+s.id;ipSessionId=s.id;}
   $('operatorDetection').hidden=!s.side_ready;$('frontStream').hidden=!s.front_ready;
   $('liveStatus').textContent=s.side;$('frontStatus').textContent=s.front_ready?(s.plates?.candidates?.map(p=>p.text).join(', ')||s.front):s.front;
   $('syncStatus').textContent=s.ready?'Изображения согласованы':s.side_ready?'Длина измеряется без фронтального снимка':s.front_ready?'Номера читаются · длина недоступна':'Ожидание камер';
@@ -452,6 +474,7 @@ async function toggleIp(){
 }
 $('sourceMode').onchange=()=>action(async()=>{
  const next=$('sourceMode').value==='ip';
+ detectorEditDirty=false;$('operatorDetectorStatus').textContent='Выберите модель и нажмите «Применить модель». Разметка дороги сохранится.';
  if(next){await stopStream();ipMode=true;}else{ipRunning=false;ipMode=false;clearTimeout(ipPollTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';}
  document.body.classList.toggle('ip-mode',ipMode);$('ipSettings').hidden=!ipMode;
  if(ipMode)showDetector(null,'IP-камеры · загрузка настройки');
@@ -477,12 +500,12 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&ipMode){$(
 window.addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==$('calibrationFrame').contentWindow||e.data?.type!=='station-calibration-saved')return;
   action(async()=>{
-    if(e.data.target==='ip'){$('calibrationStatus').textContent='Калибровка IP-камер сохранена. Подключите камеры.';if(ipMode)await ipPoll();return;}
+    if(e.data.target==='ip'){$('calibrationStatus').textContent='Калибровка IP-камер применена.';if(ipMode)await ipPoll();return;}
     importedProfile=e.data.profile;
     if(liveSource&&liveSource.media.image_size.toString()===importedProfile.image_size.toString()){
-      const running=!!streamId;if(running)await stopStream();
+      const running=!!streamId;if(running){await workbench('/detector/check',detectorChoice(importedProfile));await stopStream();}
       liveSource.profile=importedProfile;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));
-      if(running)await startStream();
+      if(running)await startStream({throwOnError:true});
     }
     calibrationLabel();toast('Калибровка сохранена для видеозаписей');
   });
@@ -514,3 +537,40 @@ $('removeReference').onclick=()=>action(()=>saveCalibrationReference(false));
 
 $('referenceLength').oninput=()=>{referenceDirty=true;};
 $('referenceVerified').onchange=()=>{referenceDirty=true;};
+
+function detectorChoice(profile){return {detector_model:profile.detector_model??'yolo26n',detector_imgsz:profile.detector_imgsz??640};}
+for(const id of ['operatorDetectorModel','operatorDetectorSize'])$(id).onchange=()=>{
+ detectorEditDirty=true;$('operatorDetectorStatus').textContent='Выбор ещё не применён. Нажмите «Применить модель».';
+};
+function notifyCalibration(target){$('calibrationFrame').contentWindow?.postMessage({type:'station-settings-changed',target},location.origin);}
+$('applyDetector').onclick=async()=>{
+ if(detectorApplying)return;
+ detectorApplying=true;
+ const target=ipMode?'ip':'operator';
+ const choice={detector_model:$('operatorDetectorModel').value,detector_imgsz:Number($('operatorDetectorSize').value)};
+ const controls=['applyDetector','operatorDetectorModel','operatorDetectorSize','sourceMode','operatorCalibration','streamPlay'];
+ const disabled=controls.map(id=>$(id).disabled);
+ controls.forEach(id=>$(id).disabled=true);
+ $('operatorDetectorStatus').textContent='Проверяем и применяем модель… Первая загрузка весов может занять несколько минут.';
+ try{
+  if(target==='ip'){
+   const result=await ipApi('/detector',choice);
+   showDetector(result.detector,result.running?'IP-камеры · настройка сервера':'IP-камеры · камеры остановлены');
+   $('operatorDetectorStatus').textContent=result.restarted?'Модель применена. Камеры переподключены.':'Модель сохранена. Будет использоваться при подключении камер.';
+   await ipPoll();
+  }else{
+   const previous=liveSource?.profile||importedProfile||await workbench('/operator-calibration');
+   const next={...structuredClone(previous),...choice};
+   const running=!!streamId;
+   if(running)await workbench('/detector/check',choice);
+   importedProfile=await workbench('/operator-calibration',next);
+   if(running)await stopStream();
+   if(liveSource){liveSource.profile=importedProfile;localStorage.setItem('ferryVideo',JSON.stringify(liveSource));}
+   if(running)await startStream({throwOnError:true});
+   calibrationLabel();
+   $('operatorDetectorStatus').textContent=running?'Модель применена. Видео продолжает работать.':'Модель сохранена для видеозаписей.';
+  }
+  detectorEditDirty=false;notifyCalibration(target);
+ }catch(e){$('operatorDetectorStatus').textContent='Не удалось применить: '+e.message;toast(e.message);}
+ finally{detectorApplying=false;controls.forEach((id,i)=>$(id).disabled=disabled[i]);}
+};

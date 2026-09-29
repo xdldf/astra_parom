@@ -13,7 +13,7 @@ function studio() {
     strokes.push([key,...args]);
   }});
   function element() {
-    return {value:'0',textContent:'',className:'',hidden:false,checked:false,
+    return {value:'0',textContent:'',className:'',hidden:false,checked:false,style:{},classList:{add(){},remove(){}},
       width:600,height:500,clientWidth:600,children:[],
       append(...items){this.children.push(...items);},
       replaceChildren(){this.children=[];},
@@ -141,7 +141,7 @@ test('play continues through bbox center crossings to the end',async()=>{
   await ui.elements.get('play').onclick();
   assert.equal(Number(ui.elements.get('timeline').value),3);
   assert.equal(ui.run('playing'),false);
-  assert.equal(ui.elements.get('play').textContent,'Play');
+  assert.equal(ui.elements.get('play').textContent,'▶ Пуск');
   assert.doesNotMatch((ui.elements.get('status')?.textContent||''),/Paused: bbox center/);
 });
 
@@ -271,7 +271,7 @@ test('position inspector draws the local road cross-section instead of a global 
   ui.run(`detections=[{bbox:[200,150,200,150],label:'car',depth:.5,road_cross_section:{far:[300,150],near:[300,450]}}];selected=0;draw();inspect();`);
   assert.ok(ui.strokes.some(s=>s[0]==='moveTo'&&s[1]===300&&s[2]===150));
   assert.ok(ui.strokes.some(s=>s[0]==='lineTo'&&s[1]===300&&s[2]===450));
-  assert.equal(ui.elements.get('depth').textContent,'50.0% across road');
+  assert.equal(ui.elements.get('depth').textContent,'50.0% дороги');
 });
 
 
@@ -279,7 +279,7 @@ test('RT-DETR selection survives profile import and clears stale YOLO boxes',asy
   const ui=studio();await ui.run('finishPendingRoad()');
   ui.run('profile.detector_model="rtdetr-x";profile.detector_imgsz=640;detectorUI();');
   assert.equal(ui.elements.get('detectorModel').value,'rtdetr-x');
-  assert.equal(ui.elements.get('detect').textContent,'Detect · RTDETR-X');
+  assert.equal(ui.elements.get('detect').textContent,'Найти · RT-DETR X');
   ui.run('detections=[{bbox:[100,150,100,75],source:"yolo26m"}];selected=0;');
   ui.elements.get('detectorModel').value='rtdetr-l';
   ui.elements.get('detectorSize').value='640';
@@ -297,7 +297,7 @@ test('RT-DETR can be selected before opening media and reaches the first detecti
   await ui.elements.get('detectorSize').onchange();
   assert.equal(ui.elements.get('detectorModel').value,'rtdetr-x');
   assert.equal(ui.run('profile'),null);
-  assert.match(ui.elements.get('detect').textContent,/RTDETR-X/);
+  assert.match(ui.elements.get('detect').textContent,/RT-DETR X/);
   ui.run('adoptMedia({id:"new",name:"new.mp4",frames:20,image_size:[600,500]});');
   assert.equal(ui.run('profile.detector_model'),'rtdetr-x');
   assert.equal(ui.run('profile.detector_imgsz'),1280);
@@ -331,4 +331,55 @@ test('imported detector settings take priority over an unbound selection',async(
   await ui.run(`loadProfile(${JSON.stringify({...continuedProfile,detector_model:'yolo26l',detector_imgsz:640})},'saved.json')`);
   assert.equal(ui.elements.get('detectorModel').value,'yolo26l');
   assert.equal(ui.run('profile.detector_model'),'yolo26l');
+});
+
+test('saved detector switches without loading any image and survives a fresh load',async()=>{
+  const ui=studio();ui.run('media=null;profile=null;picture=null;draft=[];mode="select";');
+  ui.run(`var stored=${JSON.stringify({...continuedProfile,detector_model:'yolo26m',detector_imgsz:640})};
+    $('calibrationTarget').value='ip';stationProfileRequest=async(method,body)=>{
+      if(method==='POST'){stored=structuredClone(body);return {profile:stored,restarted:true};}
+      return structuredClone(stored);
+    };`);
+  await ui.elements.get('loadSaved').onclick();
+  assert.equal(ui.elements.get('saveState').textContent,'Настройка сохранена');
+  ui.elements.get('detectorModel').value='rtdetr-x';await ui.elements.get('detectorModel').onchange();
+  assert.match(ui.elements.get('saveState').textContent,/неприменённые/);
+  assert.match(ui.elements.get('serverDetector').textContent,/YOLO26 M/);
+  await ui.elements.get('applyCalibration').onclick();
+  assert.equal(ui.run('stored.detector_model'),'rtdetr-x');
+  assert.deepEqual(JSON.parse(ui.run('JSON.stringify(stored.polygon)')),continuedProfile.polygon);
+  assert.match(ui.elements.get('status').textContent,/переподключены/);
+  assert.match(ui.elements.get('serverDetector').textContent,/RT-DETR X/);
+  ui.run('profile=null');await ui.elements.get('loadSaved').onclick();
+  assert.equal(ui.elements.get('detectorModel').value,'rtdetr-x');
+});
+
+test('undo restores road and metric calibration invalidated by a lens edit',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');
+  await ui.run(`loadProfile(${JSON.stringify(continuedProfile)},'saved.json');refresh=async()=>{};`);
+  const before=ui.run('JSON.stringify(profile)');
+  ui.elements.get('k1').value=-.3;ui.elements.get('k1').oninput();
+  assert.equal(ui.run('profile.polygon.length'),0);
+  await ui.elements.get('undoChange').onclick();
+  assert.equal(ui.run('JSON.stringify(profile)'),before);
+});
+
+test('changing source keeps independent unsaved drafts and does not copy IP geometry to video',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');
+  ui.run(`currentTarget='ip';$('calibrationTarget').value='ip';profile.detector_model='rtdetr-x';
+    stationProfileRequest=async()=>(${JSON.stringify({...continuedProfile,detector_model:'yolo26m'})});refresh=async()=>{};`);
+  ui.elements.get('calibrationTarget').value='operator';await ui.elements.get('calibrationTarget').onchange();
+  assert.equal(ui.run('profile.detector_model'),'yolo26m');
+  ui.elements.get('calibrationTarget').value='ip';await ui.elements.get('calibrationTarget').onchange();
+  assert.equal(ui.run('profile.detector_model'),'rtdetr-x');
+  assert.equal(ui.run('media.id'),'test');
+});
+
+test('zoom selected before the image arrives is applied when the corrected frame finishes',async()=>{
+  const ui=studio();await ui.run('finishPendingRoad()');ui.run('picture=null;');
+  ui.elements.get('viewZoom').value='2';ui.elements.get('viewZoom').onchange();
+  assert.equal(ui.elements.get('canvas').style.width,'');
+  await ui.run('refresh()');
+  assert.equal(ui.elements.get('canvas').style.width,'1200px');
+  assert.equal(ui.run('profile.image_size[0]'),600);
 });
