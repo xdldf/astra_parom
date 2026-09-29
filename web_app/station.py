@@ -449,6 +449,8 @@ def vehicles(request: Request,response: Response,plate: str='',status: str='',ca
             FROM vehicle_list WHERE {where}""",args).fetchone())
         rows=[summary(r) for r in db.execute(f"""SELECT page.*, json_extract(v.data, '$.side_photo') AS side_photo,
             json_extract(v.data, '$.front_photo') AS front_photo,
+            COALESCE(json_extract(v.data, '$.source.measurement.temporal.reasons[0]'),
+                     json_extract(v.data, '$.source.measurement.status')) AS measurement_reason,
             json_extract(v.data, '$.source.front_evidence.offset_seconds') AS front_photo_offset_seconds
             FROM (SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC LIMIT ? OFFSET ?) AS page
             JOIN vehicles v ON v.id=page.id ORDER BY page.seq DESC""",args+[limit,offset])]

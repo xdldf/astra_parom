@@ -33,6 +33,7 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
                   target_tolerance_m=tolerance_m, samples=[], diagnostics={})
     seen = set()
     rejected = []
+    ambiguous = []
     half_band = min(60., max(30., 3*line_tolerance_px))
     extended_band = max(half_band, min(120., .2*anchor_box[2]))
     for frame in sorted(frames, key=lambda row: row['frame']):
@@ -45,14 +46,14 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
         if not matches or matches[0][0] < .55:
             rejected.append(dict(frame=index, reason='lost_vehicle'))
             continue
-        if len(matches) > 1 and matches[1][0] > .4:
-            result['reasons'].append('ambiguous_vehicle_association')
-            rejected.append(dict(frame=index, reason='ambiguous_vehicle_association'))
-            continue
         box = matches[0][1]['bbox']
         offset = 0. if line_x is None else box[0]+box[2]/2-line_x
         if abs(offset) > extended_band:
             rejected.append(dict(frame=index, reason='outside_temporal_band'))
+            continue
+        if len(matches) > 1 and matches[1][0] > .4:
+            ambiguous.append(offset)
+            rejected.append(dict(frame=index, reason='ambiguous_vehicle_association'))
             continue
         measured = measure_box(box, polygon, scale, image_size)
         if measured['length_m'] is None:
@@ -67,6 +68,9 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
                         for s in result['samples'] if abs(s['line_offset_px']) > half_band)
         result['samples'] = narrow
     samples = result['samples']
+    used_band = extended_band if expanded else half_band
+    if any(abs(offset)<=used_band for offset in ambiguous):
+        result['reasons'].append('ambiguous_vehicle_association')
     has_line = any(abs(s['line_offset_px']) <= line_tolerance_px for s in samples)
     result['diagnostics'].update(requested_frames=len(frames), used_frames=len(samples),
                                  temporal_band_px=extended_band if expanded else half_band,

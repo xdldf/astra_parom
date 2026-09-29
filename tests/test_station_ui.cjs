@@ -190,3 +190,16 @@ test('skipped video crossing sends both observed boxes for server-side neighbour
   assert.equal(body.temporal,true);assert.equal(body.source,'rtdetr-x');
   assert.ok(ui.requests.every(r=>!r.path.includes('/workbench/frame/')));
 });
+
+test('missing lengths explain camera rejection in queue and legacy record details',async()=>{
+  const ui=await stationUI();const data=page();
+  data.rows[0].length_m=null;data.rows[0].measurement_reason='insufficient_temporal_frames';
+  ui.respond(()=>({data}));await ui.run('loadVehicles()');
+  const length=ui.elements.get('carsTable').children[0].children[3];
+  assert.equal(length.textContent,'Не измерена');
+  assert.match(length.children[0].textContent,/Недостаточно кадров/);
+  const legacy=ui.run("measurementNote({length_m:null,source:{measurement:{status:'temporal_review',temporal:{reasons:['missing_line_evidence','line_not_bracketed']}}}})");
+  assert.match(legacy,/Нет пригодного кадра/);assert.match(legacy,/до и после/);
+  assert.equal(ui.run("measurementNote({length_m:4.5,measurement_reason:'outside_calibration'})"),'');
+  assert.match(ui.run("measurementNote({length_m:null,measurement_reason:'anchor_outside_calibration'})"),/вне области калибровки/);
+});

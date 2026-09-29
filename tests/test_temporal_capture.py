@@ -73,6 +73,10 @@ def test_ip_capture_requires_enough_actual_frames(setup,monkeypatch,count,expect
     if expected is None:
         assert evidence['reasons']==['insufficient_temporal_frames']
         assert record['status']=='Требует проверки'
+        from web_app.main import app
+        row=TestClient(app).get('/api/station/vehicles').json()['rows'][0]
+        assert row['measurement_reason']=='insufficient_temporal_frames'
+        assert 'source' not in row  # Queue diagnostics do not send entire calibration/images.
 
 
 def test_ip_reconnect_cannot_mix_passages(setup,monkeypatch):
@@ -87,6 +91,79 @@ def test_ip_reconnect_cannot_mix_passages(setup,monkeypatch):
     with pytest.raises(HTTPException,match='переподключением'):
         camera.capture((packet,None,None),dict(bbox=[250,150,100,75],label='car'),'vehicle',temporal=True)
     assert not camera.saved
+
+
+def test_ip_capture_freezes_neighbours_before_anchor_render(setup,monkeypatch):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    jpeg=cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes()
+    now=time.monotonic()
+    packets=[ip.Packet(i,now-.3+.04*i,jpeg) for i in range(7)]
+    camera.side.packets.extend(packets)
+    original=wb.render_raw
+    def render(*args,**kwargs):
+        # The receiver keeps moving while the detector/rectification is busy.
+        camera.side.packets.clear()
+        camera.side.packets.append(ip.Packet(99,now,jpeg))
+        return original(*args,**kwargs)
+    monkeypatch.setattr(wb,'render_raw',render)
+    monkeypatch.setattr(wb,'detect_vehicles',lambda *a,**k:[dict(bbox=[250,150,100,75])])
+    record=camera.capture((packets[3],None,None),dict(bbox=[250,150,100,75],label='car'),
+                          'vehicle',temporal=True)
+    assert record['length_m']==pytest.approx(5)
+    evidence=record['source']['measurement']['temporal']
+    assert [s['frame'] for s in evidence['samples']]==list(range(7))
+    assert evidence['diagnostics']['buffered_frames']==7
+
+
+def test_pending_ip_passage_keeps_past_and_future_after_rolling_eviction(setup,monkeypatch):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    jpeg=cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes()
+    now=time.monotonic();start=now-.8
+    packets=[ip.Packet(i,start+.04*i,jpeg) for i in range(23)]
+    # A snapshot taken before slow inference contains the pre-line frames.
+    for p in packets[:12]:camera.side.append(p)
+    earlier=camera.side.snapshot()
+    with camera.side.lock:camera.side.packets.clear();camera.side.size=0
+    camera.side.append(packets[11])
+    window=camera.side.retain_passage(packets[11],camera.side.epoch,earlier)
+    # Future frames are collected by the receiver even if infer is occupied.
+    for p in packets[12:]:camera.side.append(p)
+    for i in range(100):camera.side.append(ip.Packet(23+i,now+.12+.01*i,jpeg))
+    assert camera.side.snapshot()[0].seq>packets[-1].seq
+    monkeypatch.setattr(wb,'detect_vehicles',lambda *a,**k:[dict(bbox=[250,150,100,75])])
+    track=dict(id='vehicle',sent=False,pending=((packets[11],None,None),
+        dict(bbox=[250,150,100,75],label='car'),camera.side.epoch),passage_frames=window)
+    camera.tracks=[track]
+    camera.flush_pending(start+1.1)
+    record=camera.saved['vehicle']
+    assert record['length_m']==pytest.approx(5)
+    assert track['sent'] and 'passage_frames' not in track
+    evidence=record['source']['measurement']['temporal']
+    assert [s['frame'] for s in evidence['samples']]==list(range(23))
+    assert evidence['diagnostics']['pinned_passage'] is True
+    assert not camera.side.windows
+    # A reconnect invalidates even the retained originals.
+    camera.side.epoch+=1
+    with pytest.raises(HTTPException,match='переподключилась'):
+        camera.capture((packets[11],None,None),dict(bbox=[250,150,100,75],label='car'),
+                       'new',temporal=True,epoch=camera.side.epoch,passage_frames=window)
+
+
+def test_passage_retention_is_bounded_and_always_keeps_anchor(setup):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    anchor=ip.Packet(50,10,b'jpeg')
+    window=camera.side.retain_passage(anchor,0)
+    for i in range(100):camera.side.append(ip.Packet(100+i,9.55+.009*i,b'jpeg'))
+    assert len(window.snapshot())==31
+    assert anchor in window.snapshot()
+    assert len({p.seq for p in window.snapshot()})==31
+    assert camera.side.size<=48*1024*1024
+    for i in range(3):camera.side.retain_passage(ip.Packet(i,11,b'jpeg'),0)
+    with pytest.raises(HTTPException,match='одновременных'):
+        camera.side.retain_passage(ip.Packet(4,11,b'jpeg'),0)
 
 
 def test_pending_capture_waits_for_post_line_frames(setup,monkeypatch):

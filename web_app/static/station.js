@@ -51,6 +51,25 @@ const plateLetters={A:'А',B:'В',C:'С',E:'Е',H:'Н',K:'К',M:'М',O:'О',P:'�
 const russianPlate = text => (text||'').toUpperCase().replace(/[ABCEHKMOPTXY]/g,c=>plateLetters[c]).replace(/\s/g,'');
 const fmt = n => n == null ? 'Нужна проверка' : new Intl.NumberFormat('ru-RU').format(n)+' ₽';
 const lengthText = n => n == null ? 'Не измерена' : new Intl.NumberFormat('ru-RU',{maximumFractionDigits:3}).format(n)+' м';
+function measurementNote(record){
+  if(record.length_m!=null)return '';
+  const m=record.source?.measurement;
+  const reasons=m?.temporal?.reasons?.length?m.temporal.reasons:[record.measurement_reason||m?.status];
+  const texts={
+    insufficient_temporal_frames:'Недостаточно кадров автомобиля у линии.',
+    missing_line_evidence:'Нет пригодного кадра на линии измерения.',
+    line_not_bracketed:'Не хватает кадров до и после линии.',
+    ambiguous_vehicle_association:'Рамки автомобилей пересекаются: нужно проверить проезд.',
+    unstable_temporal_length:'Длина по кадрам расходится больше допуска.',
+    anchor_outside_calibration:'Автомобиль вне области калибровки.',
+    outside_calibration:'Автомобиль вне области калибровки.',
+    calibration_review:'Калибровка не прошла проверку геометрии.',
+    needs_reference:'В настройке камеры нет эталонов длины.',
+    outside_road:'Рамка автомобиля вне полигона дороги.',
+    clipped:'Автомобиль не целиком в кадре.'
+  };
+  return [...new Set(reasons.map(r=>texts[r]).filter(Boolean))].join(' ');
+}
 const statusClass = s => s==='Оплачен'||s==='Подтвержден'?'green':s==='Требует проверки'?'orange':s==='Отклонён'?'red':'blue';
 function toast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),6000);}
 async function api(path,body){
@@ -108,7 +127,9 @@ function tableRow(record,report=false){
   if(!report){tr.classList.toggle('selected',current?.id===record.id);tr.onclick=()=>action(()=>selectRecord(record.id));}
   if(report)cell(tr,record.created_at.slice(0,10).split('-').reverse().join('.'));
   carPhotos(tr,record);
-  cell(tr,record.created_at.slice(11,19));cell(tr,record.plate||(record.plate_ocr?.candidates?.[0]?.text ? record.plate_ocr.candidates[0].text : record.plate_ocr?.state==='queued'?'Читаем номер…':'Не указан'));cell(tr,lengthText(record.length_m));
+  cell(tr,record.created_at.slice(11,19));cell(tr,record.plate||(record.plate_ocr?.candidates?.[0]?.text ? record.plate_ocr.candidates[0].text : record.plate_ocr?.state==='queued'?'Читаем номер…':'Не указан'));
+  const lengthCell=cell(tr,lengthText(record.length_m)),note=measurementNote(record);
+  if(note){const hint=document.createElement('small');hint.className='measurement-reason';hint.textContent=note;lengthCell.append(hint);}
   cell(tr,categories[record.category]);cell(tr,fmt(record.tariff.amount_rub)).className='tariff-only';cell(tr,'').append(badge(record.status));return tr;
 }
 async function loadVehicles(){
@@ -144,6 +165,7 @@ function showQuote(q){
   const notes=tariffsEnabled?[...(q.warnings||[])]:[];
   if(current?.source?.camera_note)notes.unshift(current.source.camera_note);
   for(const warning of current?.source?.measurement?.warnings||[])notes.unshift(warning);
+  const measurementReason=current&&measurementNote(current);if(measurementReason)notes.unshift(measurementReason);
   if(current?.source)notes.unshift('Проверьте длину и категорию автомобиля.');
   $('warning').hidden=!notes.length;$('warningText').replaceChildren();
   notes.forEach(text=>{let small=document.createElement('small');small.textContent=text;$('warningText').append(small);});

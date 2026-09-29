@@ -77,3 +77,14 @@ def test_extended_window_keeps_bad_frames_visible():
     result=measure(passage(errors=[0,0,.4,0,0],offsets=[36,18,0,-18,-36]))
     assert result['length_m'] is None
     assert 'unstable_temporal_length' in result['reasons']
+
+
+@pytest.mark.parametrize('offset',[35,70])
+def test_ambiguity_outside_used_band_does_not_erase_clean_line_measurements(offset):
+    rows=passage()
+    box=[200+offset,200,200,100]
+    rows.append(dict(frame=10,detections=[dict(bbox=box),dict(bbox=[box[0]+2,*box[1:]])]))
+    result=measure(rows)
+    assert result['length_m']==measure(passage())['length_m']
+    assert result['diagnostics']['used_frames']==7
+    assert result['diagnostics']['excluded_frames'][-1]['frame']==10

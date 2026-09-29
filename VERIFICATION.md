@@ -1,3 +1,9 @@
+## IP capture retains passage evidence — 2026-09-29
+
+- **221 Python tests and 40 frontend tests passed.** Regression coverage includes rolling-buffer eviction during anchor rendering, collection of future frames while inference is busy, bounded retention, original anchor preservation, reconnect rejection, and visible rejection reasons for queue/legacy records.
+- Reproduced lost numeric estimates when the IP rolling buffer evicts the beginning of a passage before temporal refinement. The receiver now retains each bounded passage window independently until capture; rendering cannot remove its neighbours. Ambiguity outside the selected measurement band no longer invalidates clean in-band evidence.
+- Actual original-video → receiver JPEG → RT-DETR X → IP capture replay, with rolling-buffer eviction, restored three estimates: 4.787 / 4.605 / 4.059 m from 14 / 7 / 11 frames. These exactly match complete-window estimates. Low frame counts, in-band ambiguous detections and unsupported calibration still fail. Offline CPU test only; the user's live GPU/camera and the exact rejection causes in their screenshot are unverified. [Details](docs/IP_CAPTURE_RECOVERY_2026-09-29.md).
+
 ## Working-mode multi-frame crossing recovery — 2026-09-28
 
 - **216 Python tests and 39 frontend tests passed.** Added regression coverage for intermediate detections between browser polls, bounded per-viewer result history, real-frame crossing search through the API, duplicate persistence, ambiguous neighbours, adaptive temporal bands and IP recovery beyond the three nearest packets.

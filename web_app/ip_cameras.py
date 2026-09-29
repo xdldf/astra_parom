@@ -66,6 +66,34 @@ class Packet:
         return cv2.imdecode(np.frombuffer(self.jpeg,np.uint8),cv2.IMREAD_COLOR)
 
 
+class PassageFrames:
+    """Pin a bounded original-frame window while inference uses the rolling buffer."""
+    def __init__(self, anchor, epoch):
+        from web_app.temporal_capture import WINDOW_SECONDS
+        self.anchor=anchor
+        self.epoch=epoch
+        self.end=anchor.stamp+WINDOW_SECONDS
+        self.lock=threading.Lock()
+        self.packets={anchor.seq:anchor}
+
+    def extend(self, packets):
+        from web_app.temporal_capture import WINDOW_SECONDS, MAX_FRAMES
+        with self.lock:
+            for packet in packets:
+                if abs(packet.stamp-self.anchor.stamp)<=WINDOW_SECONDS:
+                    self.packets[packet.seq]=packet
+            nearest=sorted(self.packets.values(),key=lambda p:abs(p.stamp-self.anchor.stamp))
+            selected=[];size=0
+            for packet in nearest[:MAX_FRAMES]:
+                if selected and size+len(packet.jpeg)>48*1024*1024:break
+                selected.append(packet);size+=len(packet.jpeg)
+            self.packets={p.seq:p for p in selected}
+
+    def snapshot(self):
+        with self.lock:
+            return sorted(self.packets.values(),key=lambda p:p.seq)
+
+
 class Receiver:
     def __init__(self,url,stop,opener=None,save_fps=15):
         self.url=url
@@ -79,6 +107,7 @@ class Receiver:
         self.seq=0
         self.last_seen=0
         self.epoch=0
+        self.windows=[]
 
     @staticmethod
     def open(url):
@@ -87,6 +116,30 @@ class Receiver:
     def snapshot(self):
         with self.lock:
             return list(self.packets)
+
+    def retain_passage(self, anchor, epoch, earlier=()):
+        with self.lock:
+            if epoch!=self.epoch:
+                raise HTTPException(409,'Камера переподключилась во время измерения')
+            window=PassageFrames(anchor,epoch)
+            window.extend([*earlier,*self.packets,anchor])
+            latest=self.packets[-1].stamp if self.packets else anchor.stamp
+            self.windows=[w for w in self.windows if w.epoch==epoch and w.end>latest]
+            if latest<window.end:
+                if len(self.windows)>=4:
+                    raise HTTPException(409,'Слишком много одновременных проездов для проверки кадров')
+                self.windows.append(window)
+            return window
+
+    def append(self, packet):
+        with self.lock:
+            while self.packets and (len(self.packets)>=100 or self.size+len(packet.jpeg)>48*1024*1024):
+                self.size-=len(self.packets.popleft().jpeg)
+            self.packets.append(packet)
+            self.size+=len(packet.jpeg)
+            for window in self.windows:
+                if window.epoch==self.epoch:window.extend([packet])
+            self.windows=[w for w in self.windows if w.epoch==self.epoch and w.end>packet.stamp]
 
     def run(self):
         while not self.stop.is_set():
@@ -114,11 +167,7 @@ class Receiver:
                         continue
                     self.seq+=1
                     packet=Packet(self.seq,stamp,jpeg.tobytes())
-                    with self.lock:
-                        while self.packets and (len(self.packets)>=100 or self.size+len(packet.jpeg)>48*1024*1024):
-                            self.size-=len(self.packets.popleft().jpeg)
-                        self.packets.append(packet)
-                        self.size+=len(packet.jpeg)
+                    self.append(packet)
             except Exception:
                 self.status='Нет связи · переподключение'
             finally:
@@ -127,6 +176,7 @@ class Receiver:
                 with self.lock:
                     self.packets.clear()
                     self.size=0
+                    self.windows.clear()
             self.stop.wait(2)
         self.status='Остановлена'
 
@@ -248,9 +298,11 @@ class Station:
             if epoch!=current_epoch:
                 self.tracks=[];epoch=current_epoch
             try:
+                # Keep pre-line evidence before a slow detector can evict it.
+                earlier=self.side.snapshot()
                 self.flush_pending(a.stamp)
                 result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,detect=True),include_image=False)
-                if self.stop.is_set() or time.monotonic()-a.stamp>3:continue
+                if self.stop.is_set() or current_epoch!=self.side.epoch or time.monotonic()-a.stamp>3:continue
                 result.update(frame=a.seq,stamp=a.stamp)
                 self.result=result
                 self.error=None
@@ -268,7 +320,7 @@ class Station:
                         before=previous[0]+previous[2]/2-line;after=d['bbox'][0]+d['bbox'][2]/2-line
                         if before*after<0 and a.stamp-previous_time<2:
                             when=previous_time+(a.stamp-previous_time)*abs(before)/(abs(before)+abs(after))
-                            packets=[p for p in self.side.snapshot() if previous_time<=p.stamp<=a.stamp
+                            packets=[p for p in earlier if previous_time<=p.stamp<=a.stamp
                                      and abs(p.stamp-when)<=WINDOW_SECONDS]
                             for packet in sorted(packets,key=lambda p:abs(p.stamp-when))[:MAX_FRAMES]:
                                 pp=pair_packets([packet],self.front.snapshot(),self.cfg.offset_seconds,self.cfg.tolerance_ms/1000,time.monotonic())
@@ -280,6 +332,7 @@ class Station:
                                 if match is not None:
                                     candidate=match;capture_pair=pp;break
                     if capture_candidate(candidate):
+                        track['passage_frames']=self.side.retain_passage(capture_pair[0],current_epoch,earlier)
                         track['pending']=(capture_pair,candidate,current_epoch)
             except Exception:
                 self.error='Измерение не выполнено. Проверьте камеры и настройку.'
@@ -293,25 +346,32 @@ class Station:
             pair, candidate, epoch=pending
             if epoch != self.side.epoch or not self.cfg.auto_measure or stamp-pair[0].stamp>3:
                 track.pop('pending',None)
+                track.pop('passage_frames',None)
                 continue
-            self.capture(pair,candidate,track['id'],temporal=True,epoch=epoch)
+            self.capture(pair,candidate,track['id'],temporal=True,epoch=epoch,
+                         passage_frames=track.get('passage_frames'))
             track.update(sent=True,pending=None)
+            track.pop('passage_frames',None)
 
-    def capture(self,pair,d,track_id,*,temporal=False,epoch=None):
+    def capture(self,pair,d,track_id,*,temporal=False,epoch=None,passage_frames=None):
         from web_app import station as st
         a,b,delta=pair
         if self.stop.is_set() or self.fresh(self.side) is None or time.monotonic()-a.stamp>3:
             raise HTTPException(409,'Нет свежего изображения боковой камеры')
         with self.capture_lock:
             if track_id in self.saved:return self.saved[track_id]
+            expected_epoch=self.side.epoch if epoch is None else epoch
+            if expected_epoch!=self.side.epoch or (passage_frames and passage_frames.epoch!=expected_epoch):
+                raise HTTPException(409,'Камера переподключилась во время измерения')
+            # Freeze first: rendering the anchor must not erase its neighbours.
+            if temporal:
+                window=passage_frames or self.side.retain_passage(a,expected_epoch)
+                packets=window.snapshot()
             result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,boxes=[d['bbox']]),
                                  include_image=False,include_frame=True)
             if temporal and result['detections'][0]['length_m'] is not None:
-                from web_app.temporal_capture import refine, WINDOW_SECONDS, MAX_FRAMES
+                from web_app.temporal_capture import refine, WINDOW_SECONDS
                 from vehicle_metrology.temporal import apply_passage
-                expected_epoch=self.side.epoch if epoch is None else epoch
-                packets=[p for p in self.side.snapshot() if abs(p.stamp-a.stamp)<=WINDOW_SECONDS]
-                packets=sorted(sorted(packets,key=lambda p:abs(p.stamp-a.stamp))[:MAX_FRAMES],key=lambda p:p.seq)
                 if expected_epoch != self.side.epoch:
                     raise HTTPException(409,'Камера переподключилась во время измерения')
                 passage=refine(self.profile,d['bbox'],((p.seq,p.image()) for p in packets))
@@ -319,7 +379,12 @@ class Station:
                     raise HTTPException(409,'Измерение прервано переподключением или остановкой камеры')
                 passage.update(detector_model=self.profile.detector_model,imgsz=self.profile.detector_imgsz,
                                anchor_frame=a.seq,window_seconds=WINDOW_SECONDS)
+                passage['diagnostics'].update(buffered_frames=len(packets),
+                    frame_span_seconds=packets[-1].stamp-packets[0].stamp if packets else 0,
+                    pinned_passage=passage_frames is not None)
                 result['detections'][0]=apply_passage(result['detections'][0],passage)
+            if expected_epoch!=self.side.epoch or self.stop.is_set():
+                raise HTTPException(409,'Измерение прервано переподключением или остановкой камеры')
             payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source=self.profile.detector_model,actor='Камеры',temporal=temporal)
             paired=None;samples=[]
             if b is not None:
