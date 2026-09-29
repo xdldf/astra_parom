@@ -42,6 +42,11 @@ def test_bad_frame_is_exposed_instead_of_discarded_to_pass_tolerance():
     saved=apply_passage(old,result)
     assert saved['length_m'] is None and saved['single_frame_length_m']==4.4
     assert old['length_m']==4.4 and old['warnings']==[]
+    estimate=apply_passage(old,result,allow_estimate=True)
+    assert estimate['length_m']==pytest.approx(4,abs=.03)
+    assert estimate['approximate'] and estimate['status']=='temporal_estimate'
+    assert 'unstable_temporal_length' in estimate['quality_reasons']
+    assert estimate['temporal']['length_m'] is None  # Failed check is not re-labelled as success.
 
 
 def test_duplicate_polls_missing_frames_and_ambiguous_neighbours():

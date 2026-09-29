@@ -208,3 +208,5 @@ button:disabled{opacity:.45;cursor:not-allowed}.client-only .screen-switch,.clie
 .calibration-reference label{display:block;margin:10px 0;line-height:1.5}
 .calibration-reference input[type=number]{display:block;width:180px;max-width:100%;padding:8px 10px;margin-top:5px;border:1px solid #d9dce5;border-radius:8px;font:inherit}
 .calibration-reference input[type=checkbox]{margin-right:6px}
+
+.detector-banner{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0;padding:12px 14px;background:#eaf2ff;border:1px solid #bdd3fa;border-radius:10px;color:#183d7b}.detector-banner strong{font-size:17px}.detector-banner small{margin-left:auto;color:#526581}

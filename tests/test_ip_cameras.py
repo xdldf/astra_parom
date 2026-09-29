@@ -60,6 +60,22 @@ def test_ip_calibration_is_separate_and_start_is_singleton(tmp_path,monkeypatch)
     assert not client.get('/api/ip/state').json()['running']
 
 
+def test_operator_sees_server_detector_and_stopped_profile_without_secrets(tmp_path,monkeypatch):
+    monkeypatch.setattr(ip,'CONFIG',tmp_path/'ip.json')
+    stored=wb.Profile(image_size=(600,500),detector_model='yolo26m')
+    ip.CONFIG.write_text(ip.Settings(profile=stored,side_url='rtsp://user:secret@camera/stream').model_dump_json())
+    runtime=stored.model_copy(update=dict(detector_model='rtdetr-x',detector_imgsz=1280))
+    camera=ip.Station(ip.Settings(profile=stored),runtime)
+    monkeypatch.setattr(ip,'active',camera)
+    client=TestClient(app)
+    response=client.get('/api/ip/state?compact=true')
+    assert response.json()['detector']==dict(model='rtdetr-x',imgsz=1280)
+    assert 'secret' not in response.text and response.json()['result'] is None
+    monkeypatch.setattr(ip,'active',None)
+    assert client.get('/api/ip/state').json()['detector']==dict(model='yolo26m',imgsz=640)
+    assert client.get('/api/ip/configuration').json()['detector']==dict(model='yolo26m',imgsz=640)
+
+
 def test_receiver_reconnect_clears_old_frames():
     stop=threading.Event();opens=[]
     class Fake:

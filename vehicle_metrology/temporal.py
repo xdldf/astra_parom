@@ -17,14 +17,15 @@ def _line_fit(x, y):
 
 
 def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
-                    line_tolerance_px=10., tolerance_m=.1, min_samples=5):
+                    line_tolerance_px=10., tolerance_m=.1, min_samples=5, estimate=False):
     """Associate a short neighbourhood with one box and fit length at the line.
 
     Input frames are decoded observations, not repeated browser polls. At least
     one actual box must satisfy the original measurement-line gate.
     Prefer the original narrow band. For fast passages with fewer than five
     samples, use up to 20% of the anchor width, capped at 120 original pixels.
-    No ground-depth extrapolation, imputed observations or catalogue dimensions.
+    Depth extrapolation is disabled unless explicitly requested for a labelled
+    estimate. No imputed observations or catalogue dimensions are used.
     """
     if not math.isfinite(tolerance_m) or tolerance_m <= 0 or min_samples < 5:
         raise ValueError('Positive tolerance_m and min_samples >= 5 required')
@@ -55,12 +56,14 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
             ambiguous.append(offset)
             rejected.append(dict(frame=index, reason='ambiguous_vehicle_association'))
             continue
-        measured = measure_box(box, polygon, scale, image_size)
+        measured = measure_box(box, polygon, scale, image_size,estimate=estimate)
         if measured['length_m'] is None:
             rejected.append(dict(frame=index, reason=measured['status']))
             continue
         result['samples'].append(dict(frame=index, bbox=list(box),
-                                      line_offset_px=offset, length_m=measured['length_m']))
+                                      line_offset_px=offset, length_m=measured['length_m'],
+                                      approximate=measured.get('approximate',False),
+                                      quality_reasons=measured.get('quality_reasons',[])))
     narrow = [s for s in result['samples'] if abs(s['line_offset_px']) <= half_band]
     expanded = len(narrow) < min_samples
     if not expanded:
@@ -73,6 +76,7 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
         result['reasons'].append('ambiguous_vehicle_association')
     has_line = any(abs(s['line_offset_px']) <= line_tolerance_px for s in samples)
     result['diagnostics'].update(requested_frames=len(frames), used_frames=len(samples),
+                                 estimated_frames=sum(s['approximate'] for s in samples),
                                  temporal_band_px=extended_band if expanded else half_band,
                                  expanded_for_fast_passage=expanded and extended_band>half_band,
                                  excluded_frames=rejected,
@@ -100,22 +104,40 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
     if estimate <= 0 or max_residual > tolerance_m or split_difference > tolerance_m:
         result['reasons'].append('unstable_temporal_length')
         return result
-    result.update(status='temporal_consistent', length_m=estimate)
+    result.update(status='temporal_consistent', length_m=estimate,
+                  approximate=any(s['approximate'] for s in samples))
     return result
 
 
-def apply_passage(measurement, passage):
+def apply_passage(measurement, passage, *, allow_estimate=False):
     """Preserve the single-frame evidence alongside the independently recomputed fit."""
+    if measurement['status']=='outside_calibration' and passage['length_m'] is None:
+        passage=dict(passage,reasons=list(dict.fromkeys(['anchor_outside_calibration',*passage.get('reasons',[])])))
     result = dict(measurement, single_frame_length_m=measurement['length_m'], single_frame_status=measurement['status'],
-                  temporal=passage, length_m=passage['length_m'])
+                  single_frame_quality_reasons=measurement.get('quality_reasons',[]),
+                  temporal=passage, length_m=passage['length_m'],approximate=False,quality_reasons=[])
     result['warnings'] = list(measurement.get('warnings', []))
     counts=passage.get('diagnostics',{})
     if 'requested_frames' in counts:
         result['warnings'].append(f"Проверено кадров: {counts['requested_frames']}; использовано для длины: {counts['used_frames']}.")
-    if passage['length_m'] is None:
+    fallback=passage.get('diagnostics',{}).get('candidate_length_m')
+    if fallback is None or not math.isfinite(fallback) or fallback<=0:
+        fallback=measurement['length_m']
+    if allow_estimate and (passage.get('approximate') or (passage['length_m'] is None and fallback is not None)):
+        result.update(status='temporal_estimate',approximate=True,
+                      length_m=passage['length_m'] if passage['length_m'] is not None else fallback)
+        result['quality_reasons']=list(dict.fromkeys([*passage.get('reasons',[]),
+            *measurement.get('quality_reasons',[]),
+            *(r for s in passage.get('samples',[]) for r in s.get('quality_reasons',[]))]))
+        result['warnings'].append('Приблизительная длина: проверка точности/устойчивости не пройдена. Проверьте значение перед подтверждением.')
+        if passage['length_m'] is None and not passage.get('diagnostics',{}).get('candidate_length_m'):
+            result['warnings'].append('Сохранена оценка по исходной рамке: пригодных соседних кадров недостаточно.')
+    elif passage['length_m'] is None:
         result['status'] = 'temporal_review'
         result['warnings'].append('Недостаточно устойчивых кадров одного автомобиля. Длина не назначена; требуется проверка.')
     else:
         result['status'] = 'temporal_consistent'
         result['warnings'].append('Оценка по нескольким кадрам. Стабильность кадров не подтверждает абсолютную точность; проверьте калибровку.')
+        if measurement['status']=='outside_calibration' or 'outside_calibration' in measurement.get('quality_reasons',[]):
+            result['warnings'].append('Начальная рамка вне области эталонов. Длина рассчитана по соседним кадрам этого автомобиля внутри области калибровки.')
     return result

@@ -1,3 +1,9 @@
+## Road-overlap estimates and visible runtime model — 2026-09-29
+
+- **231 Python tests and 43 frontend tests passed.** Working profiles now default to the user-requested estimate mode: bottom-edge overlap first, then any bbox/road overlap; unsupported depth and failed temporal checks can retain a clearly labelled numeric estimate. Strict mode remains available. No independent physical accuracy claim is made.
+- Exported `config/st-calibration-rtdetr-x.json`, the most stable tested ST detector/profile combination, keeping the established lens, polygon and eight unique references. Original-video replay recovered the calibration-edge container passage (15.548 m video / 15.557 m receiver JPEG). Unstable YOLO lumber-truck frames now retain ≈9.098 m with the failed check intact; RT-DETR X yields a stable 9.083 m estimate on that passage.
+- The operator banner reads model/resolution from the active IP/video server profile. Tested stale browser profiles, stopped cameras, disconnected server and source changes; inspected the RT-DETR X / 640 banner in an isolated browser fixture. [Behavior, installation and limits](docs/ST_RECOMMENDED_PROFILE_2026-09-29.md).
+
 ## IP capture retains passage evidence — 2026-09-29
 
 - **221 Python tests and 40 frontend tests passed.** Regression coverage includes rolling-buffer eviction during anchor rendering, collection of future frames while inference is busy, bounded retention, original anchor preservation, reconnect rejection, and visible rejection reasons for queue/legacy records.

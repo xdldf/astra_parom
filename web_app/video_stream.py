@@ -299,6 +299,7 @@ def state(key: str, after_sequence: int = 0):
         gap=bool(c.results and after_sequence<c.results[0]['sequence']-1)
         result=c.result
     return {'result':result,'results':results,'result_gap':gap,'frame':c.display_frame,'error':c.error,'ended':c.ended,
+            'detector':wb.detector_settings(c.request.profile),
             'plates':c.plate_result,'plate_error':c.plate_error,
             'front_frame':c.front_frame,
             'front_seconds':None if c.front_frame is None else c.front_frame/c.front['fps'],

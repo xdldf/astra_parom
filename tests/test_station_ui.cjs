@@ -203,3 +203,37 @@ test('missing lengths explain camera rejection in queue and legacy record detail
   assert.equal(ui.run("measurementNote({length_m:4.5,measurement_reason:'outside_calibration'})"),'');
   assert.match(ui.run("measurementNote({length_m:null,measurement_reason:'anchor_outside_calibration'})"),/вне области калибровки/);
 });
+
+test('operator model badge uses the running IP server profile and clears stale state',async()=>{
+  const ui=await stationUI();ui.run("ipMode=true;page='operator';importedProfile={detector_model:'yolo26m'};");
+  ui.respond(()=>({data:{running:true,id:'camera',detector:{model:'rtdetr-x',imgsz:1280},auto_measure:true}}));
+  await ui.run('ipPoll()');
+  assert.equal(ui.elements.get('activeDetector').textContent,'RT-DETR X · 1280 px');
+  ui.run('calibrationLabel()'); // A late video-profile load must not overwrite IP status.
+  assert.equal(ui.elements.get('activeDetector').textContent,'RT-DETR X · 1280 px');
+  ui.respond(()=>({data:{running:false,detector:{model:'yolo26l',imgsz:640}}}));
+  await ui.run('ipPoll()');assert.equal(ui.elements.get('activeDetector').textContent,'YOLO26 L · 640 px');
+  assert.match(ui.elements.get('activeDetectorContext').textContent,/остановлены/);
+  ui.respond(()=>({status:503,data:{detail:'offline'}}));await ui.run('ipPoll()');
+  assert.equal(ui.elements.get('activeDetector').textContent,'Не определена');
+  ui.run("ipMode=false;importedProfile={detector_model:'rtdetr-l',detector_imgsz:640};calibrationLabel();");
+  assert.equal(ui.elements.get('activeDetector').textContent,'RT-DETR L · 640 px');
+});
+
+test('running video badge uses server detector rather than old browser settings',async()=>{
+  const ui=await stationUI();
+  ui.run("liveSource={media:{id:'clip',frames:1000,fps:25},profile:{detector_model:'yolo26m'}};streamId='video';liveGeneration=1;");
+  ui.respond(()=>({data:{frame:10,results:[],detector:{model:'rtdetr-x',imgsz:640}}}));
+  await ui.run("pollStream('video',1)");
+  assert.equal(ui.elements.get('activeDetector').textContent,'RT-DETR X · 640 px');
+  ui.run('calibrationLabel()');assert.equal(ui.elements.get('activeDetector').textContent,'RT-DETR X · 640 px');
+});
+
+test('approximate saved lengths retain their numeric value and visible review reason',async()=>{
+  const ui=await stationUI();const data=page();
+  Object.assign(data.rows[0],{length_m:4.5,measurement_approximate:1,measurement_reason:'unstable_temporal_length'});
+  ui.respond(()=>({data}));await ui.run('loadVehicles()');
+  const length=ui.elements.get('carsTable').children[0].children[3];
+  assert.match(length.textContent,/^≈ /);assert.match(length.textContent,/4,5/);
+  assert.match(length.children[0].textContent,/Приблизительно/);assert.match(length.children[0].textContent,/расходится/);
+});

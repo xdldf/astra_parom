@@ -30,6 +30,40 @@ def test_road_depth_uses_local_edges_and_rejects_outside():
     assert road_depth(p,300,120) is None
 
 
+@pytest.mark.parametrize('box,method',[
+    ([10,150,15,100],'bbox_bottom_overlap'),  # bottom centre outside, edge touches road
+    ([200,430,100,50],'bbox_road_overlap'),   # bottom below road, body overlaps
+    ([580,250,10,50],'bbox_road_overlap'),   # exact touch at right boundary
+])
+def test_operating_mode_accepts_road_overlap_without_requiring_whole_box(box,method):
+    scale=fit_scale(POLY,REFS)
+    assert measure_box(box,POLY,scale,(600,500))['length_m'] is None
+    result=measure_box(box,POLY,scale,(600,500),estimate=True)
+    assert result['length_m']>0 and result['approximate']
+    assert result['road_contact_method']==method
+    assert result['bbox']==box
+    assert 'road_overlap_proxy' in result['quality_reasons']
+
+
+def test_road_overlap_distinguishes_boundary_contact_from_concave_empty_space():
+    from vehicle_metrology.bbox_scale import box_road_contact
+    # Touching the far edge counts; enclosing a road also counts.
+    assert box_road_contact([200,100,100,100],POLY)['point'][1]==200
+    assert box_road_contact([10,10,580,480],POLY) is not None
+    concave=[(20,20),(400,20),(400,100),(100,100),(100,400),(20,400)]
+    assert box_road_contact([200,200,100,100],concave) is None
+    assert measure_box([200,10,100,100],POLY,fit_scale(POLY,REFS),(600,500),estimate=True)['length_m'] is None
+
+
+def test_empirical_extrapolation_is_numeric_and_explicitly_approximate():
+    scale=fit_scale(POLY,REFS[:1]);box=[100,300,100,75]
+    assert measure_box(box,POLY,scale,(600,500))['status']=='outside_calibration'
+    result=measure_box(box,POLY,scale,(600,500),estimate=True)
+    assert result['length_m']==pytest.approx(5)
+    assert result['approximate'] and result['status']=='approximate'
+    assert result['quality_reasons']==['outside_calibration']
+
+
 def test_unsupported_and_invalid_calibration():
     assert measure_box([100,100,50,40],POLY,None,(600,500))['length_m'] is None
     assert fit_scale(POLY,REFS[:1])['status'] == 'single_reference'
@@ -245,6 +279,11 @@ def test_rulers_interpolate_perspective_and_refuse_extrapolation():
     for box in ([150,50,200,100],[150,350,200,100],[20,150,200,150],[350,150,200,150]):
         r=measure_box(box,RULER_POLY,scale,(600,500))
         assert r['length_m'] is None and r['status']=='outside_calibration'
+    for box,expected in [([150,50,200,100],2),([150,350,200,100],1),
+                         ([20,150,200,150],200/150),([350,150,200,150],200/150)]:
+        r=measure_box(box,RULER_POLY,scale,(600,500),estimate=True)
+        assert r['length_m']==pytest.approx(expected)
+        assert r['approximate'] and 'outside_calibration' in r['quality_reasons']
 
 
 def test_ruler_validation_and_profile_roundtrip():

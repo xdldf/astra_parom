@@ -11,6 +11,7 @@ def test_state_retains_intermediate_detections_for_each_browser_cursor(monkeypat
     monkeypatch.setitem(stream.sessions,camera.id,camera)
     for index in (10,12,14):camera.publish_result(dict(detections=[dict(frame=index)]),index)
     a=stream.state(camera.id,0)
+    assert a['detector']==dict(model='yolo26n',imgsz=640)
     assert [r['frame'] for r in a['results']]==[10,12,14]
     assert a['result']['frame']==14 and not a['result_gap']
     assert [r['frame'] for r in stream.state(camera.id,1)['results']]==[12,14]

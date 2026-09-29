@@ -49,11 +49,20 @@ def public_config(cfg):
     # Credentials and full URLs never return to the browser or station records.
     data=cfg.model_dump(exclude={'side_url','front_url','profile'})
     data['calibrated']=cfg.profile is not None
+    data['detector']=configured_detector(cfg)
     for name in ('side','front'):
         url=getattr(cfg,name+'_url')
         data[name+'_configured']=bool(url)
         data[name+'_host']=urlsplit(url).hostname if url else ''
     return data
+
+
+def configured_detector(cfg):
+    try:
+        profile=cfg.profile or wb.operator_calibration()
+        return wb.detector_settings(profile)
+    except HTTPException:
+        return None
 
 
 @dataclass(frozen=True)
@@ -355,6 +364,7 @@ class Station:
 
     def capture(self,pair,d,track_id,*,temporal=False,epoch=None,passage_frames=None):
         from web_app import station as st
+        from web_app.temporal_capture import refinement_candidate
         a,b,delta=pair
         if self.stop.is_set() or self.fresh(self.side) is None or time.monotonic()-a.stamp>3:
             raise HTTPException(409,'Нет свежего изображения боковой камеры')
@@ -369,7 +379,7 @@ class Station:
                 packets=window.snapshot()
             result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,boxes=[d['bbox']]),
                                  include_image=False,include_frame=True)
-            if temporal and result['detections'][0]['length_m'] is not None:
+            if temporal and refinement_candidate(result['detections'][0]):
                 from web_app.temporal_capture import refine, WINDOW_SECONDS
                 from vehicle_metrology.temporal import apply_passage
                 if expected_epoch != self.side.epoch:
@@ -382,7 +392,8 @@ class Station:
                 passage['diagnostics'].update(buffered_frames=len(packets),
                     frame_span_seconds=packets[-1].stamp-packets[0].stamp if packets else 0,
                     pinned_passage=passage_frames is not None)
-                result['detections'][0]=apply_passage(result['detections'][0],passage)
+                result['detections'][0]=apply_passage(result['detections'][0],passage,
+                    allow_estimate=self.profile.measurement_mode=='estimate')
             if expected_epoch!=self.side.epoch or self.stop.is_set():
                 raise HTTPException(409,'Измерение прервано переподключением или остановкой камеры')
             payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source=self.profile.detector_model,actor='Камеры',temporal=temporal)
@@ -511,13 +522,14 @@ def automatic(enabled: bool):
 @router.get('/state')
 def state(compact: bool=False):
     c=active
-    if not c:return {'running':False}
+    if not c:return {'running':False,'detector':configured_detector(settings())}
     pair=c.paired()
     side_ready=c.fresh(c.side) is not None;front_ready=c.fresh(c.front) is not None
     return dict(running=True,id=c.id,ready=pair is not None,side_ready=side_ready,front_ready=front_ready,side=c.side.status,front=c.front.status,
                 error=c.error,plate_error=c.plate_error,plates=c.plates if front_ready else None,
                 result=c.result if side_ready and not compact else None,sync_error_ms=pair[2]*1000 if pair else None,
-                auto_measure=c.cfg.auto_measure,last_capture=c.last_capture)
+                auto_measure=c.cfg.auto_measure,last_capture=c.last_capture,
+                detector=wb.detector_settings(c.profile))
 
 
 @router.get('/{camera}/video')

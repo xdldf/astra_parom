@@ -103,6 +103,7 @@ class Profile(BaseModel):
     measurement_line_x: float | None = Field(None, ge=0)
     line_tolerance_px: float = Field(10, ge=1, le=100)
     accuracy_tolerance_m: float = Field(.1, gt=0, le=1)
+    measurement_mode: Literal['estimate','strict'] = 'estimate'
     detector_model: Literal['yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x'] = 'yolo26n'
     detector_imgsz: Literal[640,1280] = 640
 
@@ -157,6 +158,10 @@ class FrameRequest(BaseModel):
     detect: bool = False
     confidence: float = Field(.3, ge=.05, le=.95)
     boxes: list[tuple[float,float,float,float]] = Field(default_factory=list, max_length=200)
+
+
+def detector_settings(profile):
+    return dict(model=profile.detector_model,imgsz=profile.detector_imgsz)
 
 
 def profile_scale(profile):
@@ -345,7 +350,8 @@ def render_raw(raw, request, include_image=True, include_frame=False):
     scale = profile_scale(request.profile)
     for d in detections:
         d.update(measure_box(d['bbox'],request.profile.polygon,scale,request.profile.image_size,
-                            request.profile.measurement_line_x,request.profile.line_tolerance_px))
+                            request.profile.measurement_line_x,request.profile.line_tolerance_px,
+                            estimate=request.profile.measurement_mode=='estimate'))
     encoded_image = None
     if include_image:
         _,encoded = cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,92])

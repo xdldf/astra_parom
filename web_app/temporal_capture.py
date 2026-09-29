@@ -75,6 +75,13 @@ def capture_candidate(detection):
                                                  detection['status'] in {'outside_calibration','calibration_review'})
 
 
+def refinement_candidate(measured):
+    # A jittery first box can fall outside depth support while its actual
+    # neighbours at the line are calibrated. Let those frames prove the fit.
+    return measured['length_m'] is not None or (measured.get('at_measurement_line') and
+                                               measured['status']=='outside_calibration')
+
+
 def refine(profile, anchor_box, frames):
     """Frames yield distinct (index, original pixels) from one bounded passage."""
     observations = []
@@ -87,10 +94,14 @@ def refine(profile, anchor_box, frames):
         detections = wb.detect_vehicles(frame, .3, detector_model=profile.detector_model,
                                          imgsz=profile.detector_imgsz)
         observations.append(dict(frame=index, detections=detections))
-    return measure_passage(observations, anchor_box, profile.polygon, wb.profile_scale(profile),
-                           profile.image_size, line_x=profile.measurement_line_x,
-                           line_tolerance_px=profile.line_tolerance_px,
-                           tolerance_m=profile.accuracy_tolerance_m)
+    options=dict(line_x=profile.measurement_line_x,line_tolerance_px=profile.line_tolerance_px,
+                 tolerance_m=profile.accuracy_tolerance_m)
+    args=(observations,anchor_box,profile.polygon,wb.profile_scale(profile),profile.image_size)
+    strict=measure_passage(*args,**options)
+    if strict['length_m'] is not None or profile.measurement_mode=='strict':return strict
+    estimated=measure_passage(*args,**options,estimate=True)
+    estimated['strict_review_reasons']=strict['reasons']
+    return estimated
 
 
 def video_frames(item, anchor):
@@ -117,9 +128,9 @@ def video_frames(item, anchor):
 def refine_video(payload, result):
     measured = result['detections'][0]
     item = wb.media[payload.media_id]
-    if measured['length_m'] is None or item['kind'] != 'video':
+    if not refinement_candidate(measured) or item['kind'] != 'video':
         return
     passage = refine(payload.profile, payload.bbox, video_frames(item, payload.frame))
     passage.update(detector_model=payload.profile.detector_model, imgsz=payload.profile.detector_imgsz,
                    anchor_frame=payload.frame, window_seconds=WINDOW_SECONDS)
-    result['detections'][0] = apply_passage(measured, passage)
+    result['detections'][0] = apply_passage(measured, passage,allow_estimate=payload.profile.measurement_mode=='estimate')

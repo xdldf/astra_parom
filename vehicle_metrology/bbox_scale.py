@@ -60,6 +60,53 @@ def road_depth(polygon, x, y):
     return None if section is None else section['depth']
 
 
+def box_road_contact(bbox, polygon):
+    """Use the bottom-edge overlap first, then the lowest bbox/road overlap.
+
+    Clip each road edge against the axis-aligned box; this also works for a
+    concave road, unlike intersectConvexConvex. Touching an edge counts.
+    The contact is an image-space proxy, not a surveyed wheel position.
+    """
+    x,y,w,h=bbox;right=x+w;bottom=y+h
+    p=np.asarray(polygon,dtype=np.float32)
+    if len(p)<4:return None
+    points=[]
+    for point in ((x,y),(right,y),(right,bottom),(x,bottom),(x+w/2,bottom)):
+        if cv2.pointPolygonTest(p,point,False)>=0:points.append(point)
+    for a,b in zip(p,np.roll(p,-1,axis=0)):
+        lo,hi=0.,1.;delta=b-a
+        for axis,lower,upper in ((0,x,right),(1,y,bottom)):
+            if abs(delta[axis])<1e-10:
+                if a[axis]<lower or a[axis]>upper:lo,hi=1.,0.;break
+            else:
+                ends=sorted(((lower-a[axis])/delta[axis],(upper-a[axis])/delta[axis]))
+                lo=max(lo,float(ends[0]));hi=min(hi,float(ends[1]))
+        if lo<=hi:
+            points.extend([tuple(map(float,a+lo*delta)),tuple(map(float,a+hi*delta))])
+    if not points:return None
+    # Prefer the centre of a bottom interval. Include edge intersections so a
+    # narrow sliver of road is eligible even when the bottom centre is outside.
+    bottom_x=sorted({px for px,py in points if abs(py-bottom)<1e-4})
+    candidates=[(x+w/2,bottom)] if bottom_x else []
+    candidates += [((a+b)/2,bottom) for a,b in zip(bottom_x,bottom_x[1:])]
+    candidates += [(px,bottom) for px in bottom_x]
+    candidates += sorted(points,key=lambda q:(-q[1],abs(q[0]-(x+w/2))))
+    for px,py in candidates:
+        if not x-1e-4<=px<=right+1e-4 or not y-1e-4<=py<=bottom+1e-4:continue
+        section=road_cross_section(p,px,py)
+        if section is not None:
+            return dict(point=[px,py],section=section,
+                        method='bbox_bottom_overlap' if abs(py-bottom)<1e-4 else 'bbox_road_overlap')
+    # Vertical right boundaries need an inward cross-section sample. Keep the
+    # actual contact unchanged and move only the scan line by a subpixel epsilon.
+    for px,py in sorted(points,key=lambda q:(-q[1],abs(q[0]-(x+w/2)))):
+        for dx in (-1e-4,1e-4):
+            section=road_cross_section(p,px+dx,py)
+            if section is not None:
+                return dict(point=[px,py],section=section,method='bbox_road_overlap')
+    return None
+
+
 def fit_scale(polygon, references, rulers=(), *, tolerance_m=.05):
     if not np.isfinite(tolerance_m) or tolerance_m <= 0:
         raise ValueError('Tolerance must be finite and positive')
@@ -124,10 +171,10 @@ def fit_rulers(polygon, rulers):
     return dict(status='ruler_calibrated', rulers=rows, depths=[r['depth'] for r in rows])
 
 
-def ruler_length(scale, left, right, depth):
+def ruler_length(scale, left, right, depth, *, extrapolate=False):
     rows = scale['rulers']
     if len(rows) == 1:
-        if abs(depth-rows[0]['depth']) > .05:
+        if abs(depth-rows[0]['depth']) > .05 and not extrapolate:
             return None
         nearby = rows
     else:
@@ -135,26 +182,35 @@ def ruler_length(scale, left, right, depth):
         if exact:
             nearby = exact
         elif depth < rows[0]['depth'] or depth > rows[-1]['depth']:
-            return None
+            if not extrapolate:return None
+            nearby=[min(rows,key=lambda r:abs(r['depth']-depth))]
         else:
             index = min(len(rows)-2, max(0, int(np.searchsorted(scale['depths'], depth))-1))
             nearby = rows[index:index+2]
     ppm = []
     for row in nearby:
         xs = row['x']
-        if left < xs[0] or right > xs[-1]:
+        if (left < xs[0] or right > xs[-1]) and not extrapolate:
             return None
         metres = np.arange(len(xs))*row['step_m']
         # Integrate across every interval, rather than sampling just the bbox center.
-        length = np.interp(right, xs, metres)-np.interp(left, xs, metres)
+        def position(x):
+            if x<xs[0]:return metres[0]+(x-xs[0])*row['step_m']/(xs[1]-xs[0])
+            if x>xs[-1]:return metres[-1]+(x-xs[-1])*row['step_m']/(xs[-1]-xs[-2])
+            return np.interp(x,xs,metres)
+        length = position(right)-position(left)
         ppm.append((right-left)/length)
     local_ppm = np.interp(depth, [r['depth'] for r in nearby], ppm)
     return float((right-left)/local_ppm)
 
 
-def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px=10):
+def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px=10, *, estimate=False):
     x, y, w, h = bbox
     section = road_cross_section(polygon, x+w/2, y+h)
+    contact=None
+    if estimate and section is None:
+        contact=box_road_contact(bbox,polygon)
+        section=contact['section'] if contact else None
     t = None if section is None else section['depth']
     result = dict(bbox=bbox, bottom=[x+w/2, y+h], depth=t, length_m=None,
                   road_cross_section=section,
@@ -164,6 +220,13 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
                   line_offset_px=None if line_x is None else x+w/2-line_x,
                   at_measurement_line=line_x is not None and abs(x+w/2-line_x) <= line_tolerance_px,
                   cm_per_px=None, coefficient=None, status='outside_road', warnings=[])
+    result.update(approximate=False,quality_reasons=[],road_contact=[x+w/2,y+h],
+                  road_contact_method='bbox_bottom_center')
+    if contact:
+        result.update(road_contact=contact['point'],road_contact_method=contact['method'],approximate=True,
+                      position_model='bbox_road_overlap_relative_depth')
+        result['quality_reasons'].append('road_overlap_proxy')
+        result['warnings'].append('Низ рамки не даёт центральной точки на дороге. Положение оценено по пересечению рамки с полигоном; длина приблизительная.')
     if t is None:
         return result
     if min(x, y) <= 1 or x+w >= image_size[0]-1 or y+h >= image_size[1]-1:
@@ -201,9 +264,15 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
         return result
     if scale['status'] == 'ruler_calibrated':
         length = ruler_length(scale, x, x+w, t)
+        if length is None and estimate:
+            length=ruler_length(scale,x,x+w,t,extrapolate=True)
+            result['approximate']=True
+            result['quality_reasons'].append('outside_calibration')
+            result['warnings'].append('Вне области мерных отметок использован ближайший масштаб. Длина приблизительная; требуется проверка.')
         result['status'] = 'outside_calibration' if length is None else 'ruler_calibrated'
         if length is not None:
             result.update(length_m=length, cm_per_px=100*length/w)
+            if result['approximate']:result['status']='approximate'
         return result
     diagnostics = scale.get('diagnostics', {})
     result['calibration_diagnostics'] = diagnostics
@@ -212,16 +281,24 @@ def measure_box(bbox, polygon, scale, image_size, line_x=None, line_tolerance_px
         result['warnings'].append(f'Калибровка расходится с эталонными длинами более чем на {100*tolerance:g} см. Точность ±{100*tolerance:g} см не подтверждена; проверьте эталоны и геометрию.')
     if scale['status'] in {'verified_local', 'single_reference'}:
         if not min(scale['depths'])-.05 <= t <= max(scale['depths'])+.05:
-            result['status']='outside_calibration'
-            return result
+            if not estimate:
+                result['status']='outside_calibration'
+                return result
+            result['quality_reasons'].append('outside_calibration')
         result['warnings'].append('Эталоны задают масштаб только в этой полосе. Для других глубин нужны дополнительные эталоны или мерные линии.')
     elif scale['status'] == 'depth_calibrated' and not min(scale['depths'])-1e-7 <= t <= max(scale['depths'])+1e-7:
-        result['status'] = 'outside_calibration'
-        return result
+        if not estimate:
+            result['status'] = 'outside_calibration'
+            return result
+        result['quality_reasons'].append('outside_calibration')
     ppm = scale['intercept'] + scale['slope']*t
     if w > 1.5*scale.get('max_reference_width_px',float('inf')):
         result['warnings'].append('Автомобиль значительно шире эталона в кадре. Масштаб по короткому автомобилю не проверяет искажение по всей длине состава. Проверьте длину по документам или мерным отметкам вдоль всей зоны измерения.')
     result.update(length_m=float(w/ppm), cm_per_px=float(100/ppm),
                   coefficient=float((scale['intercept']+scale['slope'])/ppm),
                   status=scale['status'])
+    if 'outside_calibration' in result['quality_reasons']:
+        result['approximate']=True
+        result['warnings'].append('Автомобиль за пределами глубин эталонов. Масштаб продолжен по имеющейся калибровке; длина приблизительная, требуется проверка.')
+    if result['approximate']:result['status']='approximate'
     return result

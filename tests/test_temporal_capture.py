@@ -16,7 +16,7 @@ def setup(tmp_path, monkeypatch):
     monkeypatch.setattr(station, 'DB', tmp_path/'station.sqlite3')
     profile = wb.Profile(image_size=(600,500), polygon=[(20,200),(580,200),(580,450),(20,450)],
                          references=[dict(bbox=[250,150,100,75],length_m=5)],
-                         measurement_line_x=300, detector_model='yolo26m')
+                         measurement_line_x=300, detector_model='yolo26m',measurement_mode='strict')
     return tmp_path, profile
 
 
@@ -77,6 +77,32 @@ def test_ip_capture_requires_enough_actual_frames(setup,monkeypatch,count,expect
         row=TestClient(app).get('/api/station/vehicles').json()['rows'][0]
         assert row['measurement_reason']=='insufficient_temporal_frames'
         assert 'source' not in row  # Queue diagnostics do not send entire calibration/images.
+
+
+@pytest.mark.parametrize('count',[3,7])
+def test_working_estimate_mode_preserves_numeric_length_and_failed_checks(setup,monkeypatch,count):
+    _,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':'estimate'})
+    camera=ip.Station(ip.Settings(),profile);now=time.monotonic()
+    jpeg=cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes()
+    packets=[ip.Packet(i,now-.3+.04*i,jpeg) for i in range(count)]
+    camera.side.packets.extend(packets)
+    # Entire sequence outside the supported depth: it must be an estimate,
+    # even if the actual detector boxes are perfectly consistent.
+    box=[250,300,100,75]
+    monkeypatch.setattr(wb,'detect_vehicles',lambda *a,**k:[dict(bbox=box,label='car')])
+    record=camera.capture((packets[count//2],None,None),dict(bbox=box,label='car'),'car',temporal=True)
+    measured=record['source']['measurement']
+    assert record['length_m']==pytest.approx(5)
+    assert record['status']=='Требует проверки'
+    assert measured['approximate'] and measured['status']=='temporal_estimate'
+    assert 'outside_calibration' in measured['quality_reasons']
+    assert measured['temporal']['accuracy_validated'] is False
+    assert len(measured['temporal']['samples'])==count
+    if count==3:assert 'insufficient_temporal_frames' in measured['quality_reasons']
+    from web_app.main import app
+    row=TestClient(app).get('/api/station/vehicles').json()['rows'][0]
+    assert row['length_m']==pytest.approx(5) and row['measurement_approximate']
 
 
 def test_ip_reconnect_cannot_mix_passages(setup,monkeypatch):
@@ -187,17 +213,50 @@ def test_pending_capture_waits_for_post_line_frames(setup,monkeypatch):
     assert len(calls)==1 and not track.get('pending')
 
 
-def test_uncalibrated_crossing_is_reviewed_without_relaxing_line_gate(setup):
+def test_uncalibrated_crossing_is_reviewed_without_relaxing_line_gate(setup,monkeypatch):
     _,profile=setup
     camera=ip.Station(ip.Settings(),profile)
     packet=ip.Packet(1,time.monotonic(),cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes())
     camera.side.packets.append(packet)
+    monkeypatch.setattr(wb,'detect_vehicles',lambda *a,**k:[dict(bbox=[250,325,100,75])])
     record=camera.capture((packet,None,None),dict(bbox=[250,325,100,75],label='truck'),'truck',temporal=True)
     assert record['length_m'] is None and record['side_photo']
-    assert record['source']['measurement']['temporal']['reasons']==['anchor_outside_calibration']
+    assert 'anchor_outside_calibration' in record['source']['measurement']['temporal']['reasons']
+    assert not record['source']['measurement']['temporal']['samples']
     assert record['source']['measurement']['single_frame_status']=='outside_calibration'
     with pytest.raises(HTTPException):
         camera.capture((packet,None,None),dict(bbox=[350,325,100,75],label='truck'),'off-line',temporal=True)
+
+
+@pytest.mark.parametrize('source',['ip','video'])
+def test_outside_anchor_uses_only_calibrated_neighbours_at_the_line(setup,monkeypatch,source):
+    path,profile=setup
+    anchor=[250,164,100,75]  # Bottom just beyond local reference support.
+    raw=[np.full((500,600,3),i*20,np.uint8) for i in range(7)]
+    def detect(image,*args,**kwargs):
+        i=round(float(image.mean())/20)
+        return [dict(bbox=anchor if i==3 else [250+4*(i-3),150,100,75],label='car')]
+    monkeypatch.setattr(wb,'detect_vehicles',detect)
+    if source=='ip':
+        camera=ip.Station(ip.Settings(),profile);now=time.monotonic()
+        packets=[ip.Packet(i,now-.24+.04*i,cv2.imencode('.jpg',image)[1].tobytes()) for i,image in enumerate(raw)]
+        camera.side.packets.extend(packets)
+        record=camera.capture((packets[3],None,None),dict(bbox=anchor,label='car'),'car',temporal=True)
+    else:
+        video=path/'depth.avi';writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+        assert writer.isOpened()
+        for image in raw:writer.write(image)
+        writer.release()
+        monkeypatch.setitem(wb.media,'depth',dict(path=video,kind='video',fps=25,frames=7))
+        record=station.capture(station.Capture(media_id='depth',profile=profile,frame=3,bbox=anchor,temporal=True))
+    evidence=record['source']['measurement']
+    assert record['length_m']==pytest.approx(5)
+    assert evidence['single_frame_length_m'] is None
+    assert evidence['single_frame_status']=='outside_calibration'
+    assert {s['frame'] for s in evidence['temporal']['samples']}=={0,1,2,4,5,6}
+    assert evidence['temporal']['accuracy_validated'] is False
+    assert dict(frame=3,reason='outside_calibration') in evidence['temporal']['diagnostics']['excluded_frames']
+    assert record['status']=='Требует проверки'
 
 
 def test_crossing_search_recovers_real_frame_when_interpolation_misses_line(setup,monkeypatch):
