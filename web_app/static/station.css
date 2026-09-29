@@ -43,6 +43,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}
 th{text-align:left;color:#637089;font-weight:700;background:#f7f9fc;padding:12px 14px;border-bottom:1px solid var(--line)}
 td{padding:14px;border-bottom:1px solid #edf1f6}
 .measurement-reason{display:block;margin-top:4px;font-size:12px;color:#945700;max-width:220px}
+.plate-note{display:block;margin-top:4px;font-size:12px;color:#945700;max-width:220px}
 tbody tr{cursor:pointer}
 tbody tr:hover{background:#f8fbff}
 tbody tr.selected{background:#edf5ff;box-shadow:inset 3px 0 0 var(--blue)}

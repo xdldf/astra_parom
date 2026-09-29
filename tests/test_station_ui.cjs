@@ -39,6 +39,48 @@ test('polling unchanged queue preserves DOM and sends ETag',async()=>{
   assert.match(ui.requests[0].path,/limit=250/);
 });
 
+test('queue shows a labelled OCR number and distinguishes missing or failed readings',async()=>{
+  const ui=await stationUI();
+  const cases=[
+    [{state:'queued',candidates:[]},'Читаем номер…',null],
+    [{state:'review',candidates:[{text:'A123BC14'}],candidate_count:1},'А123ВС14',/Распознано/],
+    [{state:'not_found',candidates:[]},'Номер не найден',/читаемого номера/],
+    [{state:'error',candidates:[]},'Ошибка чтения номера',/повторите/],
+    // The compact API only sends the first candidate, plus the actual count.
+    [{state:'review',candidates:[{text:'A123BC14'}],candidate_count:2},'Несколько вариантов',/выберите номер/],
+  ];
+  for(const [ocr,text,note] of cases){
+    const data=page();Object.assign(data.rows[0],{plate:'',front_photo:'cab.jpg',plate_ocr:ocr});
+    ui.respond(()=>({data}));await ui.run('loadVehicles()');
+    const cell=ui.elements.get('carsTable').children[0].children[2];
+    assert.equal(cell.textContent,text);
+    if(note)assert.match(cell.children[0].textContent,note);
+  }
+  assert.equal(ui.run('dirty'),false);
+  assert.ok(ui.requests.every(r=>!r.options.method));
+});
+
+test('confirmed operator number takes priority over OCR and reports keep that number',async()=>{
+  const ui=await stationUI();
+  const row=page().rows[0];row.plate_ocr={state:'review',candidates:[{text:'B456EE14'}]};
+  const actual=ui.run(`tableRow(${JSON.stringify(row)},true)`);
+  assert.equal(actual.children[3].textContent,'А123ВС14');
+  assert.equal(actual.children[3].children.length,0);
+});
+
+test('record header shows the OCR proposal without overwriting the operator field',async()=>{
+  const ui=await stationUI();
+  const record={...page().rows[0],plate:'',front_photo:'cab.jpg',plate_ocr:{state:'review',candidates:[{text:'A123BC14',photo:'plate.jpg'}]}};
+  ui.run(`renderRecord(${JSON.stringify(record)})`);
+  assert.equal(ui.elements.get('plate').textContent,'А123ВС14');
+  assert.match(ui.elements.get('plate').children[0].textContent,/Распознано/);
+  assert.equal(ui.elements.get('plateInput').value,'');
+  assert.equal(ui.run('dirty'),false);
+  ui.elements.get('ocrCandidates').children[0].children[3].onclick();
+  assert.equal(ui.elements.get('plateInput').value,'А123ВС14');
+  assert.equal(ui.run('dirty'),true);
+});
+
 test('older queue pages freeze insertion boundary and filters reset paging',async()=>{
   const ui=await stationUI();
   ui.respond(path=>({data:page(Number(new URL(path,'http://station').searchParams.get('offset')))}));

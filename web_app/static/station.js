@@ -131,10 +131,25 @@ function tableRow(record,report=false){
   if(!report){tr.classList.toggle('selected',current?.id===record.id);tr.onclick=()=>action(()=>selectRecord(record.id));}
   if(report)cell(tr,record.created_at.slice(0,10).split('-').reverse().join('.'));
   carPhotos(tr,record);
-  cell(tr,record.created_at.slice(11,19));cell(tr,record.plate||(record.plate_ocr?.candidates?.[0]?.text ? record.plate_ocr.candidates[0].text : record.plate_ocr?.state==='queued'?'Читаем номер…':'Не указан'));
+  cell(tr,record.created_at.slice(11,19));
+  renderPlate(cell(tr,''),record);
   const lengthCell=cell(tr,recordLengthText(record)),note=measurementNote(record);
   if(note){const hint=document.createElement('small');hint.className='measurement-reason';hint.textContent=note;lengthCell.append(hint);}
   cell(tr,categories[record.category]);cell(tr,fmt(record.tariff.amount_rub)).className='tariff-only';cell(tr,'').append(badge(record.status));return tr;
+}
+function platePresentation(record){
+  if(record.plate)return {text:record.plate};
+  const o=record.plate_ocr,count=o?.candidate_count??o?.candidates?.length??0;
+  if(o?.state==='queued')return {text:'Читаем номер…'};
+  if(o?.state==='error')return {text:'Ошибка чтения номера',note:'Откройте запись и повторите распознавание.'};
+  if(count>1)return {text:'Несколько вариантов',note:'Откройте запись и выберите номер по фото.'};
+  if(count===1&&o.candidates?.[0]?.text)return {text:o.candidates[0].text,note:'Распознано · проверьте по фото'};
+  if(o?.state==='not_found')return {text:'Номер не найден',note:'На сохранённых кадрах нет читаемого номера.'};
+  return {text:record.front_photo?'Не указан':'Нет снимка номера'};
+}
+function renderPlate(target,record){
+  const plate=platePresentation(record);target.replaceChildren();target.textContent=plate.text;
+  if(plate.note){const hint=document.createElement('small');hint.className='plate-note';hint.textContent=plate.note;target.append(hint);}
 }
 async function loadVehicles(){
   const serial=++queueSerial,params=pageQuery();const result=await cachedGet('/vehicles?'+params);
@@ -189,7 +204,7 @@ function renderRecord(r){
   current=r;dirty=false;$('recordConflict').hidden=true;quoteSerial++;$('emptyDetail').hidden=true;$('recordDetail').hidden=false;
   renderOCR(r);
   renderCalibrationReference(r);
-  $('plate').textContent=r.plate||'Не указан';$('category').textContent=categories[r.category];
+  renderPlate($('plate'),r);$('category').textContent=categories[r.category];
   $('detectedLength').textContent=r.source?recordLengthText({...r,length_m:r.measured_length_m}):'Ручная запись';
   $('recordStatus').replaceChildren(badge(r.status));$('plateInput').value=r.plate;$('categoryInput').value=r.category;
   $('lengthInput').value=r.length_m??'';$('capacityInput').value=r.load_capacity_t??'';capacityUI();$('manualTariff').value=r.manual_rub??'';$('reason').value='';
@@ -460,7 +475,7 @@ async function ipPoll(){
  if(s.running){
   if(!wasRunning||ipSessionId!==s.id||!$('operatorDetection').getAttribute('src')){$('operatorDetection').src='/api/ip/side/video?session='+s.id;$('frontStream').src='/api/ip/front/video?session='+s.id;ipSessionId=s.id;}
   $('operatorDetection').hidden=!s.side_ready;$('frontStream').hidden=!s.front_ready;
-  $('liveStatus').textContent=s.side;$('frontStatus').textContent=s.front_ready?(s.plates?.candidates?.map(p=>p.text).join(', ')||s.front):s.front;
+  $('liveStatus').textContent=s.side;$('frontStatus').textContent=s.front_ready?(s.plate_error?'Ошибка чтения номера':s.plates?.candidates?.map(p=>p.text).join(', ')||s.front):s.front;
   $('syncStatus').textContent=s.ready?'Изображения согласованы':s.side_ready?'Длина измеряется без фронтального снимка':s.front_ready?'Номера читаются · длина недоступна':'Ожидание камер';
   $('detectionStatus').textContent=s.error||(!s.side_ready?'Ожидание боковой камеры':s.auto_measure?'Автоматическое измерение включено':'Автоматическое измерение выключено');
   $('autoMeasure').checked=s.auto_measure;

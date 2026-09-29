@@ -183,7 +183,8 @@ def test_concurrent_starts_share_one_camera_station(tmp_path,monkeypatch):
     assert {r['id'] for r in results}==set(started)
 
 
-def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,monkeypatch):
+@pytest.mark.parametrize('advance',['none','same_truck','following_vehicle'])
+def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,monkeypatch,advance):
     monkeypatch.setattr(station,'DATA',tmp_path)
     monkeypatch.setattr(station,'DB',tmp_path/'db.sqlite')
     monkeypatch.setattr(plates,'enqueue',lambda _:None)
@@ -202,6 +203,16 @@ def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,mo
         camera.front_history.observe(body,[0,0,600,500],[],camera.front.epoch)
     side=frame(20,now,80)
     camera.side.packets.append(side);camera.front.packets.append(body)
+    if advance!='none':
+        original=wb.render_raw
+        def render(*args,**kwargs):
+            # Front processing proceeds while side rectification/measurement
+            # uses the older paired anchor, including the next cab arriving.
+            for i in range(1,4):
+                reads=[] if advance=='same_truck' else [dict(candidate,text='В456ЕЕ14',confidence=.99)]
+                camera.front_history.observe(frame(30+i,now+i*.4,60),[0,0,600,500],reads,camera.front.epoch)
+            return original(*args,**kwargs)
+        monkeypatch.setattr(wb,'render_raw',render)
     result=camera.capture((side,body,0),{'bbox':[100,150,100,75],'label':'truck'},'truck')
     assert cv2.imread(str(tmp_path/result['front_photo'])).mean()==pytest.approx(200,abs=1)
     source=result['source']
@@ -221,6 +232,8 @@ def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,mo
     client=TestClient(app)
     row=client.get('/api/station/vehicles').json()['rows'][0]
     assert row['front_photo_offset_seconds']==pytest.approx(-8)
+    assert row['plate_ocr']['candidates'][0]['text']==candidate['text']
+    assert row['plate_ocr']['candidate_count']==1
     calls=[]
     monkeypatch.setattr(plates,'recognize',lambda image,reference_box=None:calls.append(reference_box) or [candidate])
     client.post('/api/station/vehicles/'+result['id']+'/recognize-plate')

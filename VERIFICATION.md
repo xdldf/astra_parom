@@ -1,3 +1,9 @@
+## Truck plate evidence during delayed capture — 2026-09-29
+
+- **257 Python tests and 55 frontend tests passed.** Front-camera evidence is selected at the capture timestamp using bounded passage history, including when front inference has advanced or the next vehicle has arrived. A readable cab may precede capture by up to 30 seconds; reconnects/rewinds and ambiguous passage boundaries cannot reuse its number.
+- IP/video capture regressions preserve the original synchronized photo, earlier cab and cached OCR. Added bounded-history, longer-passage and queue-state coverage; an isolated browser fixture verified proposed-number labels, distinct not-found/error/ambiguous states and the operator's selection button.
+- Tests use controlled detections/OCR; the exact truck's front video and on-site GPU were unavailable. The OCR model/weights and official operator-entered plate are unchanged. [Details](docs/TRUCK_PLATE_2026-09-29.md).
+
 ## Slow-passage temporal evidence — 2026-09-29
 
 - **250 Python tests and 52 frontend tests passed.** Video and IP capture extend the original ±0.45 s evidence window to ±2 s only when line evidence exists but a crossing/sample count is incomplete. At most 61 distinct frames are examined; original observations remain in the fit and are not inferred twice.

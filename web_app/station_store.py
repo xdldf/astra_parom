@@ -77,6 +77,9 @@ def summary(row):
     r.pop('seq')
     r['tariff'] = dict(amount_rub=r.pop('amount_rub'), code=r.pop('code'))
     state, text = r.pop('ocr_state'), r.pop('ocr_text')
+    count = r.pop('ocr_candidate_count', None)
     if state:
         r['plate_ocr'] = dict(state=state, candidates=[dict(text=text)] if text else [])
+        if count is not None:
+            r['plate_ocr']['candidate_count'] = count
     return r

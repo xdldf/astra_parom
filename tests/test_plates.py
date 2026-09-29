@@ -49,6 +49,9 @@ def test_ambiguous_does_not_assign_plate(client,monkeypatch):
     assert result['plate']==''
     assert len(result['plate_ocr']['candidates'])==2
     assert result['plate_ocr']['association']=='operator_review'
+    row=client.get('/api/station/vehicles').json()['rows'][0]
+    assert row['plate_ocr']['state']=='review' and row['plate_ocr']['candidate_count']==2
+    assert len(row['plate_ocr']['candidates'])==1  # Queue stays a compact projection.
 
 
 def test_error_no_plate_and_closed_records(client,monkeypatch):
@@ -57,11 +60,13 @@ def test_error_no_plate_and_closed_records(client,monkeypatch):
     monkeypatch.setattr(plates,'recognize',lambda image:[])
     plates.process_record(r['id'])
     assert client.get(url).json()['plate_ocr']['state']=='not_found'
+    assert client.get('/api/station/vehicles').json()['rows'][0]['plate_ocr']['state']=='not_found'
     def fail(image): raise RuntimeError('CUDA unavailable')
     monkeypatch.setattr(plates,'recognize',fail)
     plates.process_record(r['id'])
     result=client.get(url).json()
     assert result['plate_ocr']['state']=='error'
+    assert client.get('/api/station/vehicles').json()['rows'][0]['plate_ocr']['state']=='error'
     confirmed=client.post(url,json={'version':result['version'],'action':'confirm','plate':'','category':'car','length_m':4.5}).json()
     assert confirmed['status']=='Подтвержден'
     assert client.post(url+'/recognize-plate',json={}).status_code==409

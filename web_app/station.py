@@ -453,7 +453,8 @@ def vehicles(request: Request,response: Response,plate: str='',status: str='',ca
             COALESCE(json_extract(v.data, '$.source.measurement.quality_reasons[0]'),
                      json_extract(v.data, '$.source.measurement.temporal.reasons[0]'),
                      json_extract(v.data, '$.source.measurement.status')) AS measurement_reason,
-            json_extract(v.data, '$.source.front_evidence.offset_seconds') AS front_photo_offset_seconds
+            json_extract(v.data, '$.source.front_evidence.offset_seconds') AS front_photo_offset_seconds,
+            json_array_length(v.data, '$.plate_ocr.candidates') AS ocr_candidate_count
             FROM (SELECT * FROM vehicle_list WHERE {where} ORDER BY seq DESC LIMIT ? OFFSET ?) AS page
             JOIN vehicles v ON v.id=page.id ORDER BY page.seq DESC""",args+[limit,offset])]
     return dict(rows=rows,**totals,limit=limit,offset=offset,snapshot=snapshot,has_more=offset+len(rows)<totals['count'],tariffs_enabled=enabled)

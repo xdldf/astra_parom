@@ -371,7 +371,8 @@ def test_long_truck_requires_category_choice_not_automatic_reclassification(clie
     assert response.json()['tariff']['code']=='7.4'
 
 
-def test_video_capture_uses_only_matching_session_front_history(client,monkeypatch):
+@pytest.mark.parametrize('front_advanced',[False,True])
+def test_video_capture_uses_only_matching_session_front_history(client,monkeypatch,front_advanced):
     from types import SimpleNamespace
     from web_app import video_stream,plates
     from web_app.ip_cameras import Packet
@@ -386,6 +387,8 @@ def test_video_capture_uses_only_matching_session_front_history(client,monkeypat
     candidate=dict(text='А123ВС14',confidence=.95,bbox=[100,300,200,350])
     history.observe(Packet(20,2,jpeg),[0,0,600,500],[candidate],0)
     for second in range(3,11):history.observe(Packet(second*10,second,b''),[0,0,600,500],[],0)
+    if front_advanced:
+        history.observe(Packet(110,11,jpeg),[0,0,600,500],[dict(candidate,text='В456ЕЕ14')],0)
     monkeypatch.setitem(video_stream.sessions,'video-session',SimpleNamespace(
         front_history=history,request=SimpleNamespace(media_id='side',front_media_id='front')))
     payload=dict(media_id='side',front_media_id='front',front_session_id='video-session',front_offset_seconds=0,
