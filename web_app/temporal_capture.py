@@ -9,6 +9,15 @@ from web_app import workbench as wb
 
 WINDOW_SECONDS = .45
 MAX_FRAMES = 31
+# Slow passages may enter the line tolerance before their centre crosses it.
+# Keep the original evidence and add a bounded, sparse set of real neighbours.
+EXTENDED_WINDOW_SECONDS = 2.
+MAX_EXTENDED_FRAMES = 61
+
+
+def needs_more_evidence(passage):
+    reasons = set(passage.get('reasons', []))
+    return bool(reasons) and reasons <= {'line_not_bracketed', 'insufficient_temporal_frames'}
 
 
 def crossing_fraction(profile, before_box, after_box):
@@ -82,11 +91,14 @@ def refinement_candidate(measured):
                                                measured['status']=='outside_calibration')
 
 
-def refine(profile, anchor_box, frames):
+def refine(profile, anchor_box, frames, *, observations=None, max_frames=MAX_FRAMES):
     """Frames yield distinct (index, original pixels) from one bounded passage."""
-    observations = []
+    observations = [] if observations is None else observations
+    seen = {row['frame'] for row in observations}
     for index, raw in frames:
-        if len(observations) >= MAX_FRAMES:
+        if index in seen:
+            continue
+        if len(observations) >= max_frames:
             break
         if raw is None or tuple(raw.shape[1::-1]) != profile.image_size:
             continue
@@ -94,6 +106,7 @@ def refine(profile, anchor_box, frames):
         detections = wb.detect_vehicles(frame, .3, detector_model=profile.detector_model,
                                          imgsz=profile.detector_imgsz)
         observations.append(dict(frame=index, detections=detections))
+        seen.add(index)
     options=dict(line_x=profile.measurement_line_x,line_tolerance_px=profile.line_tolerance_px,
                  tolerance_m=profile.accuracy_tolerance_m)
     args=(observations,anchor_box,profile.polygon,wb.profile_scale(profile),profile.image_size)
@@ -104,14 +117,23 @@ def refine(profile, anchor_box, frames):
     return estimated
 
 
-def video_frames(item, anchor):
+def video_frames(item, anchor, *, extended=False):
     fps = item.get('fps', 0)
     if not math.isfinite(fps) or fps <= 0:
         return
     radius = max(1, round(fps*WINDOW_SECONDS))
     first, last = max(0, anchor-radius), min(item['frames']-1, anchor+radius)
-    indices = sorted(set([anchor, *range(first, last+1, max(1, math.ceil((last-first+1)/(MAX_FRAMES-1))))]))
-    selected = set(indices)
+    selected = set([anchor, *range(first, last+1, max(1, math.ceil((last-first+1)/(MAX_FRAMES-1))))])
+    if extended:
+        extra_radius = max(radius, round(fps*EXTENDED_WINDOW_SECONDS))
+        outer_first, outer_last = max(0, anchor-extra_radius), min(item['frames']-1, anchor+extra_radius)
+        per_side = (MAX_EXTENDED_FRAMES-MAX_FRAMES)//2
+        for start, end in ((outer_first, first-1), (last+1, outer_last)):
+            if end < start:
+                continue
+            count = min(per_side, end-start+1)
+            selected.update(round(start+i*(end-start)/max(1,count-1)) for i in range(count))
+        first, last = outer_first, outer_last
     capture = cv2.VideoCapture(str(item['path']))
     try:
         capture.set(cv2.CAP_PROP_POS_FRAMES, first)
@@ -130,7 +152,14 @@ def refine_video(payload, result):
     item = wb.media[payload.media_id]
     if not refinement_candidate(measured) or item['kind'] != 'video':
         return
-    passage = refine(payload.profile, payload.bbox, video_frames(item, payload.frame))
+    observations = []
+    passage = refine(payload.profile, payload.bbox, video_frames(item, payload.frame), observations=observations)
+    initial_reasons = list(passage['reasons'])
+    extended = needs_more_evidence(passage)
+    if extended:
+        passage = refine(payload.profile, payload.bbox, video_frames(item, payload.frame, extended=True),
+                         observations=observations, max_frames=MAX_EXTENDED_FRAMES)
+    passage['diagnostics'].update(extended_time_window=extended, initial_review_reasons=initial_reasons)
     passage.update(detector_model=payload.profile.detector_model, imgsz=payload.profile.detector_imgsz,
-                   anchor_frame=payload.frame, window_seconds=WINDOW_SECONDS)
+                   anchor_frame=payload.frame, window_seconds=EXTENDED_WINDOW_SECONDS if extended else WINDOW_SECONDS)
     result['detections'][0] = apply_passage(measured, passage,allow_estimate=payload.profile.measurement_mode=='estimate')

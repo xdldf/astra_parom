@@ -78,29 +78,65 @@ class Packet:
 class PassageFrames:
     """Pin a bounded original-frame window while inference uses the rolling buffer."""
     def __init__(self, anchor, epoch):
-        from web_app.temporal_capture import WINDOW_SECONDS
+        from web_app.temporal_capture import EXTENDED_WINDOW_SECONDS
         self.anchor=anchor
         self.epoch=epoch
-        self.end=anchor.stamp+WINDOW_SECONDS
+        self.end=anchor.stamp+EXTENDED_WINDOW_SECONDS
         self.lock=threading.Lock()
         self.packets={anchor.seq:anchor}
+        # Only the inference/capture worker accesses the decoded observations.
+        self.observations=[]
+        self.passage=None
 
     def extend(self, packets):
-        from web_app.temporal_capture import WINDOW_SECONDS, MAX_FRAMES
+        from web_app.temporal_capture import WINDOW_SECONDS, EXTENDED_WINDOW_SECONDS, MAX_FRAMES, MAX_EXTENDED_FRAMES
         with self.lock:
-            for packet in packets:
-                if abs(packet.stamp-self.anchor.stamp)<=WINDOW_SECONDS:
-                    self.packets[packet.seq]=packet
-            nearest=sorted(self.packets.values(),key=lambda p:abs(p.stamp-self.anchor.stamp))
-            selected=[];size=0
-            for packet in nearest[:MAX_FRAMES]:
-                if selected and size+len(packet.jpeg)>48*1024*1024:break
+            bins={}
+            for packet in [*self.packets.values(),*packets]:
+                offset=packet.stamp-self.anchor.stamp
+                if packet.seq==self.anchor.seq or abs(offset)>EXTENDED_WINDOW_SECONDS:
+                    continue
+                outer=abs(offset)>WINDOW_SECONDS
+                count=(MAX_EXTENDED_FRAMES-MAX_FRAMES)//2 if outer else (MAX_FRAMES-1)//2
+                start=WINDOW_SECONDS if outer else 0.
+                span=EXTENDED_WINDOW_SECONDS-WINDOW_SECONDS if outer else WINDOW_SECONDS
+                slot=min(count-1,int((abs(offset)-start)/span*count))
+                target=start+(slot+.5)*span/count
+                key=(outer,offset<0,slot)
+                distance=abs(abs(offset)-target)
+                if key not in bins or distance<bins[key][0]:
+                    bins[key]=(distance,packet)
+            # Reserve sparse neighbours separately so dense near-anchor frames
+            # cannot evict all evidence of a later slow crossing.
+            ordered=sorted((value[1] for value in bins.values()),
+                           key=lambda p:(abs(p.stamp-self.anchor.stamp)>WINDOW_SECONDS,
+                                         abs(p.stamp-self.anchor.stamp)))
+            selected=[self.anchor];size=len(self.anchor.jpeg)
+            for packet in ordered:
+                if size+len(packet.jpeg)>48*1024*1024:continue
                 selected.append(packet);size+=len(packet.jpeg)
             self.packets={p.seq:p for p in selected}
 
-    def snapshot(self):
+    def snapshot(self, *, extended=False):
+        from web_app.temporal_capture import WINDOW_SECONDS
         with self.lock:
-            return sorted(self.packets.values(),key=lambda p:p.seq)
+            return sorted((p for p in self.packets.values()
+                           if extended or abs(p.stamp-self.anchor.stamp)<=WINDOW_SECONDS),key=lambda p:p.seq)
+
+    def measure(self, profile, box, *, extended=False, packets=None):
+        from web_app.temporal_capture import refine, WINDOW_SECONDS, EXTENDED_WINDOW_SECONDS, MAX_FRAMES, MAX_EXTENDED_FRAMES
+        packets=self.snapshot(extended=extended) if packets is None else packets
+        initial_reasons=list(self.passage['reasons']) if self.passage else []
+        passage=refine(profile,box,((p.seq,p.image()) for p in packets),observations=self.observations,
+                       max_frames=MAX_EXTENDED_FRAMES if extended else MAX_FRAMES)
+        passage.update(detector_model=profile.detector_model,imgsz=profile.detector_imgsz,
+                       anchor_frame=self.anchor.seq,
+                       window_seconds=EXTENDED_WINDOW_SECONDS if extended else WINDOW_SECONDS)
+        passage['diagnostics'].update(buffered_frames=len(packets),
+            frame_span_seconds=packets[-1].stamp-packets[0].stamp if packets else 0,
+            extended_time_window=extended,initial_review_reasons=initial_reasons if extended else list(passage['reasons']))
+        self.passage=passage
+        return passage
 
 
 class Receiver:
@@ -149,6 +185,10 @@ class Receiver:
             for window in self.windows:
                 if window.epoch==self.epoch:window.extend([packet])
             self.windows=[w for w in self.windows if w.epoch==self.epoch and w.end>packet.stamp]
+
+    def release_passage(self, window):
+        with self.lock:
+            self.windows=[w for w in self.windows if w is not window]
 
     def run(self):
         while not self.stop.is_set():
@@ -347,26 +387,37 @@ class Station:
                 self.error='Измерение не выполнено. Проверьте камеры и настройку.'
 
     def flush_pending(self, stamp):
-        from web_app.temporal_capture import WINDOW_SECONDS
+        from web_app.temporal_capture import WINDOW_SECONDS, EXTENDED_WINDOW_SECONDS, needs_more_evidence
         for track in self.tracks:
             pending=track.get('pending')
             if not pending or stamp-pending[0][0].stamp < WINDOW_SECONDS:
                 continue
             pair, candidate, epoch=pending
-            if epoch != self.side.epoch or not self.cfg.auto_measure or stamp-pair[0].stamp>3:
+            window=track.get('passage_frames')
+            max_age=3+EXTENDED_WINDOW_SECONDS if window else 3
+            if epoch != self.side.epoch or not self.cfg.auto_measure or stamp-pair[0].stamp>max_age:
                 track.pop('pending',None)
                 track.pop('passage_frames',None)
+                self.side.release_passage(window)
                 continue
+            if window:
+                passage=window.passage or window.measure(self.profile,candidate['bbox'])
+                if needs_more_evidence(passage) and not passage['diagnostics']['extended_time_window']:
+                    if stamp<window.end:
+                        continue  # Receiver keeps the originals; resume live tracking meanwhile.
+                    window.measure(self.profile,candidate['bbox'],extended=True)
             self.capture(pair,candidate,track['id'],temporal=True,epoch=epoch,
-                         passage_frames=track.get('passage_frames'))
+                         passage_frames=window)
             track.update(sent=True,pending=None)
             track.pop('passage_frames',None)
+            self.side.release_passage(window)
 
     def capture(self,pair,d,track_id,*,temporal=False,epoch=None,passage_frames=None):
         from web_app import station as st
-        from web_app.temporal_capture import refinement_candidate
+        from web_app.temporal_capture import refinement_candidate, EXTENDED_WINDOW_SECONDS, needs_more_evidence
         a,b,delta=pair
-        if self.stop.is_set() or self.fresh(self.side) is None or time.monotonic()-a.stamp>3:
+        max_age=3+EXTENDED_WINDOW_SECONDS if passage_frames else 3
+        if self.stop.is_set() or self.fresh(self.side) is None or time.monotonic()-a.stamp>max_age:
             raise HTTPException(409,'Нет свежего изображения боковой камеры')
         with self.capture_lock:
             if track_id in self.saved:return self.saved[track_id]
@@ -380,18 +431,16 @@ class Station:
             result=wb.render_raw(a.image(),wb.FrameRequest(profile=self.profile,frame=a.seq,boxes=[d['bbox']]),
                                  include_image=False,include_frame=True)
             if temporal and refinement_candidate(result['detections'][0]):
-                from web_app.temporal_capture import refine, WINDOW_SECONDS
                 from vehicle_metrology.temporal import apply_passage
                 if expected_epoch != self.side.epoch:
                     raise HTTPException(409,'Камера переподключилась во время измерения')
-                passage=refine(self.profile,d['bbox'],((p.seq,p.image()) for p in packets))
+                passage=window.passage or window.measure(self.profile,d['bbox'],packets=packets)
+                if (needs_more_evidence(passage) and not passage['diagnostics']['extended_time_window']
+                        and expected_epoch==self.side.epoch and not self.stop.is_set()):
+                    passage=window.measure(self.profile,d['bbox'],extended=True)
                 if expected_epoch != self.side.epoch or self.stop.is_set():
                     raise HTTPException(409,'Измерение прервано переподключением или остановкой камеры')
-                passage.update(detector_model=self.profile.detector_model,imgsz=self.profile.detector_imgsz,
-                               anchor_frame=a.seq,window_seconds=WINDOW_SECONDS)
-                passage['diagnostics'].update(buffered_frames=len(packets),
-                    frame_span_seconds=packets[-1].stamp-packets[0].stamp if packets else 0,
-                    pinned_passage=passage_frames is not None)
+                passage['diagnostics']['pinned_passage']=passage_frames is not None
                 result['detections'][0]=apply_passage(result['detections'][0],passage,
                     allow_estimate=self.profile.measurement_mode=='estimate')
             if expected_epoch!=self.side.epoch or self.stop.is_set():
@@ -419,6 +468,7 @@ class Station:
             self.saved[track_id]=record
             if len(self.saved)>1000:self.saved.pop(next(iter(self.saved)))
             self.last_capture=record['id']
+            if temporal:self.side.release_passage(window)
             return record
 
     def read_plates(self):

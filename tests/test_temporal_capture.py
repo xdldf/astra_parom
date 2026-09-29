@@ -334,3 +334,175 @@ def test_ip_search_recovers_crossing_beyond_three_nearest_packets(setup,monkeypa
     pending=camera.tracks[0]['pending']
     assert pending[0][0].seq==8 and pending[1]['at_measurement_line']
     assert len(seen)>5  # Two live observations plus more than three recovery attempts.
+
+
+@pytest.mark.parametrize('source',['ip','video'])
+@pytest.mark.parametrize('mode',['strict','estimate'])
+def test_slow_truck_waits_for_actual_crossing_and_reuses_original_evidence(setup,monkeypatch,source,mode):
+    path,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':mode})
+    # A 19.33 m synthetic truck enters the 10 px line gate. Its centre only
+    # crosses 0.67 s later, beyond the old 0.45 s capture window.
+    frames=[np.full((500,600,3),i*2,np.uint8) for i in range(101)]
+    def box(i):return [300+8-12*(i-50)/25-193.3,150,386.6,75]
+    calls=[]
+    def detect(image,*args,**kwargs):
+        i=round(float(image.mean())/2);calls.append(i)
+        return [dict(bbox=box(i),label='truck')]
+    monkeypatch.setattr(wb,'detect_vehicles',detect)
+    initial_frames=None
+    if source=='video':
+        video=path/'slow-truck.avi'
+        writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+        assert writer.isOpened()
+        for image in frames:writer.write(image)
+        writer.release()
+        item=dict(path=video,kind='video',fps=25,frames=len(frames))
+        monkeypatch.setitem(wb.media,'slow',item)
+        initial_frames={index for index,_ in video_frames(item,50)}
+        record=station.capture(station.Capture(media_id='slow',profile=profile,frame=50,
+            bbox=box(50),label='truck',temporal=True))
+    else:
+        camera=ip.Station(ip.Settings(),profile)
+        # Isolated clock: preserve realistic packet freshness while advancing
+        # the receiver without waiting two wall-clock seconds in the test.
+        clock=[100.]
+        monkeypatch.setattr(ip.time,'monotonic',lambda:clock[0])
+        packets=[ip.Packet(i,98+i/25,cv2.imencode('.jpg',image)[1].tobytes())
+                 for i,image in enumerate(frames)]
+        for p in packets[:51]:camera.side.append(p)
+        window=camera.side.retain_passage(packets[50],camera.side.epoch)
+        track=dict(id='slow',sent=False,pending=((packets[50],None,None),
+            dict(bbox=box(50),label='truck'),camera.side.epoch),passage_frames=window)
+        camera.tracks=[track]
+        for p in packets[51:63]:camera.side.append(p)
+        clock[0]=packets[62].stamp
+        camera.flush_pending(clock[0])
+        assert not camera.saved and not track['sent']
+        assert window.passage['reasons']==['line_not_bracketed']
+        initial_frames={row['frame'] for row in window.observations}
+        initial_calls=len(calls)
+        camera.flush_pending(clock[0]+.1)
+        assert len(calls)==initial_calls  # Pending polls do not rerun inference.
+        for p in packets[63:]:camera.side.append(p)
+        clock[0]=packets[-1].stamp
+        camera.flush_pending(clock[0])
+        assert track['sent'] and not camera.side.windows
+        record=camera.saved['slow']
+        camera.flush_pending(clock[0]+.1)
+        assert len(camera.saved)==1
+    evidence=record['source']['measurement']['temporal']
+    assert record['source']['frame']==50 and record['source']['bbox']==box(50)
+    assert record['length_m']==pytest.approx(19.33,abs=.002)
+    assert evidence['status']=='temporal_consistent' and not evidence['reasons']
+    assert evidence['accuracy_validated'] is False
+    assert evidence['window_seconds']==2
+    assert evidence['diagnostics']['extended_time_window'] is True
+    assert evidence['diagnostics']['initial_review_reasons']==['line_not_bracketed']
+    assert len(calls)==evidence['diagnostics']['requested_frames']<=61
+    offsets=[s['line_offset_px'] for s in evidence['samples']]
+    assert min(offsets)<0<max(offsets)
+    included={s['frame'] for s in evidence['samples']}
+    excluded={s['frame'] for s in evidence['diagnostics']['excluded_frames']}
+    assert initial_frames <= included|excluded
+
+
+def test_extended_retention_keeps_both_time_edges_with_count_and_byte_limits():
+    from web_app.temporal_capture import MAX_EXTENDED_FRAMES
+    anchor=ip.Packet(500,10,b'anchor')
+    window=ip.PassageFrames(anchor,0)
+    # High receive rate must not crowd out the sparse outer reserve.
+    window.extend(ip.Packet(i,8+i*.004,b'jpeg') for i in range(1001))
+    packets=window.snapshot(extended=True)
+    assert len(packets)<=MAX_EXTENDED_FRAMES and anchor in packets
+    assert packets[0].stamp<8.15 and packets[-1].stamp>11.85
+    assert len(window.snapshot())<=31
+    large=b'x'*(2*1024*1024)
+    window=ip.PassageFrames(anchor,0)
+    window.extend(ip.Packet(i,8+i*.05,large) for i in range(81))
+    assert 46*1024*1024<=sum(len(p.jpeg) for p in window.snapshot(extended=True))<=48*1024*1024
+    assert anchor in window.snapshot(extended=True)
+
+
+@pytest.mark.parametrize('failure',['unstable_temporal_length','ambiguous_vehicle_association','missing_line_evidence','unstable_after_extension'])
+def test_failed_checks_remain_visible_without_discarding_original_frames(setup,monkeypatch,failure):
+    path,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':'estimate'})
+    video=path/'failed-check.avi'
+    writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+    assert writer.isOpened()
+    for i in range(101):writer.write(np.full((500,600,3),i*2,np.uint8))
+    writer.release()
+    monkeypatch.setitem(wb.media,'failed',dict(path=video,kind='video',fps=25,frames=101))
+    calls=[]
+    def detect(image,*args,**kwargs):
+        i=round(float(image.mean())/2);calls.append(i)
+        offset=8-.48*(i-50) if failure=='unstable_after_extension' else 2*(i-50)
+        if failure=='missing_line_evidence':offset=20
+        width=106 if i==50 and failure.startswith('unstable') else 100
+        d=dict(bbox=[300+offset-width/2,150,width,75],label='car')
+        return [d,d] if failure=='ambiguous_vehicle_association' else [d]
+    monkeypatch.setattr(wb,'detect_vehicles',detect)
+    record=station.capture(station.Capture(media_id='failed',profile=profile,frame=50,
+        bbox=[258 if failure=='unstable_after_extension' else 250,150,100,75],temporal=True))
+    temporal=record['source']['measurement']['temporal']
+    expected='unstable_temporal_length' if failure=='unstable_after_extension' else failure
+    assert expected in temporal['reasons'] and temporal['length_m'] is None
+    assert record['status']=='Требует проверки'
+    assert temporal['diagnostics']['extended_time_window']==(failure=='unstable_after_extension')
+    if failure=='unstable_after_extension':
+        assert temporal['diagnostics']['initial_review_reasons']==['line_not_bracketed']
+        assert 50 in {s['frame'] for s in temporal['samples']}
+        assert temporal['diagnostics']['residual_max_m']>.1
+        assert 31<len(calls)<=61
+    else:
+        indices={s['frame'] for s in temporal['samples']}|{s['frame'] for s in temporal['diagnostics']['excluded_frames']}
+        assert len(calls)==len(indices)<=31 and min(indices)>=39 and max(indices)<=61
+
+
+@pytest.mark.parametrize('mode',['strict','estimate'])
+def test_slow_vehicle_that_never_crosses_still_requires_review(setup,monkeypatch,mode):
+    _,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':mode})
+    camera=ip.Station(ip.Settings(),profile)
+    clock=[100.];monkeypatch.setattr(ip.time,'monotonic',lambda:clock[0])
+    images=[np.full((500,600,3),2*i,np.uint8) for i in range(101)]
+    # Approaches then stops 8 px before the centre line. Earlier samples are
+    # outside tolerance: the system must not invent a crossing after waiting.
+    def detect(image,*args,**kwargs):
+        i=round(float(image.mean())/2)
+        return [dict(bbox=[250+max(8,8-(i-50)*.5),150,100,75],label='car')]
+    monkeypatch.setattr(wb,'detect_vehicles',detect)
+    packets=[ip.Packet(i,98+i/25,cv2.imencode('.jpg',raw)[1].tobytes()) for i,raw in enumerate(images)]
+    for p in packets[:51]:camera.side.append(p)
+    window=camera.side.retain_passage(packets[50],0)
+    track=dict(id='stopped',sent=False,pending=((packets[50],None,None),dict(bbox=[258,150,100,75],label='car'),0),passage_frames=window)
+    camera.tracks=[track]
+    for p in packets[51:63]:camera.side.append(p)
+    clock[0]=100.48;camera.flush_pending(clock[0])
+    assert not camera.saved
+    for p in packets[63:]:camera.side.append(p)
+    clock[0]=102;camera.flush_pending(clock[0])
+    record=camera.saved['stopped'];evidence=record['source']['measurement']
+    assert evidence['temporal']['reasons']==['line_not_bracketed']
+    assert record['length_m']==(5 if mode=='estimate' else None)
+    assert record['status']=='Требует проверки'
+    assert evidence['temporal']['diagnostics']['extended_time_window']
+    assert not camera.side.windows
+
+
+@pytest.mark.parametrize('cancel',['reconnect','automatic_off','expired'])
+def test_waiting_slow_passage_is_discarded_when_invalidated(setup,monkeypatch,cancel):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    anchor=ip.Packet(1,10,b'jpeg')
+    window=camera.side.retain_passage(anchor,0)
+    window.passage=dict(reasons=['line_not_bracketed'],diagnostics=dict(extended_time_window=False))
+    track=dict(id='slow',sent=False,pending=((anchor,None,None),dict(bbox=[258,150,100,75]),0),passage_frames=window)
+    camera.tracks=[track]
+    if cancel=='reconnect':camera.side.epoch+=1
+    if cancel=='automatic_off':camera.cfg.auto_measure=False
+    calls=[];monkeypatch.setattr(camera,'capture',lambda *a,**k:calls.append(1))
+    camera.flush_pending(15.1 if cancel=='expired' else 11)
+    assert not calls and not camera.saved and not track.get('pending')
+    assert 'passage_frames' not in track and not camera.side.windows

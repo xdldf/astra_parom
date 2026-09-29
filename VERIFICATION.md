@@ -1,3 +1,9 @@
+## Slow-passage temporal evidence — 2026-09-29
+
+- **250 Python tests and 52 frontend tests passed.** Video and IP capture extend the original ±0.45 s evidence window to ±2 s only when line evidence exists but a crossing/sample count is incomplete. At most 61 distinct frames are examined; original observations remain in the fit and are not inferred twice.
+- Regressions cover slow crossing in strict/estimate modes, stopping before the line, preserving an unstable original observation after extension, ambiguous detection, missing line evidence, bounded retention, reconnect/automatic-off/timeout cancellation and duplicate prevention. Existing checks were not relaxed.
+- Actual RT-DETR X replay of the September 7 container truck is unchanged: 15.5481047 m from video and 15.5570361 m from receiver JPEGs. This normal passage does not need an extension. The exact 19.33 m screenshot passage has no original side video here; its physical length and live GPU behavior remain unverified. [Details](docs/SLOW_PASSAGE_2026-09-29.md).
+
 ## Detector application and practical calibration UI — 2026-09-29
 
 - **236 Python tests and 52 frontend tests passed.** Detector-only IP updates preserve geometry and settings, preflight weights before stopping a running source, reconnect automatically, and restore the old station if replacement startup fails.
