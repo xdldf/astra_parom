@@ -6,6 +6,18 @@ let quoteSerial=0, quoteTimer, filterTimer, pending=false, dirty=false;
 let queueOffset=0, queueSnapshot=null, queuePage=null, reportOffset=0, reportSnapshot=null, reportPage=null;
 let queueSerial=0, reportSerial=0, pollBusy=false, ipSessionId=null;
 let tariffsEnabled=true;
+const CLIENT_PAGE_SIZE=5;
+let clientOffset=0, clientSnapshot=null, clientPage=null, clientSerial=0;
+function operatorPrices(visible){
+  document.body.classList.toggle('operator-prices-hidden',!visible);
+  $('showOperatorPrices').checked=visible;
+  document.querySelectorAll('#carsTable .empty-row td').forEach(td=>td.colSpan=tariffsEnabled&&visible?7:6);
+}
+operatorPrices(localStorage.getItem('ferryOperatorPrices')!=='false');
+$('showOperatorPrices').onchange=()=>{
+  const visible=$('showOperatorPrices').checked;
+  localStorage.setItem('ferryOperatorPrices',String(visible));operatorPrices(visible);
+};
 const getCache=new Map();
 async function cachedGet(path){
   const old=getCache.get(path);
@@ -91,7 +103,7 @@ function options(id,entries,all){
 }
 function cell(tr,text){let td=document.createElement('td');td.textContent=text;tr.append(td);return td;}
 function badge(s){let span=document.createElement('span');span.className='tag '+statusClass(s);span.textContent=s;return span;}
-function emptyTable(id,span,text){let tr=document.createElement('tr');tr.className='empty-row';let td=cell(tr,text);td.colSpan=span-(tariffsEnabled?0:1);$(id).append(tr);}
+function emptyTable(id,span,text){let tr=document.createElement('tr');tr.className='empty-row';let td=cell(tr,text);td.colSpan=span-(!tariffsEnabled||(id==='carsTable'&&!$('showOperatorPrices').checked)?1:0);$(id).append(tr);}
 function query(report=false){
   const names=report?{date_from:'reportFrom',date_to:'reportTo',status:'reportStatus',category:'reportCategory'}:
     {plate:'filterPlate',status:'filterStatus',category:'filterCategory',length_min:'filterMin',length_max:'filterMax'};
@@ -135,7 +147,7 @@ function tableRow(record,report=false){
   renderPlate(cell(tr,''),record);
   const lengthCell=cell(tr,recordLengthText(record)),note=measurementNote(record);
   if(note){const hint=document.createElement('small');hint.className='measurement-reason';hint.textContent=note;lengthCell.append(hint);}
-  cell(tr,categories[record.category]);cell(tr,fmt(record.tariff.amount_rub)).className='tariff-only';cell(tr,'').append(badge(record.status));return tr;
+  cell(tr,categories[record.category]);cell(tr,fmt(record.tariff.amount_rub)).className='tariff-only operator-price';cell(tr,'').append(badge(record.status));return tr;
 }
 function platePresentation(record){
   if(record.plate)return {text:record.plate};
@@ -178,7 +190,8 @@ function photo(id,emptyId,filename,version){
 }
 function showQuote(q){
   $('tariff').textContent=fmt(q.amount_rub)+(q.code?' · п. '+q.code:'');
-  $('confirm').textContent=tariffsEnabled?'✓ Подтвердить'+(q.amount_rub!=null?' • '+fmt(q.amount_rub):''):'✓ Подтвердить измерение';
+  $('confirm').textContent=tariffsEnabled?'✓ Подтвердить':'✓ Подтвердить измерение';
+  if(tariffsEnabled&&q.amount_rub!=null){const amount=document.createElement('span');amount.className='operator-price';amount.textContent=' • '+fmt(q.amount_rub);$('confirm').append(amount);}
   $('confirm').disabled=(tariffsEnabled&&q.amount_rub==null)||current?.status==='Оплачен';
   $('paid').disabled=!tariffsEnabled||current?.status!=='Подтвержден'||current?.tariff?.amount_rub==null;
   const notes=tariffsEnabled?[...(q.warnings||[])]:[];
@@ -264,17 +277,71 @@ async function mutate(kind){
   if(kind==='pay'&&dirty)throw Error('Перед отметкой оплаты сохраните и подтвердите изменения.');
   const r=await api('/vehicles/'+current.id,{...fields(),version:current.version,action:kind});
   renderRecord(await api('/vehicles/'+r.id));await loadVehicles();await syncClient();
-  toast({edit:'Изменения сохранены. Запись требует подтверждения.',confirm:'Автомобиль подтверждён и показан клиенту.',reject:'Автомобиль отклонён.',pay:'Полученная оплата отмечена.'}[kind]);
+  toast({edit:'Изменения сохранены. Запись требует подтверждения.',confirm:'Данные автомобиля подтверждены.',reject:'Автомобиль отклонён.',pay:'Полученная оплата отмечена.'}[kind]);
+}
+function clientQuery(){
+  const params=new URLSearchParams({limit:CLIENT_PAGE_SIZE,offset:clientOffset});
+  if(clientOffset&&clientSnapshot!==null)params.set('snapshot',clientSnapshot);
+  return params.toString();
+}
+function clientRow(record){
+  const tr=document.createElement('tr');
+  const plateCell=cell(tr,'');plateCell.className='client-number';
+  const plate=document.createElement('strong');
+  const reading=platePresentation(record);
+  plate.textContent=russianPlate(record.plate||record.plate_ocr?.candidates?.[0]?.text);
+  // Only show an OCR proposal when it is the sole, current candidate.
+  if(!record.plate&&(record.plate_ocr?.state==='queued'||record.plate_ocr?.state==='error'||
+      (record.plate_ocr?.candidate_count??record.plate_ocr?.candidates?.length??0)!==1))plate.textContent='';
+  if(!plate.textContent){plate.textContent=reading.text==='Нет снимка номера'?'Номер не указан':reading.text;plate.className='client-placeholder';}
+  plateCell.append(plate);
+  const approved=record.status==='Подтвержден'||record.status==='Оплачен';
+  const status=document.createElement('small');status.className='client-state '+(approved?'green':'orange');
+  status.textContent=approved?'Подтвержден':'Не подтвержден';
+  plateCell.append(status);
+  const side=cell(tr,'');side.className='client-photo';
+  if(record.side_photo){
+    const img=document.createElement('img');img.alt='Фото автомобиля сбоку';img.decoding='async';
+    img.src='/api/station/photos/'+encodeURIComponent(record.side_photo)+'?v='+record.version;
+    img.onerror=()=>{side.replaceChildren();side.textContent='Фото недоступно';};side.append(img);
+  }else side.textContent='Фото отсутствует';
+  cell(tr,recordLengthText(record)).className='client-length'+(record.length_m==null?' client-placeholder':'');
+  const price=cell(tr,'');price.className='client-price tariff-only';
+  const amount=document.createElement('strong'),note=document.createElement('small');
+  const rejected=record.status==='Отклонён',value=record.tariff?.amount_rub;
+  amount.textContent=rejected?'—':value==null?'Уточняется':fmt(value);
+  if(value==null)amount.className='client-placeholder';
+  note.textContent=rejected?'Запись отклонена':record.status==='Оплачен'?'Оплачено':
+    record.status==='Подтвержден'&&value!=null?'К оплате':'Предварительно';
+  price.append(amount,note);return tr;
 }
 async function syncClient(){
-  const data=await cachedGet('/client?station_id='+encodeURIComponent($('stationId').value));applyTariffMode(data.tariffs_enabled);
-  const r=data.vehicle;$('clientEmpty').hidden=!!r;$('clientData').hidden=!r;if(!r)return;
-  $('clientConfirmed').textContent=r.status==='Оплачен'?'✓ Оплата отмечена оператором':'✓ Данные подтверждены оператором';
-  $('clientPlate').textContent=russianPlate(r.plate)||'Гос. номер не указан';$('clientCategory').textContent=categories[r.category];
-  $('clientLength').textContent=tariffsEnabled&&r.category==='truck_capacity'?'Грузоподъёмность: '+(r.load_capacity_t??'—')+' т':'📏 Длина: '+lengthText(r.length_m);$('clientPrice').textContent=r.tariff.mode==='disabled'?'Тариф не рассчитан':fmt(r.tariff.amount_rub);
-  $('clientPriceLabel').textContent=r.tariff.mode==='disabled'?'Измерение без тарифа':r.status==='Оплачен'?'Оплачено':'К оплате';
-  photo('clientFront','clientFrontEmpty',r.front_photo,r.version);photo('clientSide','clientSideEmpty',r.side_photo,r.version);
+  const serial=++clientSerial,params=clientQuery();
+  try{
+    const data=await cachedGet('/vehicles?'+params);
+    if(serial!==clientSerial||params!==clientQuery())return;
+    applyTariffMode(data.tariffs_enabled);
+    if(clientOffset&&clientOffset>=data.count){clientOffset=Math.floor(Math.max(0,data.count-1)/CLIENT_PAGE_SIZE)*CLIENT_PAGE_SIZE;return syncClient();}
+    if(clientPage!==data){
+      $('clientRows').replaceChildren();data.rows.forEach(r=>$('clientRows').append(clientRow(r)));
+      clientPage=data;pagination(data,'client');
+      $('clientEmpty').hidden=!!data.rows.length;$('clientData').hidden=!data.rows.length;
+      $('clientLatest').disabled=clientOffset===0;
+    }
+    $('clientConnection').hidden=true;
+    if(page==='client')$('systemStatus').textContent='● Список обновлён';
+  }catch(e){
+    if(serial===clientSerial){
+      $('clientConnection').textContent=clientPage?'Нет связи с сервером. Показаны последние полученные данные.':'Нет связи с сервером. Ожидаем список автомобилей.';
+      $('clientConnection').hidden=false;
+    }
+    throw e;
+  }
 }
+for(const [id,delta] of [['clientPrev',-CLIENT_PAGE_SIZE],['clientNext',CLIENT_PAGE_SIZE]])$(id).onclick=()=>action(async()=>{
+  clientOffset=Math.max(0,clientOffset+delta);clientSnapshot=clientPage?.snapshot??null;await syncClient();
+});
+$('clientLatest').onclick=()=>action(async()=>{clientOffset=0;clientSnapshot=null;await syncClient();});
 async function report(){
   const serial=++reportSerial,params=pageQuery(true);const data=await cachedGet('/vehicles?'+params);
   if(serial!==reportSerial||params.toString()!==pageQuery(true).toString())return;
@@ -336,17 +403,20 @@ $('stationId').onchange=()=>{if(stationLink()&&page==='client')action(syncClient
 $('actor').value=localStorage.getItem('ferryOperator')||'Оператор';$('actor').onchange=()=>localStorage.setItem('ferryOperator',$('actor').value);
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===$('calibrationFrame').contentWindow&&e.data?.type==='station-capture'){action(loadVehicles);toast('Автомобиль добавлен в очередь оператора');}});
 async function start(){
-  await syncConfiguration();
-  const data=await api('/catalog');categories=data.categories;statuses=data.statuses;tariffRows=data.tariffs;
-  options('categoryInput',categories);['filterCategory','reportCategory'].forEach(id=>options(id,categories,'Все категории'));
-  ['filterStatus','reportStatus'].forEach(id=>options(id,Object.fromEntries(statuses.map(s=>[s,s])),'Все статусы'));
-  $('tariffPolicy').textContent=data.policy;tariffRows.forEach(t=>{let tr=document.createElement('tr');[t.code,t.category_label,t.description,fmt(t.amount_rub)].forEach(v=>cell(tr,v));$('tariffTable').append(tr);});
-  const health=await api('/health');$('systemStatus').textContent=health.gpu_available?'● Система готова':'⚠ Система недоступна';$('systemStatus').title=health.gpu??'';
   const initial=new URLSearchParams(location.search).get('page');
-  if(initial==='client'){document.body.classList.add('client-only');showPage('client');}else{await loadVehicles();}
+  if(initial==='client'){
+    document.body.classList.add('client-only');showPage('client');
+  }else{
+    await syncConfiguration();
+    const data=await api('/catalog');categories=data.categories;statuses=data.statuses;tariffRows=data.tariffs;
+    options('categoryInput',categories);['filterCategory','reportCategory'].forEach(id=>options(id,categories,'Все категории'));
+    ['filterStatus','reportStatus'].forEach(id=>options(id,Object.fromEntries(statuses.map(s=>[s,s])),'Все статусы'));
+    $('tariffPolicy').textContent=data.policy;tariffRows.forEach(t=>{let tr=document.createElement('tr');[t.code,t.category_label,t.description,fmt(t.amount_rub)].forEach(v=>cell(tr,v));$('tariffTable').append(tr);});
+    const health=await api('/health');$('systemStatus').textContent=health.gpu_available?'● Система готова':'⚠ Система недоступна';$('systemStatus').title=health.gpu??'';
+    await loadVehicles();
+  }
   setInterval(async()=>{if(pending||document.hidden||pollBusy)return;pollBusy=true;try{if(page==='client')await syncClient();else if(page==='operator')await loadVehicles();else await syncConfiguration();}catch(e){$('systemStatus').textContent='⚠ Нет связи с сервером';}finally{pollBusy=false;}},3000);
 }
-start().catch(e=>{toast(e.message);$('systemStatus').textContent='⚠ Ошибка подключения';});
 let ipMode=false,ipRunning=false,ipPollTimer=null;
 let detectorEditDirty=false,detectorApplying=false;
 let liveSource=null, liveGeneration=0, liveSnapshot=null, importedProfile=null;
@@ -589,3 +659,5 @@ $('applyDetector').onclick=async()=>{
  }catch(e){$('operatorDetectorStatus').textContent='Не удалось применить: '+e.message;toast(e.message);}
  finally{detectorApplying=false;controls.forEach((id,i)=>$(id).disabled=disabled[i]);}
 };
+// Start after all page and camera state has been initialized.
+start().catch(e=>{toast(e.message);$('systemStatus').textContent='⚠ Ошибка подключения';});

@@ -3,17 +3,18 @@ const assert=require('node:assert/strict');
 const vm=require('node:vm');
 const fs=require('node:fs');
 
-async function stationUI(){
+async function stationUI({search='',storage={}}={}){
   const elements=new Map(),requests=[];
   function element(){return {value:'',hidden:false,children:[],parentElement:{},dataset:{},
-    classList:{add(){},remove(){},toggle(){}},
+    classList:{values:new Set(),add(name){this.values.add(name);},remove(name){this.values.delete(name);},
+      contains(name){return this.values.has(name);},toggle(name,force){const enabled=force??!this.contains(name);if(enabled)this.add(name);else this.remove(name);}},
     replaceChildren(...items){this.children=items;},append(...items){this.children.push(...items);},
     setAttribute(name,value){this[name]=value;},showModal(){this.open=true;},addEventListener(){},removeAttribute(name){delete this[name];},getAttribute(name){return this[name];}};}
   const document={hidden:false,body:element(),querySelectorAll:()=>[],addEventListener(){},createElement:element,
     getElementById(id){if(!elements.has(id))elements.set(id,element());return elements.get(id);}};
   let responder=()=>({status:404,data:{detail:'Not configured'}});
   const sandbox=vm.createContext({document,console,URLSearchParams,FormData,structuredClone,
-    localStorage:{getItem:()=>null,setItem(){}},location:{search:'',origin:'http://station'},
+    localStorage:{getItem:key=>storage[key]??null,setItem(key,value){storage[key]=value;}},location:{search,origin:'http://station'},
     window:{addEventListener(){}},LiveTracks:require('../web_app/static/live-tracks.js'),setTimeout:()=>1,clearTimeout(){},setInterval(){},
     fetch:async(path,options={})=>{
       requests.push({path,options});const {status=200,data,etag='v1'}=await responder(path,options);
@@ -21,8 +22,9 @@ async function stationUI(){
     }});
   vm.runInContext(fs.readFileSync(require.resolve('../web_app/static/station.js'),'utf8'),sandbox);
   await new Promise(resolve=>setImmediate(resolve));
+  const initialRequests=requests.slice();
   requests.length=0;
-  return {elements,requests,respond:fn=>{responder=fn;},run:code=>vm.runInContext(code,sandbox)};
+  return {elements,requests,initialRequests,storage,document,respond:fn=>{responder=fn;},run:code=>vm.runInContext(code,sandbox)};
 }
 
 function page(offset=0){return {rows:[{id:'car-'+offset,version:1,created_at:'2026-09-18T12:00:00',
@@ -332,4 +334,110 @@ test('video model preflight failure leaves existing video session and profile in
  assert.equal(ui.run('streamId'),'old');assert.equal(ui.run('liveSource.profile.detector_model'),'yolo26m');
  assert.equal(ui.requests.length,1);assert.equal(ui.requests[0].path,'/api/workbench/detector/check');
  assert.match(ui.elements.get('operatorDetectorStatus').textContent,/CUDA unavailable/);
+});
+
+test('client lists unconfirmed and paid cars with side photos and explicit confirmation tags',async()=>{
+  const ui=await stationUI();
+  const pending={...page().rows[0],plate:'',side_photo:'side.jpg',front_photo:'front.jpg',
+    plate_ocr:{state:'review',candidates:[{text:'A123BC14',photo:'plate.jpg'}]}};
+  const paid={...page().rows[0],id:'paid',status:'Оплачен',length_m:17.16,category:'truck_capacity'};
+  ui.respond(()=>({data:{...page(),rows:[pending,paid],count:2,has_more:false,tariffs_enabled:true}}));
+  await ui.run('syncClient()');
+  assert.match(ui.requests[0].path,/\/vehicles\?limit=5&offset=0$/);
+  const [first,second]=ui.elements.get('clientRows').children;
+  assert.equal(first.children.length,4);
+  assert.equal(first.children[0].children[0].textContent,'А123ВС14');
+  assert.equal(first.children[0].children[1].textContent,'Не подтвержден');
+  assert.equal(first.children[1].children.length,1);
+  assert.equal(first.children[1].children[0].src,'/api/station/photos/side.jpg?v=1');
+  assert.equal(first.children[3].children[1].textContent,'Предварительно');
+  assert.equal(second.children[0].children[1].textContent,'Подтвержден');
+  assert.equal(second.children[2].textContent,'17,16 м');
+  assert.equal(second.children[3].children[1].textContent,'Оплачено');
+  assert.equal(ui.elements.get('clientEmpty').hidden,true);
+});
+
+test('client handles missing or failed photos, ambiguous OCR, missing lengths and rejected prices',async()=>{
+  const ui=await stationUI();
+  const missing={...page().rows[0],plate:'',length_m:null,front_photo:'front-only.jpg',
+    plate_ocr:{state:'review',candidate_count:2,candidates:[{text:'A123BC14'}]},tariff:{amount_rub:null}};
+  let row=ui.run(`clientRow(${JSON.stringify(missing)})`);
+  assert.equal(row.children[0].children[0].textContent,'Несколько вариантов');
+  assert.equal(row.children[1].children.length,0);
+  assert.equal(row.children[1].textContent,'Фото отсутствует');
+  assert.equal(row.children[2].textContent,'Не измерена');
+  assert.equal(row.children[3].children[0].textContent,'Уточняется');
+  row=ui.run(`clientRow(${JSON.stringify({...missing,status:'Отклонён',side_photo:'broken.jpg',tariff:{amount_rub:1390}})})`);
+  row.children[1].children[0].onerror();
+  assert.equal(row.children[1].textContent,'Фото недоступно');
+  assert.equal(row.children[0].children[1].textContent,'Не подтвержден');
+  assert.equal(row.children[3].children[0].textContent,'—');
+});
+
+test('client polling keeps unchanged rows, freezes older pages and returns to live arrivals',async()=>{
+  const ui=await stationUI();
+  ui.respond((path,options)=>options.headers?.['If-None-Match']?{status:304}:{data:page(Number(new URL(path,'http://station').searchParams.get('offset')))});
+  await ui.run('syncClient()');const row=ui.elements.get('clientRows').children[0];
+  await ui.run('syncClient()');
+  assert.equal(ui.elements.get('clientRows').children[0],row);
+  assert.equal(ui.requests.at(-1).options.headers['If-None-Match'],'v1');
+  await ui.elements.get('clientNext').onclick();
+  assert.match(ui.requests.at(-1).path,/offset=5&snapshot=501$/);
+  assert.equal(ui.elements.get('clientRange').textContent,'6–6 из 501');
+  assert.equal(ui.elements.get('clientLatest').disabled,false);
+  await ui.elements.get('clientLatest').onclick();
+  assert.match(ui.requests.at(-1).path,/offset=0$/);
+  assert.equal(ui.elements.get('clientLatest').disabled,true);
+});
+
+test('client ignores stale page responses and marks old data when connection fails',async()=>{
+  const ui=await stationUI();let finish;
+  ui.respond(()=>new Promise(resolve=>{finish=resolve;}));
+  const older=ui.run('syncClient()');
+  ui.respond(()=>({data:{...page(),rows:[],count:0,has_more:false,tariffs_enabled:false}}));
+  await ui.run('syncClient()');finish({data:page()});await older;
+  assert.equal(ui.elements.get('clientRows').children.length,0);
+  assert.equal(ui.elements.get('clientEmpty').hidden,false);
+  assert.equal(ui.elements.get('clientData').hidden,true);
+  assert.equal(ui.run('tariffsEnabled'),false);
+  ui.respond(()=>{throw Error('offline');});
+  await assert.rejects(ui.run('syncClient()'),/offline/);
+  assert.equal(ui.elements.get('clientConnection').hidden,false);
+  assert.match(ui.elements.get('clientConnection').textContent,/последние полученные/);
+  ui.respond(()=>({data:page()}));await ui.run('syncClient()');
+  assert.equal(ui.elements.get('clientConnection').hidden,true);
+});
+
+test('standalone client starts even without catalog or GPU health endpoints',async()=>{
+  const ui=await stationUI({search:'?page=client&station=desk-1'});
+  assert.equal(ui.run('page'),'client');
+  assert.ok(ui.document.body.classList.contains('client-only'));
+  const stationRequests=ui.initialRequests.filter(r=>r.path.startsWith('/api/station/'));
+  assert.equal(stationRequests.length,1);
+  assert.match(stationRequests[0].path,/\/api\/station\/vehicles\?limit=5&offset=0$/);
+  ui.respond(()=>({data:page()}));await ui.run('start()');
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.ok(ui.requests.every(r=>r.path.startsWith('/api/station/vehicles?')));
+});
+
+test('operator price visibility persists locally without changing tariffs, quotes or unsaved edits',async()=>{
+  const ui=await stationUI();
+  ui.run("current={id:'editing',status:'Подтвержден',tariff:{amount_rub:1390}};dirty=true;showQuote(current.tariff);");
+  ui.elements.get('plateInput').value='МОИ ПРАВКИ';
+  const confirm=ui.elements.get('confirm');
+  assert.equal(confirm.children.at(-1).className,'operator-price');
+  const requests=ui.requests.length;
+  ui.elements.get('showOperatorPrices').checked=false;ui.elements.get('showOperatorPrices').onchange();
+  assert.ok(ui.document.body.classList.contains('operator-prices-hidden'));
+  assert.equal(ui.storage.ferryOperatorPrices,'false');
+  assert.equal(ui.run('tariffsEnabled'),true);
+  assert.equal(ui.run('dirty'),true);
+  assert.equal(ui.elements.get('plateInput').value,'МОИ ПРАВКИ');
+  assert.equal(ui.elements.get('confirm').disabled,false);
+  assert.equal(ui.requests.length,requests);
+  const reopened=await stationUI({storage:ui.storage});
+  assert.equal(reopened.elements.get('showOperatorPrices').checked,false);
+  assert.ok(reopened.document.body.classList.contains('operator-prices-hidden'));
+  reopened.elements.get('showOperatorPrices').checked=true;reopened.elements.get('showOperatorPrices').onchange();
+  assert.ok(!reopened.document.body.classList.contains('operator-prices-hidden'));
 });
