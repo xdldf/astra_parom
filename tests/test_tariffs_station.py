@@ -475,3 +475,21 @@ def test_stale_operator_cannot_confirm_under_a_different_tariff_mode(client):
     assert client.get('/api/station/vehicles/'+record['id']).json()['version']==record['version']
     payload['tariffs_enabled']=False
     assert client.post('/api/station/vehicles/'+record['id'],json=payload).json()['tariff']['mode']=='disabled'
+
+
+def test_client_display_settings_persist_per_desk_and_invalidate_only_its_etag(client):
+    one='/api/station/client-configuration?station_id=one'
+    two='/api/station/client-configuration?station_id=two'
+    initial=client.get(one)
+    assert initial.json()=={'rows_per_page':20}
+    other=client.get(two)
+    assert client.get(one,headers={'If-None-Match':initial.headers['etag']}).status_code==304
+    assert client.post(one,json={'rows_per_page':10}).json()=={'rows_per_page':10}
+    changed=client.get(one,headers={'If-None-Match':initial.headers['etag']})
+    assert changed.status_code==200 and changed.json()['rows_per_page']==10
+    assert client.get(two,headers={'If-None-Match':other.headers['etag']}).status_code==304
+    assert client.get('/api/station/configuration').json()['tariffs_enabled'] is True
+    for invalid in [0,6,21,250,'20',None]:
+        assert client.post(one,json={'rows_per_page':invalid}).status_code==422
+    assert client.get(one).json()['rows_per_page']==10
+    assert client.get('/api/station/client-configuration?station_id=invalid space').status_code==422

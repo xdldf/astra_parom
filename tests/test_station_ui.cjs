@@ -5,7 +5,9 @@ const fs=require('node:fs');
 
 async function stationUI({search='',storage={}}={}){
   const elements=new Map(),requests=[];
+  let clientConfig={rows_per_page:20},clientConfigVersion=1;
   function element(){return {value:'',hidden:false,children:[],parentElement:{},dataset:{},
+    style:{setProperty(name,value){this[name]=String(value);}},
     classList:{values:new Set(),add(name){this.values.add(name);},remove(name){this.values.delete(name);},
       contains(name){return this.values.has(name);},toggle(name,force){const enabled=force??!this.contains(name);if(enabled)this.add(name);else this.remove(name);}},
     replaceChildren(...items){this.children=items;},append(...items){this.children.push(...items);},
@@ -17,14 +19,22 @@ async function stationUI({search='',storage={}}={}){
     localStorage:{getItem:key=>storage[key]??null,setItem(key,value){storage[key]=value;}},location:{search,origin:'http://station'},
     window:{addEventListener(){}},LiveTracks:require('../web_app/static/live-tracks.js'),setTimeout:()=>1,clearTimeout(){},setInterval(){},
     fetch:async(path,options={})=>{
-      requests.push({path,options});const {status=200,data,etag='v1'}=await responder(path,options);
+      requests.push({path,options});
+      let result;
+      if(path.startsWith('/api/station/client-configuration?')){
+        if(options.method==='POST'){clientConfig=JSON.parse(options.body);clientConfigVersion++;}
+        const etag='client-config-'+clientConfigVersion;
+        result=options.headers?.['If-None-Match']===etag?{status:304,etag}:{data:clientConfig,etag};
+      }else result=await responder(path,options);
+      const {status=200,data,etag='v1'}=result;
       return {ok:status>=200&&status<300,status,json:async()=>data,headers:{get:()=>etag}};
     }});
   vm.runInContext(fs.readFileSync(require.resolve('../web_app/static/station.js'),'utf8'),sandbox);
   await new Promise(resolve=>setImmediate(resolve));
   const initialRequests=requests.slice();
   requests.length=0;
-  return {elements,requests,initialRequests,storage,document,respond:fn=>{responder=fn;},run:code=>vm.runInContext(code,sandbox)};
+  return {elements,requests,initialRequests,storage,document,respond:fn=>{responder=fn;},
+    configureClient:config=>{clientConfig=config;clientConfigVersion++;},run:code=>vm.runInContext(code,sandbox)};
 }
 
 function page(offset=0){return {rows:[{id:'car-'+offset,version:1,created_at:'2026-09-18T12:00:00',
@@ -343,17 +353,17 @@ test('client lists unconfirmed and paid cars with side photos and explicit confi
   const paid={...page().rows[0],id:'paid',status:'Оплачен',length_m:17.16,category:'truck_capacity'};
   ui.respond(()=>({data:{...page(),rows:[pending,paid],count:2,has_more:false,tariffs_enabled:true}}));
   await ui.run('syncClient()');
-  assert.match(ui.requests[0].path,/\/vehicles\?limit=5&offset=0$/);
+  assert.match(ui.requests.find(r=>r.path.includes('/vehicles?')).path,/\/vehicles\?limit=20&offset=0$/);
   const [first,second]=ui.elements.get('clientRows').children;
   assert.equal(first.children.length,4);
   assert.equal(first.children[0].children[0].textContent,'А123ВС14');
   assert.equal(first.children[0].children[1].textContent,'Не подтвержден');
   assert.equal(first.children[1].children.length,1);
   assert.equal(first.children[1].children[0].src,'/api/station/photos/side.jpg?v=1');
-  assert.equal(first.children[3].children[1].textContent,'Предварительно');
+  assert.equal(first.children[3].children.length,1);
   assert.equal(second.children[0].children[1].textContent,'Подтвержден');
   assert.equal(second.children[2].textContent,'17,16 м');
-  assert.equal(second.children[3].children[1].textContent,'Оплачено');
+  assert.equal(second.children[3].children.length,1);
   assert.equal(ui.elements.get('clientEmpty').hidden,true);
 });
 
@@ -382,8 +392,8 @@ test('client polling keeps unchanged rows, freezes older pages and returns to li
   assert.equal(ui.elements.get('clientRows').children[0],row);
   assert.equal(ui.requests.at(-1).options.headers['If-None-Match'],'v1');
   await ui.elements.get('clientNext').onclick();
-  assert.match(ui.requests.at(-1).path,/offset=5&snapshot=501$/);
-  assert.equal(ui.elements.get('clientRange').textContent,'6–6 из 501');
+  assert.match(ui.requests.at(-1).path,/offset=20&snapshot=501$/);
+  assert.equal(ui.elements.get('clientRange').textContent,'21–21 из 501');
   assert.equal(ui.elements.get('clientLatest').disabled,false);
   await ui.elements.get('clientLatest').onclick();
   assert.match(ui.requests.at(-1).path,/offset=0$/);
@@ -394,6 +404,7 @@ test('client ignores stale page responses and marks old data when connection fai
   const ui=await stationUI();let finish;
   ui.respond(()=>new Promise(resolve=>{finish=resolve;}));
   const older=ui.run('syncClient()');
+  await new Promise(resolve=>setImmediate(resolve));
   ui.respond(()=>({data:{...page(),rows:[],count:0,has_more:false,tariffs_enabled:false}}));
   await ui.run('syncClient()');finish({data:page()});await older;
   assert.equal(ui.elements.get('clientRows').children.length,0);
@@ -413,11 +424,12 @@ test('standalone client starts even without catalog or GPU health endpoints',asy
   assert.equal(ui.run('page'),'client');
   assert.ok(ui.document.body.classList.contains('client-only'));
   const stationRequests=ui.initialRequests.filter(r=>r.path.startsWith('/api/station/'));
-  assert.equal(stationRequests.length,1);
-  assert.match(stationRequests[0].path,/\/api\/station\/vehicles\?limit=5&offset=0$/);
+  assert.equal(stationRequests.length,2);
+  assert.match(stationRequests[0].path,/\/client-configuration\?station_id=desk-1$/);
+  assert.match(stationRequests[1].path,/\/api\/station\/vehicles\?limit=20&offset=0$/);
   ui.respond(()=>({data:page()}));await ui.run('start()');
   await new Promise(resolve=>setImmediate(resolve));
-  assert.ok(ui.requests.every(r=>r.path.startsWith('/api/station/vehicles?')));
+  assert.ok(ui.requests.every(r=>r.path.startsWith('/api/station/vehicles?')||r.path.startsWith('/api/station/client-configuration?')));
 });
 
 test('operator price visibility persists locally without changing tariffs, quotes or unsaved edits',async()=>{
@@ -440,4 +452,29 @@ test('operator price visibility persists locally without changing tariffs, quote
   assert.ok(reopened.document.body.classList.contains('operator-prices-hidden'));
   reopened.elements.get('showOperatorPrices').checked=true;reopened.elements.get('showOperatorPrices').onchange();
   assert.ok(!reopened.document.body.classList.contains('operator-prices-hidden'));
+});
+
+test('client settings save to the selected desk and reset the preview to newest cars',async()=>{
+  const ui=await stationUI();ui.respond(path=>({data:page(Number(new URL(path,'http://station').searchParams.get('offset')))}));
+  await ui.run('syncClient()');await ui.elements.get('clientNext').onclick();
+  ui.elements.get('stationId').value='cashier-2';
+  ui.elements.get('clientRowsPerPage').value='10';await ui.elements.get('clientRowsPerPage').onchange();
+  const saved=ui.requests.find(r=>r.options.method==='POST');
+  assert.equal(saved.path,'/api/station/client-configuration?station_id=cashier-2');
+  assert.deepEqual(JSON.parse(saved.options.body),{rows_per_page:10});
+  assert.match(ui.requests.at(-1).path,/limit=10&offset=0$/);
+  assert.equal(ui.run('clientPageSize'),10);
+  assert.equal(ui.elements.get('client').style['--client-page-size'],'10');
+});
+
+test('open client receives changed display settings while staying on the latest page',async()=>{
+  const ui=await stationUI({search:'?page=client&station=desk-1'});ui.respond(()=>({data:page()}));
+  await ui.run('syncClient()');
+  assert.equal(ui.run('clientPageSize'),20);
+  assert.ok(ui.elements.get('client').classList.contains('client-dense'));
+  ui.configureClient({rows_per_page:5});await ui.run('syncClient()');
+  assert.equal(ui.run('clientPageSize'),5);
+  assert.match(ui.requests.at(-1).path,/limit=5&offset=0$/);
+  assert.ok(!ui.elements.get('client').classList.contains('client-dense'));
+  assert.ok(ui.requests.every(r=>!r.options.method));
 });

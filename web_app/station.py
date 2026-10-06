@@ -69,6 +69,29 @@ def configure(payload: Configuration):
     return payload.model_dump()
 
 
+class ClientDisplayConfiguration(BaseModel):
+    rows_per_page: Literal[5,10,15,20]=20
+
+
+@router.get('/client-configuration')
+def client_configuration(request: Request,response: Response,
+                         station_id: str=Query('default',pattern=r'^[a-zA-Z0-9_-]{1,64}$')):
+    with connect() as db:
+        row=db.execute('SELECT value FROM settings WHERE key=?',('client_display:'+station_id,)).fetchone()
+    config=ClientDisplayConfiguration.model_validate_json(row['value']) if row else ClientDisplayConfiguration()
+    unchanged=conditional(request,response,str(DB)+'client_display:'+station_id+config.model_dump_json())
+    return unchanged if unchanged is not None else config.model_dump()
+
+
+@router.post('/client-configuration')
+def configure_client(payload: ClientDisplayConfiguration,
+                     station_id: str=Query('default',pattern=r'^[a-zA-Z0-9_-]{1,64}$')):
+    with connect() as db:
+        db.execute('INSERT OR REPLACE INTO settings VALUES(?,?)',
+                   ('client_display:'+station_id,payload.model_dump_json()))
+    return payload.model_dump()
+
+
 def find(db,ident):
     row=db.execute('SELECT data FROM vehicles WHERE id=?',(ident,)).fetchone()
     if not row:

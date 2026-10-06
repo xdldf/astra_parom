@@ -6,8 +6,24 @@ let quoteSerial=0, quoteTimer, filterTimer, pending=false, dirty=false;
 let queueOffset=0, queueSnapshot=null, queuePage=null, reportOffset=0, reportSnapshot=null, reportPage=null;
 let queueSerial=0, reportSerial=0, pollBusy=false, ipSessionId=null;
 let tariffsEnabled=true;
-const CLIENT_PAGE_SIZE=5;
+let clientPageSize=20;
 let clientOffset=0, clientSnapshot=null, clientPage=null, clientSerial=0;
+function clientConfigurationPath(){return '/client-configuration?station_id='+encodeURIComponent($('stationId').value);}
+function applyClientConfiguration(config){
+  if(clientPageSize!==config.rows_per_page){clientOffset=0;clientSnapshot=null;clientPage=null;}
+  clientPageSize=config.rows_per_page;
+  $('clientRowsPerPage').value=String(clientPageSize);
+  $('clientRowsPerPage').disabled=false;
+  $('client').style.setProperty('--client-page-size',clientPageSize);
+  $('client').classList.toggle('client-dense',clientPageSize>=10);
+}
+$('clientRowsPerPage').onchange=()=>action(async()=>{
+  const input=$('clientRowsPerPage'),path=clientConfigurationPath();input.disabled=true;clientSerial++;
+  try{
+    const config=await api(path,{rows_per_page:Number(input.value)});
+    getCache.delete(path);applyClientConfiguration(config);await syncClient();
+  }finally{input.value=String(clientPageSize);input.disabled=false;}
+});
 function operatorPrices(visible){
   document.body.classList.toggle('operator-prices-hidden',!visible);
   $('showOperatorPrices').checked=visible;
@@ -280,7 +296,7 @@ async function mutate(kind){
   toast({edit:'Изменения сохранены. Запись требует подтверждения.',confirm:'Данные автомобиля подтверждены.',reject:'Автомобиль отклонён.',pay:'Полученная оплата отмечена.'}[kind]);
 }
 function clientQuery(){
-  const params=new URLSearchParams({limit:CLIENT_PAGE_SIZE,offset:clientOffset});
+  const params=new URLSearchParams({limit:clientPageSize,offset:clientOffset});
   if(clientOffset&&clientSnapshot!==null)params.set('snapshot',clientSnapshot);
   return params.toString();
 }
@@ -307,21 +323,23 @@ function clientRow(record){
   }else side.textContent='Фото отсутствует';
   cell(tr,recordLengthText(record)).className='client-length'+(record.length_m==null?' client-placeholder':'');
   const price=cell(tr,'');price.className='client-price tariff-only';
-  const amount=document.createElement('strong'),note=document.createElement('small');
+  const amount=document.createElement('strong');
   const rejected=record.status==='Отклонён',value=record.tariff?.amount_rub;
   amount.textContent=rejected?'—':value==null?'Уточняется':fmt(value);
   if(value==null)amount.className='client-placeholder';
-  note.textContent=rejected?'Запись отклонена':record.status==='Оплачен'?'Оплачено':
-    record.status==='Подтвержден'&&value!=null?'К оплате':'Предварительно';
-  price.append(amount,note);return tr;
+  price.append(amount);return tr;
 }
 async function syncClient(){
-  const serial=++clientSerial,params=clientQuery();
+  const serial=++clientSerial,configPath=clientConfigurationPath();
   try{
+    const config=await cachedGet(configPath);
+    if(serial!==clientSerial||configPath!==clientConfigurationPath())return;
+    applyClientConfiguration(config);
+    const params=clientQuery();
     const data=await cachedGet('/vehicles?'+params);
-    if(serial!==clientSerial||params!==clientQuery())return;
+    if(serial!==clientSerial||params!==clientQuery()||configPath!==clientConfigurationPath())return;
     applyTariffMode(data.tariffs_enabled);
-    if(clientOffset&&clientOffset>=data.count){clientOffset=Math.floor(Math.max(0,data.count-1)/CLIENT_PAGE_SIZE)*CLIENT_PAGE_SIZE;return syncClient();}
+    if(clientOffset&&clientOffset>=data.count){clientOffset=Math.floor(Math.max(0,data.count-1)/clientPageSize)*clientPageSize;return syncClient();}
     if(clientPage!==data){
       $('clientRows').replaceChildren();data.rows.forEach(r=>$('clientRows').append(clientRow(r)));
       clientPage=data;pagination(data,'client');
@@ -338,8 +356,8 @@ async function syncClient(){
     throw e;
   }
 }
-for(const [id,delta] of [['clientPrev',-CLIENT_PAGE_SIZE],['clientNext',CLIENT_PAGE_SIZE]])$(id).onclick=()=>action(async()=>{
-  clientOffset=Math.max(0,clientOffset+delta);clientSnapshot=clientPage?.snapshot??null;await syncClient();
+for(const [id,direction] of [['clientPrev',-1],['clientNext',1]])$(id).onclick=()=>action(async()=>{
+  clientOffset=Math.max(0,clientOffset+direction*clientPageSize);clientSnapshot=clientPage?.snapshot??null;await syncClient();
 });
 $('clientLatest').onclick=()=>action(async()=>{clientOffset=0;clientSnapshot=null;await syncClient();});
 async function report(){
@@ -404,7 +422,7 @@ $('actor').value=localStorage.getItem('ferryOperator')||'Оператор';$('ac
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===$('calibrationFrame').contentWindow&&e.data?.type==='station-capture'){action(loadVehicles);toast('Автомобиль добавлен в очередь оператора');}});
 async function start(){
   const initial=new URLSearchParams(location.search).get('page');
-  if(initial==='client'){
+  if(initial==='client'&&new URLSearchParams(location.search).get('settings')!=='1'){
     document.body.classList.add('client-only');showPage('client');
   }else{
     await syncConfiguration();
@@ -413,7 +431,7 @@ async function start(){
     ['filterStatus','reportStatus'].forEach(id=>options(id,Object.fromEntries(statuses.map(s=>[s,s])),'Все статусы'));
     $('tariffPolicy').textContent=data.policy;tariffRows.forEach(t=>{let tr=document.createElement('tr');[t.code,t.category_label,t.description,fmt(t.amount_rub)].forEach(v=>cell(tr,v));$('tariffTable').append(tr);});
     const health=await api('/health');$('systemStatus').textContent=health.gpu_available?'● Система готова':'⚠ Система недоступна';$('systemStatus').title=health.gpu??'';
-    await loadVehicles();
+    if(initial==='client')showPage('client');else await loadVehicles();
   }
   setInterval(async()=>{if(pending||document.hidden||pollBusy)return;pollBusy=true;try{if(page==='client')await syncClient();else if(page==='operator')await loadVehicles();else await syncConfiguration();}catch(e){$('systemStatus').textContent='⚠ Нет связи с сервером';}finally{pollBusy=false;}},3000);
 }
