@@ -90,9 +90,10 @@ def catalogue_family(source_ids):
     return families.pop()
 
 
-def fit_ridge(features, target, groups, feature_set, alpha):
+def fit_ridge(features, target, groups, feature_set, alpha, *, feature_sets=None, feature_names=None):
     """Standardization, target and all coefficients use training rows only."""
-    columns = list(FEATURE_SETS[feature_set])
+    columns = list((FEATURE_SETS if feature_sets is None else feature_sets)[feature_set])
+    names = FEATURE_NAMES if feature_names is None else feature_names
     x = np.asarray(features, float)[:, columns]
     y = np.asarray(target, float)
     if len(x) != len(y) or len(groups) != len(y) or not len(y):
@@ -112,7 +113,7 @@ def fit_ridge(features, target, groups, feature_set, alpha):
     coefficient = np.linalg.solve(z.T @ (z*fit_weights[:, None]) + alpha*np.eye(z.shape[1]),
                                   z.T @ ((y-intercept)*fit_weights))
     return dict(feature_set=feature_set, alpha=float(alpha), columns=columns,
-                feature_names=[FEATURE_NAMES[i] for i in columns], mean=mean.tolist(),
+                feature_names=[names[i] for i in columns], mean=mean.tolist(),
                 scale=scale.tolist(), coefficient=coefficient.tolist(), intercept=intercept,
                 training_groups=sorted(counts), training_count=len(y))
 
@@ -122,27 +123,28 @@ def predict(model, features):
     return ((x-model['mean'])/model['scale']) @ model['coefficient'] + model['intercept']
 
 
-def select_model(features, target, groups):
+def select_model(features, target, groups, *, feature_sets=None, feature_names=None):
     """Inner leave-one-family-out selection using family-balanced midpoint MAE."""
     groups = np.asarray(groups)
     if len(set(groups)) < 3:
         raise ValueError('Need at least three training families for inner validation')
     scores = []
-    for feature_set in FEATURE_SETS:
+    options = dict(feature_sets=feature_sets, feature_names=feature_names)
+    for feature_set in (FEATURE_SETS if feature_sets is None else feature_sets):
         for alpha in ALPHAS:
             errors = []
             for group in sorted(set(groups)):
                 test = groups == group
-                model = fit_ridge(features[~test], target[~test], groups[~test], feature_set, alpha)
+                model = fit_ridge(features[~test], target[~test], groups[~test], feature_set, alpha, **options)
                 errors.append(float(np.mean(np.abs(predict(model, features[test])-target[test]))))
             scores.append(dict(feature_set=feature_set, alpha=alpha,
                                family_balanced_mae_m=float(np.mean(errors))))
     # Stable tie-break uses the declared order, favouring simpler feature sets.
     best = min(scores, key=lambda item: item['family_balanced_mae_m'])
-    return fit_ridge(features, target, groups, best['feature_set'], best['alpha']), scores
+    return fit_ridge(features, target, groups, best['feature_set'], best['alpha'], **options), scores
 
 
-def nested_predictions(features, target, groups):
+def nested_predictions(features, target, groups, *, feature_sets=None, feature_names=None):
     """No outer-fold label enters inner selection or the final fold model."""
     features, target, groups = np.asarray(features), np.asarray(target), np.asarray(groups)
     if len(set(groups)) < 4:
@@ -151,7 +153,8 @@ def nested_predictions(features, target, groups):
     folds = []
     for group in sorted(set(groups)):
         test = groups == group
-        model, scores = select_model(features[~test], target[~test], groups[~test])
+        model, scores = select_model(features[~test], target[~test], groups[~test],
+                                    feature_sets=feature_sets, feature_names=feature_names)
         predictions[test] = predict(model, features[test])
         folds.append(dict(heldout_group=str(group), heldout_indices=np.flatnonzero(test).tolist(),
                           model=model, inner_scores=scores))

@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 async function ui(){
  const elements=new Map(),requests=[];
- const element=()=>({value:'',hidden:false,disabled:false,style:{},parentElement:{style:{}},classList:{toggle(){}},reportValidity(){return true;}});
+ const element=()=>({value:'',hidden:false,disabled:false,style:{},attributes:{},setAttribute(k,v){this.attributes[k]=v;},parentElement:{style:{}},classList:{toggle(){}},reportValidity(){return true;}});
  const record={id:'car',version:1,created_at:'2026-10-08T10:00:00',measured_length_m:4.2,
   full_frame_photo:'car-frame.jpg',bbox:[100,50,200,100],image_size:[600,500],measurement:{warnings:[]}};
  let responder=()=>({data:{rows:[record],count:1}});
@@ -30,6 +30,17 @@ test('skip saves a null label and advances to empty queue with export still avai
  assert.equal(payload.action,'skip');assert.equal(payload.actual_length_m,null);
  assert.equal(page.elements.get('empty').hidden,false);assert.equal(page.elements.get('review').hidden,true);
  assert.equal(page.elements.get('export').hidden,false);
+});
+test('outline evidence uses full-frame coordinates and keeps the original box estimate visible',async()=>{
+ const page=await ui();page.elements.get('showBox').checked=true;
+ page.record.measurement.outline={status:'estimated',baseline_length_m:4.4,contour:[[100,50],[300,50],[300,150]]};
+ page.respond(()=>({data:{rows:[page.record],count:1}}));await page.run('load()');
+ assert.equal(page.elements.get('outline').attributes.viewBox,'0 0 600 500');
+ assert.equal(page.elements.get('outlinePoints').attributes.points,'100,50 300,50 300,150');
+ assert.equal(page.elements.get('outline').hidden,false);
+ assert.match(page.elements.get('basis').textContent,/4.400 м/);
+ page.elements.get('showBox').checked=false;await page.run("$('showBox').onchange()");
+ assert.equal(page.elements.get('outline').hidden,true);
 });
 test('validation role submits physical identity and uncertainty, and blocks catalogue evidence',async()=>{
  const page=await ui();page.elements.get('datasetRole').value='validation';

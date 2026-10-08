@@ -107,6 +107,28 @@ class SurveyCalibration(BaseModel):
         return self
 
 
+class OutlineCalibration(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False, extra='forbid')
+    version: Literal[1] = 1
+    calibration_id: str = Field(min_length=1, max_length=100)
+    geometry_signature: str = Field(pattern=r'^[a-f0-9]{64}$')
+    reference_source: Literal['catalogue'] = 'catalogue'
+    mean: tuple[float, ...] = Field(min_length=7, max_length=7)
+    scale: tuple[float, ...] = Field(min_length=7, max_length=7)
+    coefficient: tuple[float, ...] = Field(min_length=7, max_length=7)
+    intercept: float
+    feature_bounds: tuple[tuple[float, float], ...] = Field(min_length=7, max_length=7)
+    training_count: int = Field(ge=10)
+    training_family_count: int = Field(ge=4)
+    reference_manifest_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+    @model_validator(mode='after')
+    def valid(self):
+        if any(value <= 0 for value in self.scale) or any(lo > hi for lo, hi in self.feature_bounds):
+            raise ValueError('Invalid outline feature scaling or bounds')
+        return self
+
+
 class Profile(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     version: Literal[1] = 1
@@ -117,6 +139,7 @@ class Profile(BaseModel):
     evaluation_samples: list[EvaluationSample] = Field(default_factory=list)
     metric_rulers: list[MetricRuler] = Field(default_factory=list, max_length=20)
     survey_calibration: SurveyCalibration | None = None
+    outline_calibration: OutlineCalibration | None = None
     measurement_line_x: float | None = Field(None, ge=0)
     line_tolerance_px: float = Field(10, ge=1, le=100)
     accuracy_tolerance_m: float = Field(.1, gt=0, le=1)
@@ -165,6 +188,12 @@ class Profile(BaseModel):
                 raise ValueError('Survey projection belongs to different lens settings; recalibrate it')
             if self.references or self.metric_rulers or not self.polygon:
                 raise ValueError('Survey calibration needs its road polygon and cannot mix with empirical references')
+        if self.outline_calibration:
+            from vehicle_metrology.outline import geometry_signature
+            if self.measurement_mode != 'estimate' or self.survey_calibration or self.metric_rulers:
+                raise ValueError('Catalogue outline calibration requires estimate mode and empirical fallback references')
+            if not self.references or self.outline_calibration.geometry_signature != geometry_signature(self.model_dump(mode='json')):
+                raise ValueError('Outline calibration belongs to different image/lens/road geometry, or lacks fallback references')
         profile_scale(self)
         return self
 

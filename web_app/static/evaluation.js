@@ -20,6 +20,12 @@ function render(record){
   const [x,y,w,h]=record.bbox,[width,height]=record.image_size;
   $('photo').parentElement.style.maxWidth=`calc(56vh * ${width/height})`;
   Object.assign($('box').style,{left:100*x/width+'%',top:100*y/height+'%',width:100*w/width+'%',height:100*h/height+'%'});
+  const outline=record.measurement?.outline;
+  $('outline').setAttribute('viewBox',`0 0 ${width} ${height}`);
+  $('outlinePoints').setAttribute('points',(outline?.contour||[]).map(p=>p.join(',')).join(' '));
+  $('outline').hidden=!$('showBox').checked||!outline?.contour?.length;
+  $('basis').textContent=outline?(outline.status==='estimated'?'По контуру кузова. ':outline.status==='not_applicable'?'Оценка рамки; контурная модель предназначена для легковых автомобилей. ':'Контурная оценка не назначена. ')+
+    (outline.baseline_length_m!=null?`Исходная оценка рамки: ${outline.baseline_length_m.toFixed(3)} м.`:''):'';
   $('measured').textContent=record.measured_length_m==null?'Не измерена':record.measured_length_m.toFixed(3)+' м';
   $('quality').textContent=record.measurement?.warnings?.join(' ')||'';
   $('actual').value=record.evaluation?.actual_length_m??'';
@@ -72,7 +78,7 @@ $('refresh').onclick=()=>{message('');load();};
 $('state').onchange=()=>{offset=0;message('');load();};
 $('previous').onclick=()=>{offset=Math.max(0,offset-1);load();};
 $('next').onclick=()=>{offset++;load();};
-$('showBox').onchange=()=>{$('box').hidden=!$('showBox').checked;};
+$('showBox').onchange=()=>{$('box').hidden=!$('showBox').checked;$('outline').hidden=!$('showBox').checked||!current?.measurement?.outline?.contour?.length;};
 $('datasetRole').onchange=referenceRequirements;
 $('actor').value=localStorage.getItem('evaluationActor')||localStorage.getItem('ferryActor')||'Оператор';
 load();

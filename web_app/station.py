@@ -330,6 +330,13 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
             target_tolerance_m=payload.profile.accuracy_tolerance_m))
         measured['warnings'].append('Проезд у линии сохранён без длины: автомобиль вне области калибровки.')
         result['detections'][0]=measured
+    if payload.profile.outline_calibration:
+        from web_app.outline_measurement import apply_outline
+        corrected_image=result.get('frame_image')
+        if corrected_image is None and result.get('image'):
+            corrected_image=cv2.imdecode(np.frombuffer(base64.b64decode(result['image']),np.uint8),cv2.IMREAD_COLOR)
+        measured=apply_outline(payload.profile,measured,corrected_image,label=payload.label)
+        result['detections'][0]=measured
     if measured['status'] in {'outside_road','clipped','waiting_for_line','outside_calibration'}:
         raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге, в области калибровки и у линии измерения (если она включена).')
     category={'car':'car','bus':'bus','truck':'truck','motorcycle':'motorcycle'}.get(payload.label,'car')

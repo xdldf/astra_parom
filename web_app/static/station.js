@@ -99,7 +99,9 @@ function measurementNote(record){
     calibration_review:'Калибровка не прошла проверку геометрии.',
     needs_reference:'В настройке камеры нет эталонов длины.',
     outside_road:'Рамка автомобиля вне полигона дороги.',
-    clipped:'Автомобиль не целиком в кадре.'
+    clipped:'Автомобиль не целиком в кадре.',
+    catalogue_outline_estimate:'Оценка по контуру кузова и каталожным эталонам; точность 10 см для каждого автомобиля пока не достигнута.',
+    outline_unavailable:'Контурная оценка недоступна. Полный кадр сохранён, длину нужно проверить.'
   };
   const note=[...new Set(reasons.map(r=>r==='road_overlap_proxy'?'Положение взято по пересечению рамки с дорогой.':texts[r]).filter(Boolean))].join(' ');
   return (approximate?'Приблизительно · требуется проверка. ':'')+note;
@@ -452,7 +454,7 @@ function selectedVideoDetector(){
  const p=liveSource?.profile||importedProfile;
  showDetector(p?{model:p.detector_model??'yolo26n',imgsz:p.detector_imgsz??640}:null,'Видеозаписи · выбранная настройка');
 }
-function calibrationLabel(){const p=liveSource?.profile||importedProfile;selectedVideoDetector();if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
+function calibrationLabel(){const p=liveSource?.profile||importedProfile;selectedVideoDetector();if(p?.outline_calibration){$('calibrationStatus').textContent=`Контур кузова · ${p.outline_calibration.training_count} каталожных проездов · приблизительная длина`;return;}if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
 async function workbench(path,body){const response=await fetch('/api/workbench'+path,body instanceof FormData?{method:'POST',body}:body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
 async function stopStream(){const id=streamId;if(id)await flushVideoReviews(Infinity,true);streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';selectedVideoDetector();if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
 async function startStream({throwOnError=false}={}){
