@@ -20,6 +20,8 @@ from vehicle_metrology.catalogue_labels import corrected_rows
 from vehicle_metrology.outline import outline_features, geometry_signature, WEIGHTS_SHA256
 from vehicle_metrology.wheels import select_wheel_pair, wheel_features, file_digest, MODEL_FILES, MODEL_REVISION
 from vehicle_metrology.wheel_recovery import select_passage_frames, select_frame_model
+from vehicle_metrology.passage_association import associate_view
+from scripts.audit_passage_association import DETECTOR_SHA256
 from web_app.workbench import Profile
 from web_app.outline_measurement import apply_outline
 from web_app.wheel_measurement import apply_wheels
@@ -39,10 +41,47 @@ def calibration(model, profile, reference_hash, ident):
         **{k:v for k,v in model.items() if k != 'alpha'})
 
 
+def checked_associations(path, extraction_path, comparison_path, profile_path, rows, profile):
+    """Recompute every decision from hashed dense detections, not a trusted flag."""
+    audit = json.loads(path.read_text())
+    expected = dict(extraction_sha256=file_digest(extraction_path), comparison_sha256=file_digest(comparison_path),
+        profile_sha256=file_digest(profile_path), detector_sha256=DETECTOR_SHA256, imgsz=640, confidence=.3,
+        image_space='lens_corrected_full_frame',
+        association_implementation_sha256=file_digest(ROOT/'vehicle_metrology/passage_association.py'),
+        detector_implementation_sha256=file_digest(ROOT/'vehicle_metrology/detection.py'),
+        script_sha256=file_digest(ROOT/'scripts/audit_passage_association.py'))
+    if any(audit.get(k) != v for k,v in expected.items()) or set(audit['rows']) != {r['id'] for r in rows}:
+        raise ValueError('Missing, incomplete or outdated dense association audit')
+    extraction = json.loads(extraction_path.read_text())
+    decisions = {}
+    signature = {k:v for k,v in audit.items() if k != 'rows'}
+    for row in rows:
+        ident = row['id']
+        result, passage = audit['rows'][ident], extraction['rows'][ident]
+        cache_path = path.parent/result['detections_file']
+        if file_digest(cache_path) != result['detections_sha256']:
+            raise ValueError('Changed dense detection cache: '+ident)
+        cache = json.loads(cache_path.read_text())
+        if cache['signature'] != signature or cache['id'] != ident or cache['video'] != row['video']:
+            raise ValueError('Mismatched dense detection provenance: '+ident)
+        for sample in passage['samples']:
+            if cache['frames'][str(sample['frame'])]['pixels_sha256'] != sample['inference_pixels_sha256']:
+                raise ValueError('Dense association used different corrected pixels: '+ident)
+        frames = {int(k):v['detections'] for k,v in cache['frames'].items()}
+        anchor = dict(frame=row['frame'], bbox=row['bbox'])
+        checks = [dict(frame=s['frame'], expected_box=s['bbox'],
+                       **(dict(status='anchor') if s['frame'] == row['frame'] else
+                          associate_view(anchor, s, frames, profile.image_size))) for s in passage['selected_frames']]
+        if result['anchor'] != anchor or result['checks'] != checks:
+            raise ValueError('Dense association decisions do not reproduce: '+ident)
+        decisions[ident] = {s['frame']:dict(status=s['status'], reason=s.get('reason')) for s in checks}
+    return decisions
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for option in ('comparison','manifest','masks','detections','primary-profile','primary-results',
-                   'passage-extraction','catalogue-corrections','output-dir'):
+                   'passage-extraction','association-audit','catalogue-corrections','output-dir'):
         parser.add_argument('--'+option, type=Path, required=True)
     args = parser.parse_args()
     rows = corrected_rows([r for r in json.loads(args.comparison.read_text())['rows'] if r.get('comparison_eligible')],
@@ -50,6 +89,8 @@ def main():
     if len({r['id'] for r in rows}) != len(rows):
         raise ValueError('Duplicate passage IDs')
     profile = Profile.model_validate_json(args.primary_profile.read_text())
+    associations = checked_associations(args.association_audit, args.passage_extraction, args.comparison,
+                                       args.primary_profile, rows, profile)
     extraction = json.loads(args.passage_extraction.read_text())
     primary = json.loads(args.primary_results.read_text())
     masks = json.loads((args.masks/'mask-manifest.json').read_text())
@@ -68,7 +109,7 @@ def main():
     directory = args.passage_extraction.parent
     tracks = {}
     features, targets, groups, passages, anchors = [], [], [], [], []
-    failed_passages, no_pairs, frames_by_id = [], [], {}
+    failed_passages, no_pairs, rejected_views, frames_by_id = [], [], [], {}
     for row in rows:
         ident = row['id']
         if row['video'] not in tracks:
@@ -86,8 +127,14 @@ def main():
         for sample, expected in zip(entry['samples'], selected):
             if sample['frame'] != expected['frame'] or sample['expected_box'] != expected['bbox']:
                 raise ValueError('Mismatched frame/box: '+ident)
+            association = associations[ident][sample['frame']]
+            accepted = association['status'] in ('anchor', 'accepted')
             frame_rows.append(dict(frame=sample['frame'], bbox=sample['expected_box'], status=sample['status'],
-                                   wheel_status=sample.get('wheel_status'), initial_failure=sample.get('initial_failure')))
+                wheel_status=sample.get('wheel_status'), initial_failure=sample.get('initial_failure'),
+                association=association, training_eligible=accepted and not failed
+                    and not row.get('stock_body_uncertain', False) and sample.get('wheel_status') == 'ok'))
+            if not accepted:
+                rejected_views.append(dict(id=ident, frame=sample['frame'], reason=association['reason']))
             if sample['status'] != 'ok':
                 continue
             if (file_digest(directory/sample['mask']) != sample['mask_sha256']
@@ -109,7 +156,7 @@ def main():
             if sample.get('wheel_status') != 'ok':
                 raise ValueError('Unexpected accepted wheel pair: '+ident)
             np.testing.assert_allclose(value, sample['features'], rtol=0, atol=1e-12)
-            if failed or row.get('stock_body_uncertain', False):
+            if not accepted or failed or row.get('stock_body_uncertain', False):
                 continue
             features.append(value)
             targets.append(np.mean(row['catalogue_length_range_m']))
@@ -121,6 +168,7 @@ def main():
     references = dict(reference_source='catalogue', physical_accuracy_validated=False, image_space='lens_corrected_full_frame',
         comparison_sha256=file_digest(args.comparison), corrections_sha256=file_digest(args.catalogue_corrections),
         extraction_sha256=file_digest(args.passage_extraction),
+        association_audit_sha256=file_digest(args.association_audit),
         rows=[dict(id=r['id'], family=catalogue_family(r['source_ids']), model_candidate=r['model_candidate'],
             video=Path(r['video']).name, anchor_frame=r['frame'], catalogue_interval_m=r['catalogue_length_range_m'],
             sources=r['catalogue_sources'], training_eligible=bool(np.any(passages == r['id'])),
@@ -173,7 +221,7 @@ def main():
             if old['length_m'] is not None and measured['length_m'] != old['length_m']:
                 raise ValueError('Recovery changed an existing primary result')
     fitted, scores = select_frame_model(features, targets, groups, passages, anchors)
-    exported_calibration = calibration(fitted, profile, ref_hash, 'st-wheel-recovery-20261008')
+    exported_calibration = calibration(fitted, profile, ref_hash, 'st-wheel-recovery-associated-20261008')
     exported = Profile.model_validate({**profile.model_dump(), 'wheel_recovery_calibration':exported_calibration})
     (args.output_dir/'calibration.json').write_text(exported.model_dump_json(indent=2)+'\n')
     values = np.asarray([output[r['id']]['runtime_m'] if output[r['id']]['runtime_m'] is not None else np.nan for r in rows])
@@ -184,11 +232,14 @@ def main():
         summary=dict(primary=summary(base_values, intervals, row_groups), recovery=summary(values, intervals, row_groups)),
         recovered_ids=[r['id'] for r in rows if baseline[r['id']] is None and output[r['id']]['runtime_m'] is not None],
         failed_passages=failed_passages, frames_without_wheel_pair=no_pairs,
+        rejected_additional_views=rejected_views,
         training_count=fitted['training_count'], training_frame_count=fitted['training_frame_count'],
         folds=folds, selected_model=fitted, inner_scores=scores,
         limitations=['Catalogue identities/variants remain provisional; this does not prove physical accuracy.',
             'Recovery policy and image features were developed on these videos after examining their errors.',
             'Every catalogue passage remains in the denominator, including missing wheels, reviews and damaged bodies.',
+            'Additional views require bidirectional dense detection continuity; rejected views never inherit anchor lengths.',
+            'Detection continuity is an identity safeguard, not proof of catalogue identification or complete recall.',
             'Family exclusion prevents tested family labels entering coefficient fitting or regularization selection.',
             'Missing wheel anchors do not enter inner selection scores; they retain runtime primary/review fallback.',
             'This is anchor inference using a model trained on broader views, not a new temporal runtime estimator.',
@@ -197,6 +248,7 @@ def main():
             extraction=file_digest(args.passage_extraction), masks=file_digest(args.masks/'mask-manifest.json'),
             detections=file_digest(args.detections), primary_results=file_digest(args.primary_results),
             primary_profile=file_digest(args.primary_profile), corrections=file_digest(args.catalogue_corrections),
+            association_audit=file_digest(args.association_audit),
             script=file_digest(Path(__file__)), fit=file_digest(ROOT/'vehicle_metrology/wheel_recovery.py'),
             outline_runtime=file_digest(ROOT/'web_app/outline_measurement.py'), wheel_runtime=file_digest(ROOT/'web_app/wheel_measurement.py')),
         rows=[output[r['id']] for r in rows])

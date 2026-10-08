@@ -19,9 +19,9 @@
     "recovery": {
       "count": 77,
       "family_count": 14,
-      "midpoint_mae_m": 0.03675738273618351,
-      "family_balanced_midpoint_mae_m": 0.038580043802762636,
-      "optimistic_interval_mae_m": 0.029024711672524104,
+      "midpoint_mae_m": 0.037303832808315715,
+      "family_balanced_midpoint_mae_m": 0.0384757029721121,
+      "optimistic_interval_mae_m": 0.02952291046272143,
       "optimistic_interval_max_m": 0.14958160450476932,
       "outside_10cm_even_optimistically": 3,
       "within_10cm_for_entire_interval": 71,
@@ -47,12 +47,36 @@
       "frame": 8526
     }
   ],
+  "rejected_additional_views": [
+    {
+      "id": "V3-038",
+      "frame": 37850,
+      "reason": "clipped_vehicle"
+    },
+    {
+      "id": "V4-021",
+      "frame": 26400,
+      "reason": "competing_vehicle"
+    },
+    {
+      "id": "V5-004",
+      "frame": 3025,
+      "reason": "discontinuous_motion_or_size"
+    },
+    {
+      "id": "V5-034",
+      "frame": 34875,
+      "reason": "discontinuous_motion_or_size"
+    }
+  ],
   "training_count": 77,
-  "training_frame_count": 198,
+  "training_frame_count": 194,
   "limitations": [
     "Catalogue identities/variants remain provisional; this does not prove physical accuracy.",
     "Recovery policy and image features were developed on these videos after examining their errors.",
     "Every catalogue passage remains in the denominator, including missing wheels, reviews and damaged bodies.",
+    "Additional views require bidirectional dense detection continuity; rejected views never inherit anchor lengths.",
+    "Detection continuity is an identity safeguard, not proof of catalogue identification or complete recall.",
     "Family exclusion prevents tested family labels entering coefficient fitting or regularization selection.",
     "Missing wheel anchors do not enter inner selection scores; they retain runtime primary/review fallback.",
     "This is anchor inference using a model trained on broader views, not a new temporal runtime estimator.",
@@ -67,10 +91,11 @@
     "primary_results": "7b5790dcfa41d6ab67d10d402bb07a719c3e85e32e101f1140d06410c1869a44",
     "primary_profile": "0c7816c08409487dbf94247c863fce5c4c40b02cf79b0ae30ffd15fec3270e39",
     "corrections": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
-    "script": "4cdeaa4c411d3b4602b80bf6f1d8a108d030a1c04bc5819db2e00043ab696134",
+    "association_audit": "a31639d96540bfe10d67182543022e7a42264e1c396457ab36f2e8a7ba1b7cc3",
+    "script": "650e1bf50031a48cea726d1d3feb315d525ac4b2812cb2e95f049f865e5d670a",
     "fit": "0985e4ea5b67fd9f4d08f816a9ed3a3b05bd0adbc3168da31a07522d70fe1859",
     "outline_runtime": "c2f995bfe4fe05e17666a344adbe0a3fcd3bbe9720e2b8f4bb7312668972a895",
-    "wheel_runtime": "3d7645c75010e7ca391960b0b0ee3bfa862ddee8dcbb8203c6048f361eb26103"
+    "wheel_runtime": "ebb7613e6ce7224240b8d9b913bbb2dd7e9a6b2e96796bd38a025d61a1f08cf3"
   },
   "rows": [
     {
@@ -93,7 +118,7 @@
         4.6
       ],
       "previous_runtime_m": null,
-      "runtime_m": 4.596284651291014,
+      "runtime_m": 4.53728017901878,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -132,7 +157,7 @@
         3.785
       ],
       "previous_runtime_m": null,
-      "runtime_m": 3.836583159504122,
+      "runtime_m": 3.805792208694837,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -184,7 +209,7 @@
         3.94
       ],
       "previous_runtime_m": null,
-      "runtime_m": 3.9478489780829658,
+      "runtime_m": 3.9471030183879106,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -314,7 +339,7 @@
         4.71
       ],
       "previous_runtime_m": null,
-      "runtime_m": 4.664058699193685,
+      "runtime_m": 4.606169984814543,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -340,7 +365,7 @@
         3.885
       ],
       "previous_runtime_m": null,
-      "runtime_m": 3.9558509351544537,
+      "runtime_m": 3.905344969382627,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -522,7 +547,7 @@
         4.56
       ],
       "previous_runtime_m": null,
-      "runtime_m": 4.518737851574452,
+      "runtime_m": 4.4742640086906755,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -1029,7 +1054,7 @@
         4.69
       ],
       "previous_runtime_m": null,
-      "runtime_m": 4.5745860686890785,
+      "runtime_m": 4.609264263811855,
       "status": "wheel_estimate",
       "wheel_status": "estimated",
       "calibration_role": "recovery",
@@ -1087,6 +1112,5 @@
       "calibration_role": "primary",
       "reason": null
     }
-  ],
-  "full_results_sha256": "395e83accc27407febde869b2c4f0d43a603eeefc46ade1ac003d9726a6167df"
+  ]
 }

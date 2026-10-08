@@ -69,6 +69,26 @@ def test_primary_length_is_not_replaced_by_recovery(recovery):
     assert record['source']['measurement']['wheels']['calibration_role'] == 'primary'
 
 
+@pytest.mark.parametrize('accepted_outline', [False, True])
+def test_saved_revoked_recovery_profile_cannot_assign_a_length(recovery, monkeypatch, accepted_outline):
+    path, _, payload, _ = recovery
+    payload['profile']['wheel_recovery_calibration']['reference_manifest_sha256'] = next(iter(wm.REVOKED_RECOVERY_REFERENCES))
+    if accepted_outline:
+        payload['profile']['outline_calibration']['feature_bounds'] = [[-10,10]]*7
+    else:
+        monkeypatch.setattr(wm,'infer_wheels',lambda *args:pytest.fail('Revoked coefficients must not run'))
+    record = TestClient(app).post('/api/station/capture',json=payload).json()
+    assert (path/record['full_frame_photo']).is_file()
+    evidence = record['source']['measurement']['wheels']
+    if accepted_outline:
+        assert record['length_m'] == pytest.approx(4.3)
+        assert evidence['calibration_role'] == 'primary'
+    else:
+        assert record['length_m'] is None
+        assert evidence['failure_code'] == 'revoked_reference_manifest'
+        assert 'wheel_recovery_unavailable' in record['source']['measurement']['quality_reasons']
+
+
 def test_recovery_requires_primary_models_and_matching_geometry(recovery):
     _, profile, _, _ = recovery
     data = profile.model_dump()

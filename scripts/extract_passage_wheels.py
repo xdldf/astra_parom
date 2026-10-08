@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract at most three corrected views per catalogue passage, preserving failures."""
+"""Extract proposed corrected views; audit_passage_association must verify identity before training."""
 import argparse
 import hashlib
 import json
@@ -106,6 +106,7 @@ def main():
     failed = [ident for ident,r in result['rows'].items() if any(s['status']!='ok' for s in r['samples'])]
     if failed:
         raise SystemExit('Failed observations retained; investigate before interpreting the benchmark: '+', '.join(failed))
+    print('Views are proposals only. Run scripts/audit_passage_association.py before training; sparse IDs may switch cars.')
 
 
 if __name__ == '__main__':

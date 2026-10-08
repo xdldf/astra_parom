@@ -14,6 +14,12 @@ from vehicle_metrology.wheels import (
 ROOT = Path(__file__).resolve().parents[1]
 lock = threading.Lock()
 
+# This released reference set assigned V3-038's wagon length to a following
+# pickup at frame 37850. Saved operator profiles may outlive a code update.
+REVOKED_RECOVERY_REFERENCES = frozenset({
+    'af66a71fe62671869c7f834cb28e8fb9c25f18cf028f4b38409e35d09fea14e0',
+})
+
 
 @lru_cache(maxsize=1)
 def load_model():
@@ -75,6 +81,12 @@ def apply_wheels(profile, measured, image, *, label):
             or 'clipped' in measured.get('quality_reasons', [])
             or 'ambiguous_vehicle_association' in measured.get('temporal', {}).get('reasons', [])):
         evidence.update(status='not_applicable', reason='Requires an accepted outline or a feature-range-only outline rejection')
+        return result
+    if recovery and calibration.reference_manifest_sha256 in REVOKED_RECOVERY_REFERENCES:
+        evidence.update(failure_code='revoked_reference_manifest',
+                        reason='Recovery reference set contains a confirmed vehicle identity switch')
+        result['quality_reasons'].append('wheel_recovery_unavailable')
+        result['warnings'].append('Резервный профиль отозван из-за ошибки связи кадров. Загрузите обновлённый st-wheel-recovery-calibration.json; полный кадр сохранён для проверки.')
         return result
     try:
         if image is None or image.shape[1::-1] != profile.image_size:

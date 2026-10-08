@@ -1,0 +1,2242 @@
+{
+  "extraction_sha256": "45265c9009205544bb90dcddfc090f29bd4bd07a1e71eb188283372b019f645a",
+  "comparison_sha256": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+  "profile_sha256": "0c7816c08409487dbf94247c863fce5c4c40b02cf79b0ae30ffd15fec3270e39",
+  "detector_sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7",
+  "device": "cpu",
+  "imgsz": 640,
+  "confidence": 0.3,
+  "image_space": "lens_corrected_full_frame",
+  "association_implementation_sha256": "1811e8444c4168065b09a26b5db7855d7d853a62dd1bf9765fe854dbac652a1d",
+  "detector_implementation_sha256": "53a6ca0c42b2488b6240fe173ab56a19bb7cabe890b496b9554cbccdca517caa",
+  "script_sha256": "ad60306d6ea1adf458d471c780b47335d4661d90610b8267dc283cdf362a3a07",
+  "physical_accuracy_validated": false,
+  "total_passages": 78,
+  "selected_frames": 202,
+  "additional_views": 124,
+  "accepted_additional_views": 120,
+  "rejected_additional_views": 4,
+  "dense_video_frames": 4893,
+  "rows": [
+    {
+      "id": "V3-038",
+      "anchor": {
+        "frame": 37784,
+        "bbox": [
+          1058.618896484375,
+          1102.7606201171875,
+          551.396240234375,
+          230.46435546875
+        ]
+      },
+      "detections_sha256": "c7390331bb8142280a5574e8d77ebfb02dcd45dd96babddc51eff3f51b13e238",
+      "checks": [
+        {
+          "frame": 37784,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 37850,
+          "status": "rejected",
+          "reason": "clipped_vehicle",
+          "forward": {
+            "status": "rejected",
+            "reason": "clipped_vehicle",
+            "frame": 37844
+          },
+          "backward": {
+            "status": "rejected",
+            "reason": "discontinuous_motion_or_size",
+            "frame": 37794
+          }
+        }
+      ]
+    },
+    {
+      "id": "V1-001",
+      "anchor": {
+        "frame": 2236,
+        "bbox": [
+          1052.9844970703125,
+          1104.1649169921875,
+          490.470458984375,
+          224.49951171875
+        ]
+      },
+      "detections_sha256": "f43e61f62c9a79863cd539b530aafe62130a481ce552ae178e25194cbac57fed",
+      "checks": [
+        {
+          "frame": 2175,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 2236,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 2300,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-002",
+      "anchor": {
+        "frame": 901,
+        "bbox": [
+          658.859130859375,
+          1089.6558837890625,
+          549.421630859375,
+          237.837646484375
+        ]
+      },
+      "detections_sha256": "642ef9ffa939343183cee7e3cbdb067769b6e22e111a85d48c5f738e8476e639",
+      "checks": [
+        {
+          "frame": 901,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-004",
+      "anchor": {
+        "frame": 3650,
+        "bbox": [
+          1025.532958984375,
+          1097.7520751953125,
+          535.3463134765625,
+          222.8160400390625
+        ]
+      },
+      "detections_sha256": "4018dff01b2bb02f03277fdd59c543bffae7f5d381415f887fd59a44c5537661",
+      "checks": [
+        {
+          "frame": 3575,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 3650,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 3725,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-006",
+      "anchor": {
+        "frame": 5396,
+        "bbox": [
+          1052.9554443359375,
+          1072.4739990234375,
+          479.07373046875,
+          231.8966064453125
+        ]
+      },
+      "detections_sha256": "2515237c3f360373699cd37507b65448c1e9f4b4ef8239bd1811b7efa4ff3c69",
+      "checks": [
+        {
+          "frame": 5325,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 5396,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 5450,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-009",
+      "anchor": {
+        "frame": 5969,
+        "bbox": [
+          1065.837646484375,
+          1085.63037109375,
+          452.559814453125,
+          217.88330078125
+        ]
+      },
+      "detections_sha256": "eb6100b99e9d8dd888948f0d21424c9b0f3d9ec65eb8cc5b5de23edd589e91fb",
+      "checks": [
+        {
+          "frame": 5900,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 5969,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 6025,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-011",
+      "anchor": {
+        "frame": 6334,
+        "bbox": [
+          1017.8958129882812,
+          1049.4527587890625,
+          550.4524536132812,
+          273.4039306640625
+        ]
+      },
+      "detections_sha256": "98ce72ff72531c84b88d8d94aab5533ec8ee57443812d05cc8ddd745e722e516",
+      "checks": [
+        {
+          "frame": 6300,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 6334,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 6400,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-012",
+      "anchor": {
+        "frame": 6723,
+        "bbox": [
+          1015.4365234375,
+          998.1517944335938,
+          559.962646484375,
+          300.38262939453125
+        ]
+      },
+      "detections_sha256": "8d7239d53a86cbb7a0cf8bc906289c57567b2ed643f224db15d9a756c07700af",
+      "checks": [
+        {
+          "frame": 6650,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 6723,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 6775,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-014",
+      "anchor": {
+        "frame": 7290,
+        "bbox": [
+          1024.995361328125,
+          1053.2076416015625,
+          541.0482177734375,
+          255.9420166015625
+        ]
+      },
+      "detections_sha256": "0f9c5461122502df975430a343a2a4b4d1010f7f5cc1b6de9010292e929bd4e9",
+      "checks": [
+        {
+          "frame": 7225,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 7290,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 7350,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-017",
+      "anchor": {
+        "frame": 9955,
+        "bbox": [
+          1031.2666015625,
+          1130.9234619140625,
+          521.976806640625,
+          200.3736572265625
+        ]
+      },
+      "detections_sha256": "3b1b4fe348a8af78e98bad17ab01b751b7024bd263e1df08065afa6e9e6474c9",
+      "checks": [
+        {
+          "frame": 9955,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 10025,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-018",
+      "anchor": {
+        "frame": 11897,
+        "bbox": [
+          1006.5400390625,
+          1086.907470703125,
+          574.2664794921875,
+          246.0533447265625
+        ]
+      },
+      "detections_sha256": "2328d1c152398b0027066f621810b4e729a3e40189bc49e99cf7ea36d7dafb21",
+      "checks": [
+        {
+          "frame": 11897,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-020",
+      "anchor": {
+        "frame": 12612,
+        "bbox": [
+          997.4478149414062,
+          1036.9873046875,
+          585.6953735351562,
+          286.2498779296875
+        ]
+      },
+      "detections_sha256": "cc621a30f84b68f0c26eebd96b69d6abce8bccc46a5e8ced3d45ba983227497c",
+      "checks": [
+        {
+          "frame": 12550,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 12612,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 12650,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-021",
+      "anchor": {
+        "frame": 12904,
+        "bbox": [
+          1038.0758056640625,
+          1092.210693359375,
+          512.9256591796875,
+          232.934326171875
+        ]
+      },
+      "detections_sha256": "b469ead1606d9e8283c6c434887366664a071137acbb7f14d76890ddcc9e494e",
+      "checks": [
+        {
+          "frame": 12904,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 12975,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-022",
+      "anchor": {
+        "frame": 13125,
+        "bbox": [
+          1050.64306640625,
+          1108.745849609375,
+          487.981689453125,
+          222.4765625
+        ]
+      },
+      "detections_sha256": "35a2ff4b268e19fdb81df1efcf51572fff9cabb3296d311d8ba5b1fedddc7436",
+      "checks": [
+        {
+          "frame": 13075,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 13125,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 13175,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-026",
+      "anchor": {
+        "frame": 16101,
+        "bbox": [
+          997.0508422851562,
+          1103.859619140625,
+          596.1721801757812,
+          230.8504638671875
+        ]
+      },
+      "detections_sha256": "27fa0169592ca4ec38766fa032e1613bad65f8a31b0d3520aacdb3d4afa7b9ea",
+      "checks": [
+        {
+          "frame": 16075,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 16101,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 16125,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-027",
+      "anchor": {
+        "frame": 16242,
+        "bbox": [
+          1038.9334716796875,
+          1100.3553466796875,
+          506.779541015625,
+          233.055419921875
+        ]
+      },
+      "detections_sha256": "f7b08263fa175533749931eea00dac73da751b38e469e6440ab08548f717f8c8",
+      "checks": [
+        {
+          "frame": 16200,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 16242,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 16275,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-033",
+      "anchor": {
+        "frame": 24190,
+        "bbox": [
+          1024.5587158203125,
+          1087.96484375,
+          529.596923828125,
+          223.501953125
+        ]
+      },
+      "detections_sha256": "4a364ab69fd54f3bad45ceffbcd9a4c24660b73e7afa4aeee992295d353f6182",
+      "checks": [
+        {
+          "frame": 24150,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 24190,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 24225,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-036",
+      "anchor": {
+        "frame": 26106,
+        "bbox": [
+          1080.804443359375,
+          1077.0679931640625,
+          500.6619873046875,
+          228.3006591796875
+        ]
+      },
+      "detections_sha256": "0b2596f667298e69e5da2f62bc96ece7bb763bb6f9669b515948a4ddda7aa172",
+      "checks": [
+        {
+          "frame": 26106,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 26125,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-040",
+      "anchor": {
+        "frame": 27430,
+        "bbox": [
+          1018.7365112304688,
+          1059.865478515625,
+          550.4688110351562,
+          256.8140869140625
+        ]
+      },
+      "detections_sha256": "45c56253b55bfd6393fc90007564dbab2ff563718a2056b7d8ad1e288ddff6a0",
+      "checks": [
+        {
+          "frame": 27400,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 27430,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 27475,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-045",
+      "anchor": {
+        "frame": 32477,
+        "bbox": [
+          1005.3156127929688,
+          1025.4254150390625,
+          572.2691040039062,
+          302.779541015625
+        ]
+      },
+      "detections_sha256": "431c02a8255463a5215144a847f183a6c95adfa7557628261187aaa34fa98e54",
+      "checks": [
+        {
+          "frame": 32425,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 32477,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 32550,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-050",
+      "anchor": {
+        "frame": 34826,
+        "bbox": [
+          997.9105224609375,
+          1095.3736572265625,
+          578.1112060546875,
+          237.871337890625
+        ]
+      },
+      "detections_sha256": "dc1b30703790377a3fc55e9e5a8d580f0864565e8f9fde275dd8a1c6058d3ba3",
+      "checks": [
+        {
+          "frame": 34800,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 34826,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 34850,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-055",
+      "anchor": {
+        "frame": 41628,
+        "bbox": [
+          1063.3438720703125,
+          1089.1524658203125,
+          458.9547119140625,
+          217.905517578125
+        ]
+      },
+      "detections_sha256": "f7782754a31115998f80361f8576343c9673d50a3605a5aaf20bd9fd2083863c",
+      "checks": [
+        {
+          "frame": 41628,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 41700,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V1-056",
+      "anchor": {
+        "frame": 41856,
+        "bbox": [
+          1038.905517578125,
+          1064.7569580078125,
+          511.7296142578125,
+          254.7149658203125
+        ]
+      },
+      "detections_sha256": "adc01a8065315141f80a01652ad016eb7b49261fdf7d52d098f42909584cf4bc",
+      "checks": [
+        {
+          "frame": 41800,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 41856,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 41925,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-004",
+      "anchor": {
+        "frame": 2383,
+        "bbox": [
+          1066.3631591796875,
+          1090.73583984375,
+          526.2257080078125,
+          244.4876708984375
+        ]
+      },
+      "detections_sha256": "277214d7528419313996826b407be99fdbb0633f8476433c01359c8c7ffb3233",
+      "checks": [
+        {
+          "frame": 2383,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-007",
+      "anchor": {
+        "frame": 2991,
+        "bbox": [
+          1049.9625244140625,
+          1093.71484375,
+          479.772705078125,
+          234.61767578125
+        ]
+      },
+      "detections_sha256": "742e1d7861c67cc1e5d5dac2ea12e0e07916d20903e81a9b112c11198ef83c5f",
+      "checks": [
+        {
+          "frame": 2975,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 2991,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 3025,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-011",
+      "anchor": {
+        "frame": 12815,
+        "bbox": [
+          1005.6666259765625,
+          1084.026123046875,
+          565.404296875,
+          240.732421875
+        ]
+      },
+      "detections_sha256": "a814e7e5189bb70ee65e763d0287c167d602ad8b13718f8aafce3313af223f28",
+      "checks": [
+        {
+          "frame": 12800,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 12815,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 12850,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-012",
+      "anchor": {
+        "frame": 15059,
+        "bbox": [
+          1035.62744140625,
+          1101.5811767578125,
+          507.79638671875,
+          232.2725830078125
+        ]
+      },
+      "detections_sha256": "573abe698c3fc99d24aea3d1fc7372c36f05650377edd1c5ab083e5588acae36",
+      "checks": [
+        {
+          "frame": 15025,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 15059,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 15075,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-015",
+      "anchor": {
+        "frame": 16099,
+        "bbox": [
+          1018.3963012695312,
+          1074.5732421875,
+          549.0523071289062,
+          245.8753662109375
+        ]
+      },
+      "detections_sha256": "d8234fe9339fe4a7a078ff2fbb488686bfc80cebe475a49e6b8a085318fe940b",
+      "checks": [
+        {
+          "frame": 16075,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 16099,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 16125,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-017",
+      "anchor": {
+        "frame": 19519,
+        "bbox": [
+          1012.528564453125,
+          1088.83349609375,
+          568.1597900390625,
+          240.766845703125
+        ]
+      },
+      "detections_sha256": "24256f1df0e5fec6defe8d57d343985f504488bb21aab20d3c497bb1beee438a",
+      "checks": [
+        {
+          "frame": 19500,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 19519,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 19550,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-020",
+      "anchor": {
+        "frame": 22668,
+        "bbox": [
+          1020.0690307617188,
+          1086.104736328125,
+          548.9500122070312,
+          241.954345703125
+        ]
+      },
+      "detections_sha256": "5f4be0fef7050b910d236c2dbc10c0438e3178c48f96bbcaa6b445970c635be6",
+      "checks": [
+        {
+          "frame": 22625,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 22668,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 22700,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-024",
+      "anchor": {
+        "frame": 25727,
+        "bbox": [
+          1002.0306396484375,
+          1053.4278564453125,
+          594.1844482421875,
+          278.6036376953125
+        ]
+      },
+      "detections_sha256": "7dde255a2437c0bea45e6fc0a2d67b9a9f78af824bebd6866d7fb874aed26234",
+      "checks": [
+        {
+          "frame": 25700,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 25727,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 25750,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-034",
+      "anchor": {
+        "frame": 27814,
+        "bbox": [
+          1020.60986328125,
+          1074.9774169921875,
+          545.064697265625,
+          236.0167236328125
+        ]
+      },
+      "detections_sha256": "31551cedede510ffc5fe8a6c72341550435df1606e2c73566f7098be3451d815",
+      "checks": [
+        {
+          "frame": 27750,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 27814,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 27875,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-037",
+      "anchor": {
+        "frame": 29071,
+        "bbox": [
+          1025.4208984375,
+          1100.615234375,
+          543.9979248046875,
+          226.7996826171875
+        ]
+      },
+      "detections_sha256": "52078be6d2aae7c4c567722cb754959d8b25c5f8c543be49a7d5ece8a86b0632",
+      "checks": [
+        {
+          "frame": 29071,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-044",
+      "anchor": {
+        "frame": 31623,
+        "bbox": [
+          1025.3646240234375,
+          1083.6864013671875,
+          534.666259765625,
+          232.82958984375
+        ]
+      },
+      "detections_sha256": "aa0d99eb9b7cf6c817a6028cc1508b1e8bad945b4987fe0fa1d25380937295fb",
+      "checks": [
+        {
+          "frame": 31623,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 31675,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-045",
+      "anchor": {
+        "frame": 31754,
+        "bbox": [
+          1059.763916015625,
+          1092.865234375,
+          471.6806640625,
+          222.337646484375
+        ]
+      },
+      "detections_sha256": "766d0ea13864146e0097f11e4b0d69dd1b6f8654c268642ecd211ed6700aeeb0",
+      "checks": [
+        {
+          "frame": 31725,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 31754,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-046",
+      "anchor": {
+        "frame": 31868,
+        "bbox": [
+          1030.30126953125,
+          1055.4622802734375,
+          520.7144775390625,
+          221.9857177734375
+        ]
+      },
+      "detections_sha256": "ca2ef631bd846ae3b422ec8d6bcd56891626bca5927ff661849a653de2e9d336",
+      "checks": [
+        {
+          "frame": 31825,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 31868,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 31925,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-048",
+      "anchor": {
+        "frame": 32282,
+        "bbox": [
+          1038.19189453125,
+          1080.7021484375,
+          516.3646240234375,
+          252.319580078125
+        ]
+      },
+      "detections_sha256": "959f0f428441f21cf3276503efa79dbfac018025680a212fcfaaae744afc2a0f",
+      "checks": [
+        {
+          "frame": 32282,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 32350,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-051",
+      "anchor": {
+        "frame": 34259,
+        "bbox": [
+          1009.89501953125,
+          1050.3505859375,
+          567.6807861328125,
+          271.0123291015625
+        ]
+      },
+      "detections_sha256": "c3d659b105955bfc6dbd024a277548922bfcb5bc49994419621f07a989540f78",
+      "checks": [
+        {
+          "frame": 34200,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 34259,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V2-068",
+      "anchor": {
+        "frame": 43467,
+        "bbox": [
+          1013.886474609375,
+          1116.5155029296875,
+          556.244384765625,
+          215.4840087890625
+        ]
+      },
+      "detections_sha256": "4a6db07a393bba1ec869cfda759a052c7c2122de057f383693512210b2f06272",
+      "checks": [
+        {
+          "frame": 43467,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-002",
+      "anchor": {
+        "frame": 2006,
+        "bbox": [
+          983.5401611328125,
+          1075.82568359375,
+          620.8931884765625,
+          259.385498046875
+        ]
+      },
+      "detections_sha256": "5910f0b287150c22d5947115c582c52d38fd63750a595b2e642cf32887b92c14",
+      "checks": [
+        {
+          "frame": 2006,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 2075,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-010",
+      "anchor": {
+        "frame": 15030,
+        "bbox": [
+          1012.5431518554688,
+          1115.2484130859375,
+          555.7870483398438,
+          218.496337890625
+        ]
+      },
+      "detections_sha256": "f86e144c88f09319346dd003da1a3eb0a1afef7255ab9a9047587d1c10c42142",
+      "checks": [
+        {
+          "frame": 15000,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 15030,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 15050,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-013",
+      "anchor": {
+        "frame": 17161,
+        "bbox": [
+          1003.4948120117188,
+          1084.7513427734375,
+          588.9556274414062,
+          250.50927734375
+        ]
+      },
+      "detections_sha256": "122e105480000023a9af3da08ce4b24a9b0b14d7e3e22375e6d57b8f87716a98",
+      "checks": [
+        {
+          "frame": 17125,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 17161,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 17200,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-015",
+      "anchor": {
+        "frame": 17259,
+        "bbox": [
+          1048.409423828125,
+          1113.9954833984375,
+          498.6656494140625,
+          219.9725341796875
+        ]
+      },
+      "detections_sha256": "3a03c212fbd8b147041f613a554b3cd87ef959df5b1bf821259083441532db29",
+      "checks": [
+        {
+          "frame": 17259,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-017",
+      "anchor": {
+        "frame": 22071,
+        "bbox": [
+          1011.0386352539062,
+          1112.80419921875,
+          548.5366821289062,
+          221.28662109375
+        ]
+      },
+      "detections_sha256": "c8385e5bc773538fb819fbc9de6344d893350735fcc9c70c03dfc7f3cb292b80",
+      "checks": [
+        {
+          "frame": 22050,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 22071,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 22100,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-021",
+      "anchor": {
+        "frame": 23958,
+        "bbox": [
+          1052.74755859375,
+          1108.7916259765625,
+          485.8668212890625,
+          222.1641845703125
+        ]
+      },
+      "detections_sha256": "2002c93e8d67c3de826ca9a35b9ba23d634d87d7fed9ad8f80c7571d424fbf53",
+      "checks": [
+        {
+          "frame": 23925,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 23958,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 24000,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-022",
+      "anchor": {
+        "frame": 24107,
+        "bbox": [
+          1033.6666259765625,
+          1079.260498046875,
+          521.91455078125,
+          248.8214111328125
+        ]
+      },
+      "detections_sha256": "7c500d91e065be1af2ccaef37d57009dda241177a7e4f791b7de40bfe3797f51",
+      "checks": [
+        {
+          "frame": 24075,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 24107,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 24150,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-026",
+      "anchor": {
+        "frame": 27319,
+        "bbox": [
+          1015.414794921875,
+          1086.8338623046875,
+          565.3656005859375,
+          236.855224609375
+        ]
+      },
+      "detections_sha256": "2a10d25147e12ffde7e8240e9cd48a7c9ce36d9e92ac9874830b7518c3aa7f5a",
+      "checks": [
+        {
+          "frame": 27275,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 27319,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 27375,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-030",
+      "anchor": {
+        "frame": 32676,
+        "bbox": [
+          1046.17529296875,
+          1096.6368408203125,
+          480.3775634765625,
+          231.1807861328125
+        ]
+      },
+      "detections_sha256": "7b96592e22b640e38f10f362109a2af9ac6e1a93c294825f04ed1a022df9f844",
+      "checks": [
+        {
+          "frame": 32650,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 32676,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 32700,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-035",
+      "anchor": {
+        "frame": 36522,
+        "bbox": [
+          1008.1054077148438,
+          1051.5167236328125,
+          576.3732299804688,
+          272.0989990234375
+        ]
+      },
+      "detections_sha256": "96adc3a0f93ffcd0d1c0d6435eec3078410f533da1646865178c492e1df478aa",
+      "checks": [
+        {
+          "frame": 36522,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 36550,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V3-047",
+      "anchor": {
+        "frame": 44030,
+        "bbox": [
+          1004.5755615234375,
+          1088.7269287109375,
+          574.973388671875,
+          241.1085205078125
+        ]
+      },
+      "detections_sha256": "a2ccc103ef176b7e780950fd90cebe44c3a07fdab7e78c9728e63c7648caf696",
+      "checks": [
+        {
+          "frame": 44000,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 44030,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 44075,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-001",
+      "anchor": {
+        "frame": 2736,
+        "bbox": [
+          998.2137451171875,
+          1061.4910888671875,
+          623.364013671875,
+          270.8126220703125
+        ]
+      },
+      "detections_sha256": "3e200433eec4943fafd6e4507d107ef9ccbc661388d0770803853396c90f8134",
+      "checks": [
+        {
+          "frame": 2725,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 2736,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 2750,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-002",
+      "anchor": {
+        "frame": 4659,
+        "bbox": [
+          1032.1153564453125,
+          1066.8968505859375,
+          515.562744140625,
+          253.9798583984375
+        ]
+      },
+      "detections_sha256": "57c51ed48b5912a449f7e8454297aecd13fb6aaca44f6b7732639b14ee884229",
+      "checks": [
+        {
+          "frame": 4625,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 4659,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 4700,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-005",
+      "anchor": {
+        "frame": 7459,
+        "bbox": [
+          1048.7413330078125,
+          1121.966064453125,
+          569.16845703125,
+          214.8350830078125
+        ]
+      },
+      "detections_sha256": "26b6f742f79d807066707bda7da4216e5ca8d1883f4ee93ce7c3eb1bf6fbf95d",
+      "checks": [
+        {
+          "frame": 7459,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 7475,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-008",
+      "anchor": {
+        "frame": 8223,
+        "bbox": [
+          984.543212890625,
+          1058.6563720703125,
+          621.8154296875,
+          273.4659423828125
+        ]
+      },
+      "detections_sha256": "d8becbde53e7335d8d584c7ed3159596fbff5347dcb19c8210b859aa4fbbeedc",
+      "checks": [
+        {
+          "frame": 8200,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 8223,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 8275,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-010",
+      "anchor": {
+        "frame": 8516,
+        "bbox": [
+          1021.3418579101562,
+          1045.34423828125,
+          556.6836547851562,
+          259.3446044921875
+        ]
+      },
+      "detections_sha256": "e62f4ec58ef99580efd869fb1c7c3c41714bb265314dc70b310c5aa39d518aeb",
+      "checks": [
+        {
+          "frame": 8500,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 8516,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 8550,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-013",
+      "anchor": {
+        "frame": 19317,
+        "bbox": [
+          1000.6221313476562,
+          1058.2933349609375,
+          584.0578002929688,
+          272.598388671875
+        ]
+      },
+      "detections_sha256": "cc8dfea8b842d7160a085f4134969e0bb65d3670b222a434824db473355cd753",
+      "checks": [
+        {
+          "frame": 19275,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 19317,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 19350,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-016",
+      "anchor": {
+        "frame": 20622,
+        "bbox": [
+          1009.2916259765625,
+          1047.7154541015625,
+          564.7540283203125,
+          262.3033447265625
+        ]
+      },
+      "detections_sha256": "8a9f0e9b5f5bccb5eb6443274559c7488eb7c48814e08209061d8c0b879e48b7",
+      "checks": [
+        {
+          "frame": 20600,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 20622,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 20650,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-018",
+      "anchor": {
+        "frame": 23235,
+        "bbox": [
+          1025.7281494140625,
+          1091.2537841796875,
+          532.0711669921875,
+          222.7261962890625
+        ]
+      },
+      "detections_sha256": "25b52573e909c0df95fa1d44a1323eb94f21f909d5bbdd654f92c0969856b7ac",
+      "checks": [
+        {
+          "frame": 23200,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 23235,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 23250,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-021",
+      "anchor": {
+        "frame": 26380,
+        "bbox": [
+          994.49267578125,
+          1126.2777099609375,
+          593.51904296875,
+          204.44140625
+        ]
+      },
+      "detections_sha256": "a28370ba3e697df22371a88640f56939a2a1a880735b22f0959b3ae7e343a0c6",
+      "checks": [
+        {
+          "frame": 26380,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 26400,
+          "status": "rejected",
+          "reason": "competing_vehicle",
+          "forward": {
+            "status": "rejected",
+            "reason": "competing_vehicle",
+            "frame": 26382
+          },
+          "backward": {
+            "status": "rejected",
+            "reason": "competing_vehicle",
+            "frame": 26395
+          }
+        }
+      ]
+    },
+    {
+      "id": "V4-023",
+      "anchor": {
+        "frame": 26914,
+        "bbox": [
+          983.8306884765625,
+          1089.543212890625,
+          565.9112548828125,
+          242.077880859375
+        ]
+      },
+      "detections_sha256": "6e681907b2f489eaeb8669141bb4afe2bf0867103b8d528f8c0b071e9b45cd42",
+      "checks": [
+        {
+          "frame": 26900,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 26914,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 26950,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V4-024",
+      "anchor": {
+        "frame": 29552,
+        "bbox": [
+          1041.5206298828125,
+          1081.7288818359375,
+          519.14892578125,
+          221.0582275390625
+        ]
+      },
+      "detections_sha256": "0c7a621ce2b3c20e61b9d2c04e295805476a7033a795b1635266e52660aa0a83",
+      "checks": [
+        {
+          "frame": 29525,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 29552,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 29575,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-004",
+      "anchor": {
+        "frame": 3088,
+        "bbox": [
+          1008.3775634765625,
+          1002.494140625,
+          574.419677734375,
+          322.71875
+        ]
+      },
+      "detections_sha256": "3ca4c9ed8c7d5dded79003108396595d874df9e5b9bc7093f170928ca92bdb61",
+      "checks": [
+        {
+          "frame": 3025,
+          "status": "rejected",
+          "reason": "discontinuous_motion_or_size",
+          "forward": {
+            "status": "rejected",
+            "reason": "discontinuous_motion_or_size",
+            "frame": 3087
+          },
+          "backward": {
+            "status": "rejected",
+            "reason": "discontinuous_motion_or_size",
+            "frame": 3088
+          }
+        },
+        {
+          "frame": 3088,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-005",
+      "anchor": {
+        "frame": 5226,
+        "bbox": [
+          1021.5926513671875,
+          1062.6614990234375,
+          552.8101806640625,
+          242.9273681640625
+        ]
+      },
+      "detections_sha256": "862d32d994822a5254fad06e927f3ae338ac206beb146fbf9046fcc16f18d68b",
+      "checks": [
+        {
+          "frame": 5200,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 5226,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 5250,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-007",
+      "anchor": {
+        "frame": 5854,
+        "bbox": [
+          979.6158447265625,
+          1038.0565185546875,
+          624.5338134765625,
+          292.57861328125
+        ]
+      },
+      "detections_sha256": "d97605df9db3e426bc5f53248671aec74a7ca63942e0804d278b95cfadf1a9d8",
+      "checks": [
+        {
+          "frame": 5825,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 5854,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 5900,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-011",
+      "anchor": {
+        "frame": 12933,
+        "bbox": [
+          1025.8408203125,
+          1073.58740234375,
+          524.028564453125,
+          234.3314208984375
+        ]
+      },
+      "detections_sha256": "b14af508a6301d986eb814815a85e3b355094268e07d782605c57a9e8660b35c",
+      "checks": [
+        {
+          "frame": 12933,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-033",
+      "anchor": {
+        "frame": 33713,
+        "bbox": [
+          1028.3033447265625,
+          1079.392822265625,
+          520.7606201171875,
+          216.6055908203125
+        ]
+      },
+      "detections_sha256": "6a23ac8380d1ee7fc577f138b18a1a1f19b37fd4dbd479a7b17765d5ee6f8042",
+      "checks": [
+        {
+          "frame": 33675,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 33713,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 33750,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-034",
+      "anchor": {
+        "frame": 34844,
+        "bbox": [
+          1009.7576293945312,
+          1100.043212890625,
+          568.8472290039062,
+          229.63037109375
+        ]
+      },
+      "detections_sha256": "944161ab64d38c2a921ac2a67ee482f3e0f86e062d0a049570bddc84fce4f063",
+      "checks": [
+        {
+          "frame": 34825,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 34844,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 34875,
+          "status": "rejected",
+          "reason": "discontinuous_motion_or_size",
+          "forward": {
+            "status": "rejected",
+            "reason": "discontinuous_motion_or_size",
+            "frame": 34847
+          },
+          "backward": {
+            "status": "rejected",
+            "reason": "discontinuous_motion_or_size",
+            "frame": 34847
+          }
+        }
+      ]
+    },
+    {
+      "id": "V5-037",
+      "anchor": {
+        "frame": 34961,
+        "bbox": [
+          990.8121948242188,
+          1107.7342529296875,
+          595.0059204101562,
+          227.7266845703125
+        ]
+      },
+      "detections_sha256": "f1e948dd41993b070c579b392e2646ce46a8af51a18b7aa7e037e004105be7a8",
+      "checks": [
+        {
+          "frame": 34961,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 35000,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V5-048",
+      "anchor": {
+        "frame": 43159,
+        "bbox": [
+          1028.20654296875,
+          1075.656005859375,
+          617.9244384765625,
+          261.5198974609375
+        ]
+      },
+      "detections_sha256": "38108f3f48f844ffaec6133b7335440fb472d7c8a0987e9b26dd8d94b0187aea",
+      "checks": [
+        {
+          "frame": 43150,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 43159,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-004",
+      "anchor": {
+        "frame": 8526,
+        "bbox": [
+          1037.365234375,
+          1120.47607421875,
+          506.4617919921875,
+          212.087646484375
+        ]
+      },
+      "detections_sha256": "1387caff4d1e0893956edc261c800b681d5cfa3769aed1ce6ee52ce7f0385784",
+      "checks": [
+        {
+          "frame": 8475,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 8526,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 8575,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-006",
+      "anchor": {
+        "frame": 10463,
+        "bbox": [
+          1015.7562866210938,
+          1032.6490478515625,
+          552.0873413085938,
+          269.2728271484375
+        ]
+      },
+      "detections_sha256": "21e49e2754f658012d754a8b44f41635990a63c7d29c00c110e16c14766c1e48",
+      "checks": [
+        {
+          "frame": 10425,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 10463,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 10500,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-008",
+      "anchor": {
+        "frame": 11167,
+        "bbox": [
+          934.1627197265625,
+          1075.232666015625,
+          642.7783203125,
+          257.63134765625
+        ]
+      },
+      "detections_sha256": "e326f1b0701786875915b40d164a2d5d1480ae228f057b137423daea0034d2ff",
+      "checks": [
+        {
+          "frame": 11150,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 11167,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 11175,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-013",
+      "anchor": {
+        "frame": 17603,
+        "bbox": [
+          1053.278564453125,
+          1065.0699462890625,
+          488.115966796875,
+          240.369873046875
+        ]
+      },
+      "detections_sha256": "725611f07a1788fa9e0409dbb2b4ba2f92c5d07f33c134628bc3ca278132b420",
+      "checks": [
+        {
+          "frame": 17575,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 17603,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-014",
+      "anchor": {
+        "frame": 17662,
+        "bbox": [
+          1292.287841796875,
+          1088.5570068359375,
+          626.1153564453125,
+          247.845458984375
+        ]
+      },
+      "detections_sha256": "e170195fb1fde644c7952544baee28281379ba5266ce7b7529b2641abc808c28",
+      "checks": [
+        {
+          "frame": 17650,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 17662,
+          "status": "anchor",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-023",
+      "anchor": {
+        "frame": 21873,
+        "bbox": [
+          1030.67626953125,
+          1096.09033203125,
+          526.244873046875,
+          235.4986572265625
+        ]
+      },
+      "detections_sha256": "40a2bbaea3526baf2e5b8aea232a74d29ccae8aa3f87fa8c9a6241a53eaf1148",
+      "checks": [
+        {
+          "frame": 21825,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 21873,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 21900,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-041",
+      "anchor": {
+        "frame": 32964,
+        "bbox": [
+          1048.6427001953125,
+          1074.300048828125,
+          491.7442626953125,
+          221.55859375
+        ]
+      },
+      "detections_sha256": "38c7ae549abc4bc9a4f151da61f630587bba82389cef99ddbdf2bb11fa12850b",
+      "checks": [
+        {
+          "frame": 32925,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 32964,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 33025,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-043",
+      "anchor": {
+        "frame": 35175,
+        "bbox": [
+          1016.30126953125,
+          1081.787353515625,
+          569.48876953125,
+          250.1614990234375
+        ]
+      },
+      "detections_sha256": "0740cbe0415f60d85c0377d7a750298f83b82724074c90e853d9e07dcb583a00",
+      "checks": [
+        {
+          "frame": 35150,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 35175,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 35200,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "V6-055",
+      "anchor": {
+        "frame": 43622,
+        "bbox": [
+          1002.5516357421875,
+          1085.6397705078125,
+          572.1536865234375,
+          243.4039306640625
+        ]
+      },
+      "detections_sha256": "e7136eddcef8e0222bb30b98d9073accc371b59c69d17f3b39bc961d7b2b5742",
+      "checks": [
+        {
+          "frame": 43600,
+          "status": "accepted",
+          "reason": null
+        },
+        {
+          "frame": 43622,
+          "status": "anchor",
+          "reason": null
+        },
+        {
+          "frame": 43650,
+          "status": "accepted",
+          "reason": null
+        }
+      ]
+    }
+  ]
+}
