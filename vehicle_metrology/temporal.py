@@ -16,6 +16,47 @@ def _line_fit(x, y):
     return intercept, slope
 
 
+def _resolve_roof_proposal(index, matches_by_frame):
+    """Resolve one nested roof/cargo proposal only with two clean neighbours.
+
+    This does not suppress a second car based on overlap alone. Both immediately
+    adjacent decoded frames must independently identify one same-size vehicle;
+    exactly one current proposal must fit their interpolated box closely. The
+    competing box may differ only by extending the top edge. No length estimate
+    or catalogue label participates in this decision.
+    """
+    matches = matches_by_frame[index]
+    if len(matches) != 2:
+        return None
+    neighbours = []
+    for frame in (index-1, index+1):
+        adjacent = matches_by_frame.get(frame, [])
+        if not adjacent or adjacent[0][0] < .55 or (len(adjacent) > 1 and adjacent[1][0] > .4):
+            return None
+        neighbours.append(np.asarray(adjacent[0][1]['bbox'], float))
+    a, b = neighbours
+    if (np.any(a[2:] <= 0) or np.any(b[2:] <= 0)
+            or np.any(np.maximum(a[2:]/b[2:], b[2:]/a[2:]) > 1.1)
+            or abs((b[0]+b[2]/2)-(a[0]+a[2]/2)) > .25*min(a[2],b[2])
+            or abs((b[1]+b[3]/2)-(a[1]+a[3]/2)) > .1*min(a[3],b[3])):
+        return None
+    expected = (a+b)/2
+    ranked = sorted([(box_iou(expected, d['bbox']), d) for _,d in matches],
+                    key=lambda item:item[0], reverse=True)
+    if ranked[0][0] < .9 or ranked[1][0] > .75:
+        return None
+    small, large = (np.asarray(item[1]['bbox'], float) for item in ranked)
+    if (large[3] < 1.2*small[3] or large[1] >= small[1]
+            or abs(large[0]-small[0]) > .02*small[2]
+            or abs(large[0]+large[2]-small[0]-small[2]) > .02*small[2]
+            or abs(large[1]+large[3]-small[1]-small[3]) > .02*small[3]):
+        return None
+    return ranked[0][1]['bbox'], dict(frame=index, method='nested_roof_proposal_with_clean_adjacent_frames',
+        neighbour_frames=[index-1,index+1], predicted_bbox=expected.tolist(),
+        accepted_bbox=small.tolist(), rejected_bbox=large.tolist(),
+        accepted_prediction_iou=ranked[0][0], rejected_prediction_iou=ranked[1][0])
+
+
 def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
                     line_tolerance_px=10., tolerance_m=.1, min_samples=5, estimate=False):
     """Associate a short neighbourhood with one box and fit length at the line.
@@ -32,18 +73,24 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
     result = dict(status='temporal_review', length_m=None, reasons=[],
                   method='robust_local_multiframe', accuracy_validated=False,
                   target_tolerance_m=tolerance_m, samples=[], diagnostics={})
+    frames = sorted(frames, key=lambda row: row['frame'])
     seen = set()
-    rejected = []
-    ambiguous = []
-    half_band = min(60., max(30., 3*line_tolerance_px))
-    extended_band = max(half_band, min(120., .2*anchor_box[2]))
-    for frame in sorted(frames, key=lambda row: row['frame']):
+    matches_by_frame = {}
+    for frame in frames:
         index = frame['frame']
         if type(index) is not int or index < 0 or index in seen:
             raise ValueError('Frame indices must be distinct nonnegative integers')
         seen.add(index)
-        matches = sorted(((box_iou(anchor_box, d['bbox']), d) for d in frame['detections']),
-                         key=lambda row: row[0], reverse=True)
+        matches_by_frame[index] = sorted(((box_iou(anchor_box, d['bbox']), d) for d in frame['detections']),
+                                        key=lambda row:row[0], reverse=True)
+    rejected = []
+    ambiguous = []
+    resolved = []
+    half_band = min(60., max(30., 3*line_tolerance_px))
+    extended_band = max(half_band, min(120., .2*anchor_box[2]))
+    for frame in frames:
+        index = frame['frame']
+        matches = matches_by_frame[index]
         if not matches or matches[0][0] < .55:
             rejected.append(dict(frame=index, reason='lost_vehicle'))
             continue
@@ -53,9 +100,17 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
             rejected.append(dict(frame=index, reason='outside_temporal_band'))
             continue
         if len(matches) > 1 and matches[1][0] > .4:
-            ambiguous.append(offset)
-            rejected.append(dict(frame=index, reason='ambiguous_vehicle_association'))
-            continue
+            resolution = _resolve_roof_proposal(index, matches_by_frame)
+            if resolution is None:
+                ambiguous.append(offset)
+                rejected.append(dict(frame=index, reason='ambiguous_vehicle_association'))
+                continue
+            box, evidence = resolution
+            offset = 0. if line_x is None else box[0]+box[2]/2-line_x
+            if abs(offset) > extended_band:
+                rejected.append(dict(frame=index, reason='outside_temporal_band'))
+                continue
+            resolved.append(evidence)
         measured = measure_box(box, polygon, scale, image_size,estimate=estimate)
         if measured['length_m'] is None:
             rejected.append(dict(frame=index, reason=measured['status']))
@@ -80,6 +135,7 @@ def measure_passage(frames, anchor_box, polygon, scale, image_size, *, line_x,
                                  temporal_band_px=extended_band if expanded else half_band,
                                  expanded_for_fast_passage=expanded and extended_band>half_band,
                                  excluded_frames=rejected,
+                                 resolved_proposals=resolved,
                                  warning='Temporal consistency only; shared calibration and boundary bias remain unvalidated.')
     if len(samples) < min_samples:
         result['reasons'].append('insufficient_temporal_frames')

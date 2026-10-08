@@ -1,0 +1,4805 @@
+{
+  "accuracy_validated": false,
+  "dataset_role": "development_catalogue_check_not_installed",
+  "plan": {
+    "hypothesis": "Wheel-relative silhouette bands reduce dependence on roof height, cargo and hidden tyre bottoms; no catalogue identity at inference.",
+    "feature_sets": [
+      "current nine features plus three wheel-relative band widths",
+      "replace fractional-height body widths with wheel-relative band widths",
+      "wheel-relative bands plus visible wheel span and diameter"
+    ],
+    "bands_in_horizontal_wheel_diameters_above_bottom_proxy": [
+      [
+        0.5,
+        1.0
+      ],
+      [
+        1.0,
+        1.5
+      ],
+      [
+        1.5,
+        2.0
+      ]
+    ],
+    "full_vehicle_extent_retained": true,
+    "validation": "Nested exclusion of each entire catalogue family; existing primary/recovery fallback for unavailable/out-of-range features; all78 passages remain.",
+    "limitations": "Development selection on previously examined videos; no independent accuracy claim. A tyre-top-plus-width proxy is not a measured ground contact."
+  },
+  "methods": {
+    "baseline": {
+      "summary": {
+        "count": 77,
+        "family_count": 14,
+        "midpoint_mae_m": 0.0373038328083157,
+        "family_balanced_midpoint_mae_m": 0.03847570297211208,
+        "optimistic_interval_mae_m": 0.029522910462721413,
+        "optimistic_interval_max_m": 0.14958160450476843,
+        "outside_10cm_even_optimistically": 3,
+        "within_10cm_for_entire_interval": 71,
+        "variant_dependent": 3,
+        "total_passages": 78,
+        "review_without_length": 1
+      },
+      "rows": [
+        {
+          "id": "V1-001",
+          "runtime_m": 3.97060038029216,
+          "raw_m": 3.97060038029216,
+          "baseline_m": 3.97060038029216,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V1-002",
+          "runtime_m": 4.53728017901878,
+          "raw_m": 4.4932539085665555,
+          "baseline_m": 4.53728017901878,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-004",
+          "runtime_m": 4.415531004027273,
+          "raw_m": 4.415531004027273,
+          "baseline_m": 4.415531004027273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V1-006",
+          "runtime_m": 4.017860554473908,
+          "raw_m": 4.017860554473908,
+          "baseline_m": 4.017860554473908,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-009",
+          "runtime_m": 3.805792208694837,
+          "raw_m": 3.7861611890069238,
+          "baseline_m": 3.805792208694837,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.75,
+            3.785
+          ]
+        },
+        {
+          "id": "V1-011",
+          "runtime_m": 4.543703373149788,
+          "raw_m": 4.543703373149788,
+          "baseline_m": 4.543703373149788,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-012",
+          "runtime_m": 4.710479863384254,
+          "raw_m": 4.710479863384254,
+          "baseline_m": 4.710479863384254,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-014",
+          "runtime_m": 4.49814841222273,
+          "raw_m": 4.49814841222273,
+          "baseline_m": 4.49814841222273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-017",
+          "runtime_m": 3.9471030183879106,
+          "raw_m": 3.9317327465083145,
+          "baseline_m": 3.9471030183879106,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.94,
+            3.94
+          ]
+        },
+        {
+          "id": "V1-018",
+          "runtime_m": 4.595237201416833,
+          "raw_m": 4.595237201416833,
+          "baseline_m": 4.595237201416833,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.6,
+            4.61
+          ]
+        },
+        {
+          "id": "V1-020",
+          "runtime_m": 4.8010816306349104,
+          "raw_m": 4.8010816306349104,
+          "baseline_m": 4.8010816306349104,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.76,
+            4.76
+          ]
+        },
+        {
+          "id": "V1-021",
+          "runtime_m": 4.1782513685939735,
+          "raw_m": 4.1782513685939735,
+          "baseline_m": 4.1782513685939735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V1-022",
+          "runtime_m": 3.8777476650539584,
+          "raw_m": 3.8777476650539584,
+          "baseline_m": 3.8777476650539584,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-026",
+          "runtime_m": 4.562099602443156,
+          "raw_m": 4.562099602443156,
+          "baseline_m": 4.562099602443156,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-027",
+          "runtime_m": 3.976007022820012,
+          "raw_m": 3.976007022820012,
+          "baseline_m": 3.976007022820012,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-033",
+          "runtime_m": 4.392286708135129,
+          "raw_m": 4.392286708135129,
+          "baseline_m": 4.392286708135129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V1-036",
+          "runtime_m": 4.206798145808963,
+          "raw_m": 4.206798145808963,
+          "baseline_m": 4.206798145808963,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V1-040",
+          "runtime_m": 4.554912515139493,
+          "raw_m": 4.554912515139493,
+          "baseline_m": 4.554912515139493,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-045",
+          "runtime_m": 4.606169984814543,
+          "raw_m": 4.626222122553666,
+          "baseline_m": 4.606169984814543,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-050",
+          "runtime_m": 4.523519599401735,
+          "raw_m": 4.523519599401735,
+          "baseline_m": 4.523519599401735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V1-055",
+          "runtime_m": 3.905344969382627,
+          "raw_m": 3.8880200113330226,
+          "baseline_m": 3.905344969382627,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-056",
+          "runtime_m": 4.29471025310236,
+          "raw_m": 4.29471025310236,
+          "baseline_m": 4.29471025310236,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V2-004",
+          "runtime_m": 4.076486001313578,
+          "raw_m": 4.076486001313578,
+          "baseline_m": 4.076486001313578,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-007",
+          "runtime_m": 3.900958472939677,
+          "raw_m": 3.900958472939677,
+          "baseline_m": 3.900958472939677,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V2-011",
+          "runtime_m": 4.610533695337261,
+          "raw_m": 4.610533695337261,
+          "baseline_m": 4.610533695337261,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V2-012",
+          "runtime_m": 3.951947060909576,
+          "raw_m": 3.951947060909576,
+          "baseline_m": 3.951947060909576,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-015",
+          "runtime_m": 4.539980262395767,
+          "raw_m": 4.539980262395767,
+          "baseline_m": 4.539980262395767,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V2-017",
+          "runtime_m": 4.562948446891703,
+          "raw_m": 4.562948446891703,
+          "baseline_m": 4.562948446891703,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-020",
+          "runtime_m": 4.471615488516129,
+          "raw_m": 4.471615488516129,
+          "baseline_m": 4.471615488516129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-024",
+          "runtime_m": 4.745553801328481,
+          "raw_m": 4.745553801328481,
+          "baseline_m": 4.745553801328481,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-034",
+          "runtime_m": 4.522276910100178,
+          "raw_m": 4.522276910100178,
+          "baseline_m": 4.522276910100178,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-037",
+          "runtime_m": 4.447602261311205,
+          "raw_m": 4.447602261311205,
+          "baseline_m": 4.447602261311205,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V2-044",
+          "runtime_m": 4.437795924760555,
+          "raw_m": 4.437795924760555,
+          "baseline_m": 4.437795924760555,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.36
+          ]
+        },
+        {
+          "id": "V2-045",
+          "runtime_m": 3.9276605461547707,
+          "raw_m": 3.9276605461547707,
+          "baseline_m": 3.927660546154771,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V2-046",
+          "runtime_m": 4.4742640086906755,
+          "raw_m": 4.43505065409891,
+          "baseline_m": 4.4742640086906755,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-048",
+          "runtime_m": 4.14114166359317,
+          "raw_m": 4.14114166359317,
+          "baseline_m": 4.14114166359317,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V2-051",
+          "runtime_m": 4.728381641115021,
+          "raw_m": 4.728381641115021,
+          "baseline_m": 4.728381641115021,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-068",
+          "runtime_m": 4.376915475155745,
+          "raw_m": 4.376915475155745,
+          "baseline_m": 4.376915475155745,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-002",
+          "runtime_m": 4.676645569115989,
+          "raw_m": 4.676645569115989,
+          "baseline_m": 4.676645569115989,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-010",
+          "runtime_m": 4.387786785978693,
+          "raw_m": 4.387786785978693,
+          "baseline_m": 4.387786785978693,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-013",
+          "runtime_m": 4.579980148866508,
+          "raw_m": 4.579980148866508,
+          "baseline_m": 4.579980148866508,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-015",
+          "runtime_m": 3.8559549032428118,
+          "raw_m": 3.8559549032428118,
+          "baseline_m": 3.8559549032428118,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-017",
+          "runtime_m": 4.185563883087581,
+          "raw_m": 4.185563883087581,
+          "baseline_m": 4.185563883087581,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-021",
+          "runtime_m": 3.9110816751836537,
+          "raw_m": 3.9110816751836537,
+          "baseline_m": 3.9110816751836537,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-022",
+          "runtime_m": 4.210368607861147,
+          "raw_m": 4.210368607861147,
+          "baseline_m": 4.210368607861147,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-026",
+          "runtime_m": 4.583734030026425,
+          "raw_m": 4.583734030026425,
+          "baseline_m": 4.583734030026425,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-030",
+          "runtime_m": 3.93057191529093,
+          "raw_m": 3.93057191529093,
+          "baseline_m": 3.93057191529093,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V3-035",
+          "runtime_m": 4.764908117233882,
+          "raw_m": 4.764908117233882,
+          "baseline_m": 4.764908117233882,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-038",
+          "runtime_m": 4.298337394457952,
+          "raw_m": 4.298337394457952,
+          "baseline_m": 4.298337394457952,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-047",
+          "runtime_m": 4.636947455732566,
+          "raw_m": 4.636947455732566,
+          "baseline_m": 4.636947455732566,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V4-001",
+          "runtime_m": 4.933466302435656,
+          "raw_m": 4.933466302435656,
+          "baseline_m": 4.933466302435656,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-002",
+          "runtime_m": 4.298509598686974,
+          "raw_m": 4.298509598686974,
+          "baseline_m": 4.298509598686974,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V4-005",
+          "runtime_m": 4.345098309250461,
+          "raw_m": 4.345098309250461,
+          "baseline_m": 4.345098309250461,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V4-008",
+          "runtime_m": 4.939437831939753,
+          "raw_m": 4.939437831939753,
+          "baseline_m": 4.939437831939753,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-010",
+          "runtime_m": 4.7073940797134775,
+          "raw_m": 4.7073940797134775,
+          "baseline_m": 4.7073940797134775,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-013",
+          "runtime_m": 4.638329458757832,
+          "raw_m": 4.638329458757832,
+          "baseline_m": 4.638329458757832,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-016",
+          "runtime_m": 4.768149479207162,
+          "raw_m": 4.768149479207162,
+          "baseline_m": 4.768149479207162,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-018",
+          "runtime_m": 4.387726306613125,
+          "raw_m": 4.387726306613125,
+          "baseline_m": 4.387726306613125,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V4-021",
+          "runtime_m": null,
+          "raw_m": 4.6104459512690035,
+          "baseline_m": null,
+          "supported": true,
+          "ambiguous": true,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V4-023",
+          "runtime_m": 4.508439199140421,
+          "raw_m": 4.508439199140421,
+          "baseline_m": 4.508439199140421,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V4-024",
+          "runtime_m": 4.380693848889762,
+          "raw_m": 4.380693848889762,
+          "baseline_m": 4.380693848889762,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-004",
+          "runtime_m": 4.722388642290982,
+          "raw_m": 4.722388642290982,
+          "baseline_m": 4.722388642290982,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V5-005",
+          "runtime_m": 4.652462516185874,
+          "raw_m": 4.652462516185874,
+          "baseline_m": 4.652462516185874,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V5-007",
+          "runtime_m": 5.063452437727804,
+          "raw_m": 5.063452437727804,
+          "baseline_m": 5.063452437727804,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            5.14,
+            5.14
+          ]
+        },
+        {
+          "id": "V5-011",
+          "runtime_m": 4.376391217883286,
+          "raw_m": 4.376391217883286,
+          "baseline_m": 4.376391217883286,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-033",
+          "runtime_m": 4.389037190370911,
+          "raw_m": 4.389037190370911,
+          "baseline_m": 4.389037190370911,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-034",
+          "runtime_m": 4.638991432359474,
+          "raw_m": 4.638991432359474,
+          "baseline_m": 4.638991432359474,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-037",
+          "runtime_m": 4.537778857127133,
+          "raw_m": 4.537778857127133,
+          "baseline_m": 4.537778857127133,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-048",
+          "runtime_m": 4.733503095313232,
+          "raw_m": 4.733503095313232,
+          "baseline_m": 4.733503095313232,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V6-004",
+          "runtime_m": 3.975796959459945,
+          "raw_m": 3.975796959459945,
+          "baseline_m": 3.975796959459945,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V6-006",
+          "runtime_m": 4.647424878700717,
+          "raw_m": 4.647424878700717,
+          "baseline_m": 4.647424878700717,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-008",
+          "runtime_m": 4.974581604504769,
+          "raw_m": 4.974581604504769,
+          "baseline_m": 4.9745816045047695,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V6-013",
+          "runtime_m": 4.048972827054099,
+          "raw_m": 4.048972827054099,
+          "baseline_m": 4.048972827054099,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V6-014",
+          "runtime_m": 4.609264263811855,
+          "raw_m": 4.554413074383312,
+          "baseline_m": 4.609264263811855,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-023",
+          "runtime_m": 4.204246910037608,
+          "raw_m": 4.204246910037608,
+          "baseline_m": 4.204246910037608,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-041",
+          "runtime_m": 4.246476053829755,
+          "raw_m": 4.246476053829755,
+          "baseline_m": 4.246476053829755,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-043",
+          "runtime_m": 4.534203419968288,
+          "raw_m": 4.534203419968288,
+          "baseline_m": 4.534203419968288,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V6-055",
+          "runtime_m": 4.605436320549299,
+          "raw_m": 4.605436320549299,
+          "baseline_m": 4.605436320549299,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        }
+      ]
+    },
+    "added_bands": {
+      "summary": {
+        "count": 77,
+        "family_count": 14,
+        "midpoint_mae_m": 0.03750809782068189,
+        "family_balanced_midpoint_mae_m": 0.037720970405536715,
+        "optimistic_interval_mae_m": 0.0299036400019957,
+        "optimistic_interval_max_m": 0.14164986425219794,
+        "outside_10cm_even_optimistically": 3,
+        "within_10cm_for_entire_interval": 71,
+        "variant_dependent": 3,
+        "total_passages": 78,
+        "review_without_length": 1
+      },
+      "rows": [
+        {
+          "id": "V1-001",
+          "runtime_m": 3.971799412655554,
+          "raw_m": 3.971799412655554,
+          "baseline_m": 3.97060038029216,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V1-002",
+          "runtime_m": 4.53728017901878,
+          "raw_m": 4.440499472114861,
+          "baseline_m": 4.53728017901878,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-004",
+          "runtime_m": 4.418973602283621,
+          "raw_m": 4.418973602283621,
+          "baseline_m": 4.415531004027273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V1-006",
+          "runtime_m": 4.021156730641464,
+          "raw_m": 4.021156730641464,
+          "baseline_m": 4.017860554473908,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-009",
+          "runtime_m": 3.805792208694837,
+          "raw_m": 3.7930070075764393,
+          "baseline_m": 3.805792208694837,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.75,
+            3.785
+          ]
+        },
+        {
+          "id": "V1-011",
+          "runtime_m": 4.556390116111969,
+          "raw_m": 4.556390116111969,
+          "baseline_m": 4.543703373149788,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-012",
+          "runtime_m": 4.713107197706532,
+          "raw_m": 4.713107197706532,
+          "baseline_m": 4.710479863384254,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-014",
+          "runtime_m": 4.509501147387283,
+          "raw_m": 4.509501147387283,
+          "baseline_m": 4.49814841222273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-017",
+          "runtime_m": 3.9471030183879106,
+          "raw_m": 3.95260766676782,
+          "baseline_m": 3.9471030183879106,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.94,
+            3.94
+          ]
+        },
+        {
+          "id": "V1-018",
+          "runtime_m": 4.599607515188167,
+          "raw_m": 4.599607515188167,
+          "baseline_m": 4.595237201416833,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.6,
+            4.61
+          ]
+        },
+        {
+          "id": "V1-020",
+          "runtime_m": 4.830593785057829,
+          "raw_m": 4.830593785057829,
+          "baseline_m": 4.8010816306349104,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.76,
+            4.76
+          ]
+        },
+        {
+          "id": "V1-021",
+          "runtime_m": 4.177493651639367,
+          "raw_m": 4.177493651639367,
+          "baseline_m": 4.1782513685939735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V1-022",
+          "runtime_m": 3.8791572423223752,
+          "raw_m": 3.8791572423223752,
+          "baseline_m": 3.8777476650539584,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-026",
+          "runtime_m": 4.572605011819312,
+          "raw_m": 4.572605011819312,
+          "baseline_m": 4.562099602443156,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-027",
+          "runtime_m": 3.9797310338868863,
+          "raw_m": 3.9797310338868863,
+          "baseline_m": 3.976007022820012,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-033",
+          "runtime_m": 4.404179236515292,
+          "raw_m": 4.404179236515292,
+          "baseline_m": 4.392286708135129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V1-036",
+          "runtime_m": 4.207586835173976,
+          "raw_m": 4.207586835173976,
+          "baseline_m": 4.206798145808963,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V1-040",
+          "runtime_m": 4.546549882134121,
+          "raw_m": 4.546549882134121,
+          "baseline_m": 4.554912515139493,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-045",
+          "runtime_m": 4.606169984814543,
+          "raw_m": 4.628414977792011,
+          "baseline_m": 4.606169984814543,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-050",
+          "runtime_m": 4.525084715059726,
+          "raw_m": 4.525084715059726,
+          "baseline_m": 4.523519599401735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V1-055",
+          "runtime_m": 3.905344969382627,
+          "raw_m": 3.8899523720529277,
+          "baseline_m": 3.905344969382627,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-056",
+          "runtime_m": 4.278637499260851,
+          "raw_m": 4.278637499260851,
+          "baseline_m": 4.29471025310236,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V2-004",
+          "runtime_m": 4.067418323401871,
+          "raw_m": 4.067418323401871,
+          "baseline_m": 4.076486001313578,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-007",
+          "runtime_m": 3.9064197119604556,
+          "raw_m": 3.9064197119604556,
+          "baseline_m": 3.900958472939677,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V2-011",
+          "runtime_m": 4.61475333814347,
+          "raw_m": 4.61475333814347,
+          "baseline_m": 4.610533695337261,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V2-012",
+          "runtime_m": 3.9533584329239577,
+          "raw_m": 3.9533584329239577,
+          "baseline_m": 3.951947060909576,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-015",
+          "runtime_m": 4.551311507835741,
+          "raw_m": 4.551311507835741,
+          "baseline_m": 4.539980262395767,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V2-017",
+          "runtime_m": 4.572625159139792,
+          "raw_m": 4.572625159139792,
+          "baseline_m": 4.562948446891703,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-020",
+          "runtime_m": 4.464100512937823,
+          "raw_m": 4.464100512937823,
+          "baseline_m": 4.471615488516129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-024",
+          "runtime_m": 4.747690567425123,
+          "raw_m": 4.747690567425123,
+          "baseline_m": 4.745553801328481,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-034",
+          "runtime_m": 4.523944920620927,
+          "raw_m": 4.523944920620927,
+          "baseline_m": 4.522276910100178,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-037",
+          "runtime_m": 4.456204615613385,
+          "raw_m": 4.456204615613385,
+          "baseline_m": 4.447602261311205,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V2-044",
+          "runtime_m": 4.444451433616992,
+          "raw_m": 4.444451433616992,
+          "baseline_m": 4.437795924760555,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.36
+          ]
+        },
+        {
+          "id": "V2-045",
+          "runtime_m": 3.9302544958249053,
+          "raw_m": 3.9302544958249053,
+          "baseline_m": 3.927660546154771,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V2-046",
+          "runtime_m": 4.4742640086906755,
+          "raw_m": 4.436543907026708,
+          "baseline_m": 4.4742640086906755,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-048",
+          "runtime_m": 4.139878826238971,
+          "raw_m": 4.139878826238971,
+          "baseline_m": 4.14114166359317,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V2-051",
+          "runtime_m": 4.7299235616680795,
+          "raw_m": 4.7299235616680795,
+          "baseline_m": 4.728381641115021,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-068",
+          "runtime_m": 4.373540590605317,
+          "raw_m": 4.373540590605317,
+          "baseline_m": 4.376915475155745,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-002",
+          "runtime_m": 4.6730744259059165,
+          "raw_m": 4.6730744259059165,
+          "baseline_m": 4.676645569115989,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-010",
+          "runtime_m": 4.386875645364518,
+          "raw_m": 4.386875645364518,
+          "baseline_m": 4.387786785978693,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-013",
+          "runtime_m": 4.5806439297633705,
+          "raw_m": 4.5806439297633705,
+          "baseline_m": 4.579980148866508,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-015",
+          "runtime_m": 3.8673441749015547,
+          "raw_m": 3.8673441749015547,
+          "baseline_m": 3.8559549032428118,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-017",
+          "runtime_m": 4.1834050972177925,
+          "raw_m": 4.1834050972177925,
+          "baseline_m": 4.185563883087581,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-021",
+          "runtime_m": 3.911735263743532,
+          "raw_m": 3.911735263743532,
+          "baseline_m": 3.9110816751836537,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-022",
+          "runtime_m": 4.2037304791922985,
+          "raw_m": 4.2037304791922985,
+          "baseline_m": 4.210368607861147,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-026",
+          "runtime_m": 4.580986955882591,
+          "raw_m": 4.580986955882591,
+          "baseline_m": 4.583734030026425,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-030",
+          "runtime_m": 3.9327921186980315,
+          "raw_m": 3.9327921186980315,
+          "baseline_m": 3.93057191529093,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V3-035",
+          "runtime_m": 4.758798555831965,
+          "raw_m": 4.758798555831965,
+          "baseline_m": 4.764908117233882,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-038",
+          "runtime_m": 4.289826884534283,
+          "raw_m": 4.289826884534283,
+          "baseline_m": 4.298337394457952,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-047",
+          "runtime_m": 4.640208429745395,
+          "raw_m": 4.640208429745395,
+          "baseline_m": 4.636947455732566,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V4-001",
+          "runtime_m": 4.933215290627279,
+          "raw_m": 4.933215290627279,
+          "baseline_m": 4.933466302435656,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-002",
+          "runtime_m": 4.290458452541521,
+          "raw_m": 4.290458452541521,
+          "baseline_m": 4.298509598686974,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V4-005",
+          "runtime_m": 4.342122230611019,
+          "raw_m": 4.342122230611019,
+          "baseline_m": 4.345098309250461,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V4-008",
+          "runtime_m": 4.941186358528757,
+          "raw_m": 4.941186358528757,
+          "baseline_m": 4.939437831939753,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-010",
+          "runtime_m": 4.7112312119524535,
+          "raw_m": 4.7112312119524535,
+          "baseline_m": 4.7073940797134775,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-013",
+          "runtime_m": 4.643291208106611,
+          "raw_m": 4.643291208106611,
+          "baseline_m": 4.638329458757832,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-016",
+          "runtime_m": 4.773295360224553,
+          "raw_m": 4.773295360224553,
+          "baseline_m": 4.768149479207162,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-018",
+          "runtime_m": 4.3940003763058035,
+          "raw_m": 4.3940003763058035,
+          "baseline_m": 4.387726306613125,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V4-021",
+          "runtime_m": null,
+          "raw_m": 4.605273209372984,
+          "baseline_m": null,
+          "supported": true,
+          "ambiguous": true,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V4-023",
+          "runtime_m": 4.495394497848284,
+          "raw_m": 4.495394497848284,
+          "baseline_m": 4.508439199140421,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V4-024",
+          "runtime_m": 4.389485222901109,
+          "raw_m": 4.389485222901109,
+          "baseline_m": 4.380693848889762,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-004",
+          "runtime_m": 4.720898964232658,
+          "raw_m": 4.720898964232658,
+          "baseline_m": 4.722388642290982,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V5-005",
+          "runtime_m": 4.657415094335894,
+          "raw_m": 4.657415094335894,
+          "baseline_m": 4.652462516185874,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V5-007",
+          "runtime_m": 5.059635728997759,
+          "raw_m": 5.059635728997759,
+          "baseline_m": 5.063452437727804,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            5.14,
+            5.14
+          ]
+        },
+        {
+          "id": "V5-011",
+          "runtime_m": 4.382871156799064,
+          "raw_m": 4.382871156799064,
+          "baseline_m": 4.376391217883286,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-033",
+          "runtime_m": 4.392195921367685,
+          "raw_m": 4.392195921367685,
+          "baseline_m": 4.389037190370911,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-034",
+          "runtime_m": 4.632697110470506,
+          "raw_m": 4.632697110470506,
+          "baseline_m": 4.638991432359474,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-037",
+          "runtime_m": 4.544594171473786,
+          "raw_m": 4.544594171473786,
+          "baseline_m": 4.537778857127133,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-048",
+          "runtime_m": 4.7402933871788555,
+          "raw_m": 4.7402933871788555,
+          "baseline_m": 4.733503095313232,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V6-004",
+          "runtime_m": 3.975796959459945,
+          "raw_m": 3.975796959459945,
+          "baseline_m": 3.975796959459945,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V6-006",
+          "runtime_m": 4.657410942798237,
+          "raw_m": 4.657410942798237,
+          "baseline_m": 4.647424878700717,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-008",
+          "runtime_m": 4.966649864252198,
+          "raw_m": 4.966649864252198,
+          "baseline_m": 4.9745816045047695,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V6-013",
+          "runtime_m": 4.040154958153345,
+          "raw_m": 4.040154958153345,
+          "baseline_m": 4.048972827054099,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V6-014",
+          "runtime_m": 4.609264263811855,
+          "raw_m": 4.512297767682689,
+          "baseline_m": 4.609264263811855,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-023",
+          "runtime_m": 4.194371973646159,
+          "raw_m": 4.194371973646159,
+          "baseline_m": 4.204246910037608,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-041",
+          "runtime_m": 4.2335415223152495,
+          "raw_m": 4.2335415223152495,
+          "baseline_m": 4.246476053829755,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-043",
+          "runtime_m": 4.537051888825042,
+          "raw_m": 4.537051888825042,
+          "baseline_m": 4.534203419968288,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V6-055",
+          "runtime_m": 4.602684387345849,
+          "raw_m": 4.602684387345849,
+          "baseline_m": 4.605436320549299,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        }
+      ]
+    },
+    "replaced_bands": {
+      "summary": {
+        "count": 77,
+        "family_count": 14,
+        "midpoint_mae_m": 0.03740398164102115,
+        "family_balanced_midpoint_mae_m": 0.04042330256284306,
+        "optimistic_interval_mae_m": 0.030035366042725477,
+        "optimistic_interval_max_m": 0.13459968529942756,
+        "outside_10cm_even_optimistically": 5,
+        "within_10cm_for_entire_interval": 70,
+        "variant_dependent": 2,
+        "total_passages": 78,
+        "review_without_length": 1
+      },
+      "rows": [
+        {
+          "id": "V1-001",
+          "runtime_m": 3.9719104850325437,
+          "raw_m": 3.9719104850325437,
+          "baseline_m": 3.97060038029216,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V1-002",
+          "runtime_m": 4.53728017901878,
+          "raw_m": 4.462962927116034,
+          "baseline_m": 4.53728017901878,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-004",
+          "runtime_m": 4.42967320425737,
+          "raw_m": 4.42967320425737,
+          "baseline_m": 4.415531004027273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V1-006",
+          "runtime_m": 4.029357394042392,
+          "raw_m": 4.029357394042392,
+          "baseline_m": 4.017860554473908,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-009",
+          "runtime_m": 3.805792208694837,
+          "raw_m": 3.7750600401762218,
+          "baseline_m": 3.805792208694837,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.75,
+            3.785
+          ]
+        },
+        {
+          "id": "V1-011",
+          "runtime_m": 4.568966149078222,
+          "raw_m": 4.568966149078222,
+          "baseline_m": 4.543703373149788,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-012",
+          "runtime_m": 4.690984627376659,
+          "raw_m": 4.690984627376659,
+          "baseline_m": 4.710479863384254,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-014",
+          "runtime_m": 4.513386372038992,
+          "raw_m": 4.513386372038992,
+          "baseline_m": 4.49814841222273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-017",
+          "runtime_m": 3.9471030183879106,
+          "raw_m": 3.9644131432732013,
+          "baseline_m": 3.9471030183879106,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.94,
+            3.94
+          ]
+        },
+        {
+          "id": "V1-018",
+          "runtime_m": 4.581835727169219,
+          "raw_m": 4.581835727169219,
+          "baseline_m": 4.595237201416833,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.6,
+            4.61
+          ]
+        },
+        {
+          "id": "V1-020",
+          "runtime_m": 4.87352027439318,
+          "raw_m": 4.87352027439318,
+          "baseline_m": 4.8010816306349104,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.76,
+            4.76
+          ]
+        },
+        {
+          "id": "V1-021",
+          "runtime_m": 4.161014976050074,
+          "raw_m": 4.161014976050074,
+          "baseline_m": 4.1782513685939735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V1-022",
+          "runtime_m": 3.865014970532785,
+          "raw_m": 3.865014970532785,
+          "baseline_m": 3.8777476650539584,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-026",
+          "runtime_m": 4.596807307619273,
+          "raw_m": 4.596807307619273,
+          "baseline_m": 4.562099602443156,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-027",
+          "runtime_m": 3.9991975249433414,
+          "raw_m": 3.9991975249433414,
+          "baseline_m": 3.976007022820012,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-033",
+          "runtime_m": 4.408332431371697,
+          "raw_m": 4.408332431371697,
+          "baseline_m": 4.392286708135129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V1-036",
+          "runtime_m": 4.2051299968091325,
+          "raw_m": 4.2051299968091325,
+          "baseline_m": 4.206798145808963,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V1-040",
+          "runtime_m": 4.556162385889407,
+          "raw_m": 4.556162385889407,
+          "baseline_m": 4.554912515139493,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-045",
+          "runtime_m": 4.606169984814543,
+          "raw_m": 4.62113222497775,
+          "baseline_m": 4.606169984814543,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-050",
+          "runtime_m": 4.5643213768719875,
+          "raw_m": 4.5643213768719875,
+          "baseline_m": 4.523519599401735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V1-055",
+          "runtime_m": 3.905344969382627,
+          "raw_m": 3.870133881237841,
+          "baseline_m": 3.905344969382627,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-056",
+          "runtime_m": 4.289567939977763,
+          "raw_m": 4.289567939977763,
+          "baseline_m": 4.29471025310236,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V2-004",
+          "runtime_m": 4.061130047612694,
+          "raw_m": 4.061130047612694,
+          "baseline_m": 4.076486001313578,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-007",
+          "runtime_m": 3.9028682476048044,
+          "raw_m": 3.9028682476048044,
+          "baseline_m": 3.900958472939677,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V2-011",
+          "runtime_m": 4.634028488173261,
+          "raw_m": 4.634028488173261,
+          "baseline_m": 4.610533695337261,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V2-012",
+          "runtime_m": 3.9648610265271635,
+          "raw_m": 3.9648610265271635,
+          "baseline_m": 3.951947060909576,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-015",
+          "runtime_m": 4.554146316415258,
+          "raw_m": 4.554146316415258,
+          "baseline_m": 4.539980262395767,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V2-017",
+          "runtime_m": 4.595418990928422,
+          "raw_m": 4.595418990928422,
+          "baseline_m": 4.562948446891703,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-020",
+          "runtime_m": 4.501254442160034,
+          "raw_m": 4.501254442160034,
+          "baseline_m": 4.471615488516129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-024",
+          "runtime_m": 4.736941518604377,
+          "raw_m": 4.736941518604377,
+          "baseline_m": 4.745553801328481,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-034",
+          "runtime_m": 4.549374956457156,
+          "raw_m": 4.549374956457156,
+          "baseline_m": 4.522276910100178,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-037",
+          "runtime_m": 4.460797589879922,
+          "raw_m": 4.460797589879922,
+          "baseline_m": 4.447602261311205,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V2-044",
+          "runtime_m": 4.452364064626972,
+          "raw_m": 4.452364064626972,
+          "baseline_m": 4.437795924760555,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.36
+          ]
+        },
+        {
+          "id": "V2-045",
+          "runtime_m": 3.9338106027211968,
+          "raw_m": 3.9338106027211968,
+          "baseline_m": 3.927660546154771,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V2-046",
+          "runtime_m": 4.4742640086906755,
+          "raw_m": 4.435382797871516,
+          "baseline_m": 4.4742640086906755,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-048",
+          "runtime_m": 4.12424657893541,
+          "raw_m": 4.12424657893541,
+          "baseline_m": 4.14114166359317,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V2-051",
+          "runtime_m": 4.725786467081981,
+          "raw_m": 4.725786467081981,
+          "baseline_m": 4.728381641115021,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-068",
+          "runtime_m": 4.393219811269133,
+          "raw_m": 4.393219811269133,
+          "baseline_m": 4.376915475155745,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-002",
+          "runtime_m": 4.59384011232747,
+          "raw_m": 4.59384011232747,
+          "baseline_m": 4.676645569115989,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-010",
+          "runtime_m": 4.402966104795351,
+          "raw_m": 4.402966104795351,
+          "baseline_m": 4.387786785978693,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-013",
+          "runtime_m": 4.619602340540535,
+          "raw_m": 4.619602340540535,
+          "baseline_m": 4.579980148866508,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-015",
+          "runtime_m": 3.8500980812704695,
+          "raw_m": 3.8500980812704695,
+          "baseline_m": 3.8559549032428118,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-017",
+          "runtime_m": 4.204536137775203,
+          "raw_m": 4.204536137775203,
+          "baseline_m": 4.185563883087581,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-021",
+          "runtime_m": 3.9022960336344923,
+          "raw_m": 3.9022960336344923,
+          "baseline_m": 3.9110816751836537,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-022",
+          "runtime_m": 4.210389769137451,
+          "raw_m": 4.210389769137451,
+          "baseline_m": 4.210368607861147,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-026",
+          "runtime_m": 4.601320903245439,
+          "raw_m": 4.601320903245439,
+          "baseline_m": 4.583734030026425,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-030",
+          "runtime_m": 3.9459743630883546,
+          "raw_m": 3.9459743630883546,
+          "baseline_m": 3.93057191529093,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V3-035",
+          "runtime_m": 4.753974270391855,
+          "raw_m": 4.753974270391855,
+          "baseline_m": 4.764908117233882,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-038",
+          "runtime_m": 4.2836468973267445,
+          "raw_m": 4.2836468973267445,
+          "baseline_m": 4.298337394457952,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-047",
+          "runtime_m": 4.6561199815727825,
+          "raw_m": 4.6561199815727825,
+          "baseline_m": 4.636947455732566,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V4-001",
+          "runtime_m": 4.926020106854129,
+          "raw_m": 4.926020106854129,
+          "baseline_m": 4.933466302435656,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-002",
+          "runtime_m": 4.27920815800593,
+          "raw_m": 4.27920815800593,
+          "baseline_m": 4.298509598686974,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V4-005",
+          "runtime_m": 4.349438790579626,
+          "raw_m": 4.349438790579626,
+          "baseline_m": 4.345098309250461,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V4-008",
+          "runtime_m": 4.925355870021227,
+          "raw_m": 4.925355870021227,
+          "baseline_m": 4.939437831939753,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-010",
+          "runtime_m": 4.697299579742412,
+          "raw_m": 4.697299579742412,
+          "baseline_m": 4.7073940797134775,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-013",
+          "runtime_m": 4.629719804563404,
+          "raw_m": 4.629719804563404,
+          "baseline_m": 4.638329458757832,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-016",
+          "runtime_m": 4.7498156827988955,
+          "raw_m": 4.7498156827988955,
+          "baseline_m": 4.768149479207162,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-018",
+          "runtime_m": 4.414124866782043,
+          "raw_m": 4.414124866782043,
+          "baseline_m": 4.387726306613125,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V4-021",
+          "runtime_m": null,
+          "raw_m": 4.605723258018052,
+          "baseline_m": null,
+          "supported": true,
+          "ambiguous": true,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V4-023",
+          "runtime_m": 4.503398940434829,
+          "raw_m": 4.503398940434829,
+          "baseline_m": 4.508439199140421,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V4-024",
+          "runtime_m": 4.405133806952321,
+          "raw_m": 4.405133806952321,
+          "baseline_m": 4.380693848889762,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-004",
+          "runtime_m": 4.715529332060093,
+          "raw_m": 4.715529332060093,
+          "baseline_m": 4.722388642290982,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V5-005",
+          "runtime_m": 4.6500906934154305,
+          "raw_m": 4.6500906934154305,
+          "baseline_m": 4.652462516185874,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V5-007",
+          "runtime_m": 5.056024302934495,
+          "raw_m": 5.056024302934495,
+          "baseline_m": 5.063452437727804,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            5.14,
+            5.14
+          ]
+        },
+        {
+          "id": "V5-011",
+          "runtime_m": 4.411284085625726,
+          "raw_m": 4.411284085625726,
+          "baseline_m": 4.376391217883286,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-033",
+          "runtime_m": 4.410013440216816,
+          "raw_m": 4.410013440216816,
+          "baseline_m": 4.389037190370911,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-034",
+          "runtime_m": 4.652728577720542,
+          "raw_m": 4.652728577720542,
+          "baseline_m": 4.638991432359474,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-037",
+          "runtime_m": 4.5687595236249035,
+          "raw_m": 4.5687595236249035,
+          "baseline_m": 4.537778857127133,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-048",
+          "runtime_m": 4.7357325513249915,
+          "raw_m": 4.7357325513249915,
+          "baseline_m": 4.733503095313232,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V6-004",
+          "runtime_m": 3.975796959459945,
+          "raw_m": 3.975796959459945,
+          "baseline_m": 3.975796959459945,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V6-006",
+          "runtime_m": 4.663005432759485,
+          "raw_m": 4.663005432759485,
+          "baseline_m": 4.647424878700717,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-008",
+          "runtime_m": 4.959599685299428,
+          "raw_m": 4.959599685299428,
+          "baseline_m": 4.9745816045047695,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V6-013",
+          "runtime_m": 4.047679099826008,
+          "raw_m": 4.047679099826008,
+          "baseline_m": 4.048972827054099,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V6-014",
+          "runtime_m": 4.609264263811855,
+          "raw_m": 4.542019078547644,
+          "baseline_m": 4.609264263811855,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-023",
+          "runtime_m": 4.190894615583684,
+          "raw_m": 4.190894615583684,
+          "baseline_m": 4.204246910037608,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-041",
+          "runtime_m": 4.224688335980579,
+          "raw_m": 4.224688335980579,
+          "baseline_m": 4.246476053829755,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-043",
+          "runtime_m": 4.553571170389197,
+          "raw_m": 4.553571170389197,
+          "baseline_m": 4.534203419968288,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V6-055",
+          "runtime_m": 4.6239363911135865,
+          "raw_m": 4.6239363911135865,
+          "baseline_m": 4.605436320549299,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        }
+      ]
+    },
+    "bands_and_wheels": {
+      "summary": {
+        "count": 77,
+        "family_count": 14,
+        "midpoint_mae_m": 0.04271644320153287,
+        "family_balanced_midpoint_mae_m": 0.050464272833952294,
+        "optimistic_interval_mae_m": 0.03456532416521767,
+        "optimistic_interval_max_m": 0.15341629946963042,
+        "outside_10cm_even_optimistically": 6,
+        "within_10cm_for_entire_interval": 65,
+        "variant_dependent": 6,
+        "total_passages": 78,
+        "review_without_length": 1
+      },
+      "rows": [
+        {
+          "id": "V1-001",
+          "runtime_m": 3.9821483168573217,
+          "raw_m": 3.9821483168573217,
+          "baseline_m": 3.97060038029216,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V1-002",
+          "runtime_m": 4.53728017901878,
+          "raw_m": 4.4491506572386585,
+          "baseline_m": 4.53728017901878,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-004",
+          "runtime_m": 4.418977064505078,
+          "raw_m": 4.418977064505078,
+          "baseline_m": 4.415531004027273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V1-006",
+          "runtime_m": 4.026016825637418,
+          "raw_m": 4.026016825637418,
+          "baseline_m": 4.017860554473908,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-009",
+          "runtime_m": 3.805792208694837,
+          "raw_m": 3.792867249071527,
+          "baseline_m": 3.805792208694837,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.75,
+            3.785
+          ]
+        },
+        {
+          "id": "V1-011",
+          "runtime_m": 4.555774531140675,
+          "raw_m": 4.555774531140675,
+          "baseline_m": 4.543703373149788,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-012",
+          "runtime_m": 4.661676520402267,
+          "raw_m": 4.661676520402267,
+          "baseline_m": 4.710479863384254,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-014",
+          "runtime_m": 4.503552368921039,
+          "raw_m": 4.503552368921039,
+          "baseline_m": 4.49814841222273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-017",
+          "runtime_m": 3.9471030183879106,
+          "raw_m": 3.9750322413931776,
+          "baseline_m": 3.9471030183879106,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.94,
+            3.94
+          ]
+        },
+        {
+          "id": "V1-018",
+          "runtime_m": 4.552600998162335,
+          "raw_m": 4.552600998162335,
+          "baseline_m": 4.595237201416833,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.6,
+            4.61
+          ]
+        },
+        {
+          "id": "V1-020",
+          "runtime_m": 4.896578981672594,
+          "raw_m": 4.896578981672594,
+          "baseline_m": 4.8010816306349104,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.76,
+            4.76
+          ]
+        },
+        {
+          "id": "V1-021",
+          "runtime_m": 4.149306983850374,
+          "raw_m": 4.149306983850374,
+          "baseline_m": 4.1782513685939735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V1-022",
+          "runtime_m": 3.8914296053285207,
+          "raw_m": 3.8914296053285207,
+          "baseline_m": 3.8777476650539584,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-026",
+          "runtime_m": 4.600908465778545,
+          "raw_m": 4.600908465778545,
+          "baseline_m": 4.562099602443156,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-027",
+          "runtime_m": 3.9978071539777353,
+          "raw_m": 3.9978071539777353,
+          "baseline_m": 3.976007022820012,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-033",
+          "runtime_m": 4.397372883025119,
+          "raw_m": 4.397372883025119,
+          "baseline_m": 4.392286708135129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V1-036",
+          "runtime_m": 4.188197851080651,
+          "raw_m": 4.188197851080651,
+          "baseline_m": 4.206798145808963,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V1-040",
+          "runtime_m": 4.561268706438829,
+          "raw_m": 4.561268706438829,
+          "baseline_m": 4.554912515139493,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-045",
+          "runtime_m": 4.606169984814543,
+          "raw_m": 4.576144606550909,
+          "baseline_m": 4.606169984814543,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-050",
+          "runtime_m": 4.572195222040302,
+          "raw_m": 4.572195222040302,
+          "baseline_m": 4.523519599401735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V1-055",
+          "runtime_m": 3.905344969382627,
+          "raw_m": 3.8938999263751244,
+          "baseline_m": 3.905344969382627,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-056",
+          "runtime_m": 4.265646365694272,
+          "raw_m": 4.265646365694272,
+          "baseline_m": 4.29471025310236,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V2-004",
+          "runtime_m": 4.081942525551281,
+          "raw_m": 4.081942525551281,
+          "baseline_m": 4.076486001313578,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-007",
+          "runtime_m": 3.921042447276018,
+          "raw_m": 3.921042447276018,
+          "baseline_m": 3.900958472939677,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V2-011",
+          "runtime_m": 4.639812351107048,
+          "raw_m": 4.639812351107048,
+          "baseline_m": 4.610533695337261,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V2-012",
+          "runtime_m": 3.962640504683057,
+          "raw_m": 3.962640504683057,
+          "baseline_m": 3.951947060909576,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-015",
+          "runtime_m": 4.5381215602655045,
+          "raw_m": 4.5381215602655045,
+          "baseline_m": 4.539980262395767,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V2-017",
+          "runtime_m": 4.60339318054437,
+          "raw_m": 4.60339318054437,
+          "baseline_m": 4.562948446891703,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-020",
+          "runtime_m": 4.509245166921585,
+          "raw_m": 4.509245166921585,
+          "baseline_m": 4.471615488516129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-024",
+          "runtime_m": 4.72449653614568,
+          "raw_m": 4.72449653614568,
+          "baseline_m": 4.745553801328481,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-034",
+          "runtime_m": 4.556599515607267,
+          "raw_m": 4.556599515607267,
+          "baseline_m": 4.522276910100178,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-037",
+          "runtime_m": 4.454111182569256,
+          "raw_m": 4.454111182569256,
+          "baseline_m": 4.447602261311205,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V2-044",
+          "runtime_m": 4.442067675890083,
+          "raw_m": 4.442067675890083,
+          "baseline_m": 4.437795924760555,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.36
+          ]
+        },
+        {
+          "id": "V2-045",
+          "runtime_m": 3.9493738966433227,
+          "raw_m": 3.9493738966433227,
+          "baseline_m": 3.927660546154771,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V2-046",
+          "runtime_m": 4.4742640086906755,
+          "raw_m": 4.4399002172792486,
+          "baseline_m": 4.4742640086906755,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-048",
+          "runtime_m": 4.108135641624727,
+          "raw_m": 4.108135641624727,
+          "baseline_m": 4.14114166359317,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V2-051",
+          "runtime_m": 4.726472354571533,
+          "raw_m": 4.726472354571533,
+          "baseline_m": 4.728381641115021,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-068",
+          "runtime_m": 4.386059617641274,
+          "raw_m": 4.386059617641274,
+          "baseline_m": 4.376915475155745,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-002",
+          "runtime_m": 4.562265205138798,
+          "raw_m": 4.562265205138798,
+          "baseline_m": 4.676645569115989,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-010",
+          "runtime_m": 4.397655027733926,
+          "raw_m": 4.397655027733926,
+          "baseline_m": 4.387786785978693,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-013",
+          "runtime_m": 4.626175756826602,
+          "raw_m": 4.626175756826602,
+          "baseline_m": 4.579980148866508,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-015",
+          "runtime_m": 3.873118554182936,
+          "raw_m": 3.873118554182936,
+          "baseline_m": 3.8559549032428118,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-017",
+          "runtime_m": 4.178052387306307,
+          "raw_m": 4.178052387306307,
+          "baseline_m": 4.185563883087581,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-021",
+          "runtime_m": 3.9217389203716633,
+          "raw_m": 3.9217389203716633,
+          "baseline_m": 3.9110816751836537,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-022",
+          "runtime_m": 4.175398903863532,
+          "raw_m": 4.175398903863532,
+          "baseline_m": 4.210368607861147,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-026",
+          "runtime_m": 4.6026646143073,
+          "raw_m": 4.6026646143073,
+          "baseline_m": 4.583734030026425,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-030",
+          "runtime_m": 3.944845178990808,
+          "raw_m": 3.944845178990808,
+          "baseline_m": 3.93057191529093,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V3-035",
+          "runtime_m": 4.7398620006618835,
+          "raw_m": 4.7398620006618835,
+          "baseline_m": 4.764908117233882,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-038",
+          "runtime_m": 4.26245043704448,
+          "raw_m": 4.26245043704448,
+          "baseline_m": 4.298337394457952,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-047",
+          "runtime_m": 4.661951473874998,
+          "raw_m": 4.661951473874998,
+          "baseline_m": 4.636947455732566,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V4-001",
+          "runtime_m": 4.9271503317916885,
+          "raw_m": 4.9271503317916885,
+          "baseline_m": 4.933466302435656,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-002",
+          "runtime_m": 4.275956089892662,
+          "raw_m": 4.275956089892662,
+          "baseline_m": 4.298509598686974,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V4-005",
+          "runtime_m": 4.344300325352746,
+          "raw_m": 4.344300325352746,
+          "baseline_m": 4.345098309250461,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V4-008",
+          "runtime_m": 4.934729685441252,
+          "raw_m": 4.934729685441252,
+          "baseline_m": 4.939437831939753,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-010",
+          "runtime_m": 4.693249620606214,
+          "raw_m": 4.693249620606214,
+          "baseline_m": 4.7073940797134775,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-013",
+          "runtime_m": 4.612493311182105,
+          "raw_m": 4.612493311182105,
+          "baseline_m": 4.638329458757832,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-016",
+          "runtime_m": 4.753646752766264,
+          "raw_m": 4.753646752766264,
+          "baseline_m": 4.768149479207162,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-018",
+          "runtime_m": 4.402834932714894,
+          "raw_m": 4.402834932714894,
+          "baseline_m": 4.387726306613125,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V4-021",
+          "runtime_m": null,
+          "raw_m": 4.612362393778681,
+          "baseline_m": null,
+          "supported": true,
+          "ambiguous": true,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V4-023",
+          "runtime_m": 4.482548926644369,
+          "raw_m": 4.482548926644369,
+          "baseline_m": 4.508439199140421,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V4-024",
+          "runtime_m": 4.392956559410332,
+          "raw_m": 4.392956559410332,
+          "baseline_m": 4.380693848889762,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-004",
+          "runtime_m": 4.695732560014312,
+          "raw_m": 4.695732560014312,
+          "baseline_m": 4.722388642290982,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V5-005",
+          "runtime_m": 4.644019084613425,
+          "raw_m": 4.644019084613425,
+          "baseline_m": 4.652462516185874,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V5-007",
+          "runtime_m": 5.026758009043972,
+          "raw_m": 5.026758009043972,
+          "baseline_m": 5.063452437727804,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            5.14,
+            5.14
+          ]
+        },
+        {
+          "id": "V5-011",
+          "runtime_m": 4.402522541337709,
+          "raw_m": 4.402522541337709,
+          "baseline_m": 4.376391217883286,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-033",
+          "runtime_m": 4.400810791821438,
+          "raw_m": 4.400810791821438,
+          "baseline_m": 4.389037190370911,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-034",
+          "runtime_m": 4.655562233017412,
+          "raw_m": 4.655562233017412,
+          "baseline_m": 4.638991432359474,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-037",
+          "runtime_m": 4.573050887626779,
+          "raw_m": 4.573050887626779,
+          "baseline_m": 4.537778857127133,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-048",
+          "runtime_m": 4.716743834413623,
+          "raw_m": 4.716743834413623,
+          "baseline_m": 4.733503095313232,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V6-004",
+          "runtime_m": 3.975796959459945,
+          "raw_m": 3.975796959459945,
+          "baseline_m": 3.975796959459945,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V6-006",
+          "runtime_m": 4.662622949792588,
+          "raw_m": 4.662622949792588,
+          "baseline_m": 4.647424878700717,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-008",
+          "runtime_m": 4.978416299469631,
+          "raw_m": 4.978416299469631,
+          "baseline_m": 4.9745816045047695,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V6-013",
+          "runtime_m": 4.073706386336325,
+          "raw_m": 4.073706386336325,
+          "baseline_m": 4.048972827054099,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V6-014",
+          "runtime_m": 4.609264263811855,
+          "raw_m": 4.4981547346786135,
+          "baseline_m": 4.609264263811855,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-023",
+          "runtime_m": 4.171519735489993,
+          "raw_m": 4.171519735489993,
+          "baseline_m": 4.204246910037608,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-041",
+          "runtime_m": 4.196455821461639,
+          "raw_m": 4.196455821461639,
+          "baseline_m": 4.246476053829755,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-043",
+          "runtime_m": 4.545474638679303,
+          "raw_m": 4.545474638679303,
+          "baseline_m": 4.534203419968288,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V6-055",
+          "runtime_m": 4.627745303501979,
+          "raw_m": 4.627745303501979,
+          "baseline_m": 4.605436320549299,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        }
+      ]
+    },
+    "inner_selected": {
+      "summary": {
+        "count": 77,
+        "family_count": 14,
+        "midpoint_mae_m": 0.037529527516884646,
+        "family_balanced_midpoint_mae_m": 0.03859426437249606,
+        "optimistic_interval_mae_m": 0.029726584249689773,
+        "optimistic_interval_max_m": 0.14958160450476843,
+        "outside_10cm_even_optimistically": 3,
+        "within_10cm_for_entire_interval": 71,
+        "variant_dependent": 3,
+        "total_passages": 78,
+        "review_without_length": 1
+      },
+      "rows": [
+        {
+          "id": "V1-001",
+          "runtime_m": 3.971799412655554,
+          "raw_m": 3.971799412655554,
+          "baseline_m": 3.97060038029216,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V1-002",
+          "runtime_m": 4.53728017901878,
+          "raw_m": 4.440499472114861,
+          "baseline_m": 4.53728017901878,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-004",
+          "runtime_m": 4.418973602283621,
+          "raw_m": 4.418973602283621,
+          "baseline_m": 4.415531004027273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V1-006",
+          "runtime_m": 4.021156730641464,
+          "raw_m": 4.021156730641464,
+          "baseline_m": 4.017860554473908,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-009",
+          "runtime_m": 3.805792208694837,
+          "raw_m": 3.7930070075764393,
+          "baseline_m": 3.805792208694837,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.75,
+            3.785
+          ]
+        },
+        {
+          "id": "V1-011",
+          "runtime_m": 4.556390116111969,
+          "raw_m": 4.556390116111969,
+          "baseline_m": 4.543703373149788,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-012",
+          "runtime_m": 4.710479863384254,
+          "raw_m": 4.710479863384254,
+          "baseline_m": 4.710479863384254,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-014",
+          "runtime_m": 4.509501147387283,
+          "raw_m": 4.509501147387283,
+          "baseline_m": 4.49814841222273,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V1-017",
+          "runtime_m": 3.9471030183879106,
+          "raw_m": 3.95260766676782,
+          "baseline_m": 3.9471030183879106,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.94,
+            3.94
+          ]
+        },
+        {
+          "id": "V1-018",
+          "runtime_m": 4.595237201416833,
+          "raw_m": 4.595237201416833,
+          "baseline_m": 4.595237201416833,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.6,
+            4.61
+          ]
+        },
+        {
+          "id": "V1-020",
+          "runtime_m": 4.8010816306349104,
+          "raw_m": 4.8010816306349104,
+          "baseline_m": 4.8010816306349104,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.76,
+            4.76
+          ]
+        },
+        {
+          "id": "V1-021",
+          "runtime_m": 4.1782513685939735,
+          "raw_m": 4.1782513685939735,
+          "baseline_m": 4.1782513685939735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V1-022",
+          "runtime_m": 3.8791572423223752,
+          "raw_m": 3.8791572423223752,
+          "baseline_m": 3.8777476650539584,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-026",
+          "runtime_m": 4.572605011819312,
+          "raw_m": 4.572605011819312,
+          "baseline_m": 4.562099602443156,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-027",
+          "runtime_m": 3.9797310338868863,
+          "raw_m": 3.9797310338868863,
+          "baseline_m": 3.976007022820012,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V1-033",
+          "runtime_m": 4.404179236515292,
+          "raw_m": 4.404179236515292,
+          "baseline_m": 4.392286708135129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V1-036",
+          "runtime_m": 4.207586835173976,
+          "raw_m": 4.207586835173976,
+          "baseline_m": 4.206798145808963,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V1-040",
+          "runtime_m": 4.546549882134121,
+          "raw_m": 4.546549882134121,
+          "baseline_m": 4.554912515139493,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V1-045",
+          "runtime_m": 4.606169984814543,
+          "raw_m": 4.626222122553666,
+          "baseline_m": 4.606169984814543,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V1-050",
+          "runtime_m": 4.525084715059726,
+          "raw_m": 4.525084715059726,
+          "baseline_m": 4.523519599401735,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V1-055",
+          "runtime_m": 3.905344969382627,
+          "raw_m": 3.8899523720529277,
+          "baseline_m": 3.905344969382627,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V1-056",
+          "runtime_m": 4.29471025310236,
+          "raw_m": 4.29471025310236,
+          "baseline_m": 4.29471025310236,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V2-004",
+          "runtime_m": 4.076486001313578,
+          "raw_m": 4.076486001313578,
+          "baseline_m": 4.076486001313578,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-007",
+          "runtime_m": 3.9064197119604556,
+          "raw_m": 3.9064197119604556,
+          "baseline_m": 3.900958472939677,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V2-011",
+          "runtime_m": 4.61475333814347,
+          "raw_m": 4.61475333814347,
+          "baseline_m": 4.610533695337261,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V2-012",
+          "runtime_m": 3.9533584329239577,
+          "raw_m": 3.9533584329239577,
+          "baseline_m": 3.951947060909576,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V2-015",
+          "runtime_m": 4.551311507835741,
+          "raw_m": 4.551311507835741,
+          "baseline_m": 4.539980262395767,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V2-017",
+          "runtime_m": 4.572625159139792,
+          "raw_m": 4.572625159139792,
+          "baseline_m": 4.562948446891703,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-020",
+          "runtime_m": 4.464100512937823,
+          "raw_m": 4.464100512937823,
+          "baseline_m": 4.471615488516129,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-024",
+          "runtime_m": 4.745553801328481,
+          "raw_m": 4.745553801328481,
+          "baseline_m": 4.745553801328481,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-034",
+          "runtime_m": 4.523944920620927,
+          "raw_m": 4.523944920620927,
+          "baseline_m": 4.522276910100178,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-037",
+          "runtime_m": 4.456204615613385,
+          "raw_m": 4.456204615613385,
+          "baseline_m": 4.447602261311205,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V2-044",
+          "runtime_m": 4.444451433616992,
+          "raw_m": 4.444451433616992,
+          "baseline_m": 4.437795924760555,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.36
+          ]
+        },
+        {
+          "id": "V2-045",
+          "runtime_m": 3.9302544958249053,
+          "raw_m": 3.9302544958249053,
+          "baseline_m": 3.927660546154771,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V2-046",
+          "runtime_m": 4.4742640086906755,
+          "raw_m": 4.436543907026708,
+          "baseline_m": 4.4742640086906755,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.55,
+            4.56
+          ]
+        },
+        {
+          "id": "V2-048",
+          "runtime_m": 4.14114166359317,
+          "raw_m": 4.14114166359317,
+          "baseline_m": 4.14114166359317,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.18,
+            4.18
+          ]
+        },
+        {
+          "id": "V2-051",
+          "runtime_m": 4.728381641115021,
+          "raw_m": 4.728381641115021,
+          "baseline_m": 4.728381641115021,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V2-068",
+          "runtime_m": 4.373540590605317,
+          "raw_m": 4.373540590605317,
+          "baseline_m": 4.376915475155745,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-002",
+          "runtime_m": 4.676645569115989,
+          "raw_m": 4.676645569115989,
+          "baseline_m": 4.676645569115989,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-010",
+          "runtime_m": 4.386875645364518,
+          "raw_m": 4.386875645364518,
+          "baseline_m": 4.387786785978693,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V3-013",
+          "runtime_m": 4.5806439297633705,
+          "raw_m": 4.5806439297633705,
+          "baseline_m": 4.579980148866508,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-015",
+          "runtime_m": 3.8673441749015547,
+          "raw_m": 3.8673441749015547,
+          "baseline_m": 3.8559549032428118,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-017",
+          "runtime_m": 4.1834050972177925,
+          "raw_m": 4.1834050972177925,
+          "baseline_m": 4.185563883087581,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-021",
+          "runtime_m": 3.911735263743532,
+          "raw_m": 3.911735263743532,
+          "baseline_m": 3.9110816751836537,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.885,
+            3.885
+          ]
+        },
+        {
+          "id": "V3-022",
+          "runtime_m": 4.2037304791922985,
+          "raw_m": 4.2037304791922985,
+          "baseline_m": 4.210368607861147,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-026",
+          "runtime_m": 4.580986955882591,
+          "raw_m": 4.580986955882591,
+          "baseline_m": 4.583734030026425,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V3-030",
+          "runtime_m": 3.9327921186980315,
+          "raw_m": 3.9327921186980315,
+          "baseline_m": 3.93057191529093,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.9,
+            3.92
+          ]
+        },
+        {
+          "id": "V3-035",
+          "runtime_m": 4.764908117233882,
+          "raw_m": 4.764908117233882,
+          "baseline_m": 4.764908117233882,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V3-038",
+          "runtime_m": 4.289826884534283,
+          "raw_m": 4.289826884534283,
+          "baseline_m": 4.298337394457952,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V3-047",
+          "runtime_m": 4.640208429745395,
+          "raw_m": 4.640208429745395,
+          "baseline_m": 4.636947455732566,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V4-001",
+          "runtime_m": 4.933466302435656,
+          "raw_m": 4.933466302435656,
+          "baseline_m": 4.933466302435656,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-002",
+          "runtime_m": 4.298509598686974,
+          "raw_m": 4.298509598686974,
+          "baseline_m": 4.298509598686974,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.265,
+            4.295
+          ]
+        },
+        {
+          "id": "V4-005",
+          "runtime_m": 4.342122230611019,
+          "raw_m": 4.342122230611019,
+          "baseline_m": 4.345098309250461,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.36,
+            4.41
+          ]
+        },
+        {
+          "id": "V4-008",
+          "runtime_m": 4.939437831939753,
+          "raw_m": 4.939437831939753,
+          "baseline_m": 4.939437831939753,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V4-010",
+          "runtime_m": 4.7073940797134775,
+          "raw_m": 4.7073940797134775,
+          "baseline_m": 4.7073940797134775,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-013",
+          "runtime_m": 4.638329458757832,
+          "raw_m": 4.638329458757832,
+          "baseline_m": 4.638329458757832,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-016",
+          "runtime_m": 4.768149479207162,
+          "raw_m": 4.768149479207162,
+          "baseline_m": 4.768149479207162,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V4-018",
+          "runtime_m": 4.3940003763058035,
+          "raw_m": 4.3940003763058035,
+          "baseline_m": 4.387726306613125,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V4-021",
+          "runtime_m": null,
+          "raw_m": 4.605273209372984,
+          "baseline_m": null,
+          "supported": true,
+          "ambiguous": true,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V4-023",
+          "runtime_m": 4.495394497848284,
+          "raw_m": 4.495394497848284,
+          "baseline_m": 4.508439199140421,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V4-024",
+          "runtime_m": 4.389485222901109,
+          "raw_m": 4.389485222901109,
+          "baseline_m": 4.380693848889762,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-004",
+          "runtime_m": 4.722388642290982,
+          "raw_m": 4.722388642290982,
+          "baseline_m": 4.722388642290982,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V5-005",
+          "runtime_m": 4.657415094335894,
+          "raw_m": 4.657415094335894,
+          "baseline_m": 4.652462516185874,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V5-007",
+          "runtime_m": 5.063452437727804,
+          "raw_m": 5.063452437727804,
+          "baseline_m": 5.063452437727804,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            5.14,
+            5.14
+          ]
+        },
+        {
+          "id": "V5-011",
+          "runtime_m": 4.382871156799064,
+          "raw_m": 4.382871156799064,
+          "baseline_m": 4.376391217883286,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-033",
+          "runtime_m": 4.392195921367685,
+          "raw_m": 4.392195921367685,
+          "baseline_m": 4.389037190370911,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.41,
+            4.42
+          ]
+        },
+        {
+          "id": "V5-034",
+          "runtime_m": 4.632697110470506,
+          "raw_m": 4.632697110470506,
+          "baseline_m": 4.638991432359474,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-037",
+          "runtime_m": 4.544594171473786,
+          "raw_m": 4.544594171473786,
+          "baseline_m": 4.537778857127133,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        },
+        {
+          "id": "V5-048",
+          "runtime_m": 4.733503095313232,
+          "raw_m": 4.733503095313232,
+          "baseline_m": 4.733503095313232,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.695,
+            4.71
+          ]
+        },
+        {
+          "id": "V6-004",
+          "runtime_m": 3.975796959459945,
+          "raw_m": 3.975796959459945,
+          "baseline_m": 3.975796959459945,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.945,
+            3.945
+          ]
+        },
+        {
+          "id": "V6-006",
+          "runtime_m": 4.657410942798237,
+          "raw_m": 4.657410942798237,
+          "baseline_m": 4.647424878700717,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-008",
+          "runtime_m": 4.974581604504769,
+          "raw_m": 4.974581604504769,
+          "baseline_m": 4.9745816045047695,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.825,
+            4.825
+          ]
+        },
+        {
+          "id": "V6-013",
+          "runtime_m": 4.048972827054099,
+          "raw_m": 4.048972827054099,
+          "baseline_m": 4.048972827054099,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            3.995,
+            3.995
+          ]
+        },
+        {
+          "id": "V6-014",
+          "runtime_m": 4.609264263811855,
+          "raw_m": 4.512297767682689,
+          "baseline_m": 4.609264263811855,
+          "supported": false,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.65,
+            4.69
+          ]
+        },
+        {
+          "id": "V6-023",
+          "runtime_m": 4.194371973646159,
+          "raw_m": 4.194371973646159,
+          "baseline_m": 4.204246910037608,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-041",
+          "runtime_m": 4.2335415223152495,
+          "raw_m": 4.2335415223152495,
+          "baseline_m": 4.246476053829755,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.195,
+            4.3
+          ]
+        },
+        {
+          "id": "V6-043",
+          "runtime_m": 4.537051888825042,
+          "raw_m": 4.537051888825042,
+          "baseline_m": 4.534203419968288,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.53,
+            4.53
+          ]
+        },
+        {
+          "id": "V6-055",
+          "runtime_m": 4.602684387345849,
+          "raw_m": 4.602684387345849,
+          "baseline_m": 4.605436320549299,
+          "supported": true,
+          "ambiguous": false,
+          "catalogue_interval_m": [
+            4.59,
+            4.6
+          ]
+        }
+      ]
+    }
+  },
+  "inputs_sha256": {
+    "runs/wheel_body_20261008/probe.py": "1c4d358dada81be8d1afde93cfc0607ee652ecafa7a99e4b0227ff53b07f28bf",
+    "runs/wheel_body_20261008/plan.json": "37aaaac36af2d1a1c1131ba7d208deff0dd848b86dc33c82a6f95df77c92811b",
+    "runs/catalogue_verify_20261008/comparison.json": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+    "config/st-catalogue-corrections.json": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+    "runs/outline_runtime_20261008/masks/mask-manifest.json": "4ccbfc67e74d205e4b7993dee3cbfdb35140df620523177c270ecf8f54b9ee3e",
+    "runs/wheel_runtime_20261008/detections.json": "1990e72664880cec2e28e5670afae2c73d0aea490ae777f82fbc47fc8b7794f5",
+    "runs/association_audit_20261008/recovery/results.json": "b80b07f3e6a1a78420f552818643da648426bb3fe08a087ec3ade11d6b0aa74a"
+  }
+}
