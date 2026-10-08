@@ -8,7 +8,7 @@ import pytest
 from vehicle_metrology.rig import Rig, measure_rig_component, measure_rig_passage
 
 
-def scene(stationary=False, offset=.12, body_shift=0., heading_shift=0.):
+def scene(stationary=False, offset=.12, body_shift=0., heading_shift=0., n=9):
     cameras={}
     for name,center in [('ST',[-3,-10,5]),('HiWatch',[8,-6,4])]:
         C=np.asarray(center,float)
@@ -31,7 +31,7 @@ def scene(stationary=False, offset=.12, body_shift=0., heading_shift=0.):
             np.asarray(c['tcw']),np.asarray(c['K']),np.asarray(c['D']))[0].reshape(-1,2)
     body=np.array([[0.,0,0],[2.7,0,0],[-.9,.3,.6],[3.6,.4,.8]])
     poses=[];endpoints=[]
-    for i,stamp in enumerate(np.linspace(1,2,9)):
+    for i,stamp in enumerate(np.linspace(1,2,n)):
         angle=(.2 if stationary else .2+.05*(stamp-1))+heading_shift
         R=np.array([[np.cos(angle),-np.sin(angle),0],[np.sin(angle),np.cos(angle),0],[0,0,1]])
         T=np.array([0 if stationary else 2*(stamp-1),2,0])+R[:,0]*body_shift
@@ -64,14 +64,19 @@ def test_second_view_resolves_stationary_single_camera_degeneracy():
     assert 'weak_multiview_geometry' in result['reasons']
 
 
-def test_occlusion_can_use_other_observations_but_hidden_contacts_are_not_invented():
+def test_occlusion_uses_supported_visible_observations_without_inventing_hidden_contacts():
     data,poses,endpoints=scene()
     for row in endpoints[:4]: row['visible']=False
     result=measure_rig_component(Rig.from_dict(data),poses,endpoints)
     assert result['length_m']==pytest.approx(4.5,abs=1e-7)
     assert result['diagnostics']['skipped_occluded_observations']==4
     poses[1]['visible']=False
-    assert measure_rig_component(Rig.from_dict(data),poses,endpoints)['reasons']==['occluded_ground_contacts']
+    poses[1]['rear_contact_uv']=None;poses[1]['front_contact_uv']=None
+    result=measure_rig_component(Rig.from_dict(data),poses,endpoints)
+    assert result['length_m']==pytest.approx(4.5,abs=1e-7)
+    assert result['diagnostics']['skipped_occluded_ground_poses']==1
+    for row in poses: row['visible']=False
+    assert measure_rig_component(Rig.from_dict(data),poses,endpoints)['reasons']==['insufficient_visible_ground_poses']
 
 
 def test_timing_and_survey_budget_failures_withhold_numeric_measurement():
@@ -88,9 +93,13 @@ def test_timing_and_survey_budget_failures_withhold_numeric_measurement():
 def test_no_pose_extrapolation_or_interpolation_through_long_missing_interval():
     data,poses,endpoints=scene()
     result=measure_rig_component(Rig.from_dict(data),poses[1:],endpoints)
-    assert result['reasons']==['endpoint_outside_pose_time_support']
+    assert result['length_m']==pytest.approx(4.5,abs=1e-7)
+    assert result['diagnostics']['unsupported_endpoint_observations']=={'endpoint_outside_pose_time_support':4}
     result=measure_rig_component(Rig.from_dict(data),[poses[0],poses[-1]],endpoints)
-    assert result['reasons']==['pose_interpolation_gap']
+    assert result['length_m']==pytest.approx(4.5,abs=1e-7)
+    assert result['diagnostics']['observation_count']==8
+    assert result['diagnostics']['unsupported_endpoint_observations']=={'pose_interpolation_gap':28}
+    assert measure_rig_component(Rig.from_dict(data),poses[1:],endpoints[:4])['reasons']==['insufficient_visible_endpoints']
 
 
 def test_wrong_endpoint_identity_generates_reprojection_failure():
@@ -170,3 +179,48 @@ def test_camera_pair_cli_records_inputs_and_evaluates_only_independent_reference
     assert json.loads((output/'evaluation.json').read_text())['acceptance']['passed_tracks']==1
     manifest=json.loads((output/'manifest.json').read_text())
     assert len(manifest['ground_truth_sha256'])==64
+
+
+def noisy_scene(*,seed=0,sigma=1.,n=9,body_shift=0.):
+    data,poses,endpoints=scene(n=n,body_shift=body_shift)
+    rng=np.random.default_rng(seed)
+    for row in poses:
+        row['sigma_px']=sigma
+        for key in ('rear_contact_uv','front_contact_uv'):
+            row[key]=(np.asarray(row[key])+rng.normal(0,sigma,2)).tolist()
+    for row in endpoints:
+        row['sigma_px']=sigma
+        row['uv']=(np.asarray(row['uv'])+rng.normal(0,sigma,2)).tolist()
+    return data,poses,endpoints
+
+
+def test_joint_passage_fit_handles_noisy_contacts_without_relaxing_pixel_checks():
+    for seed in range(8):
+        data,poses,endpoints=noisy_scene(seed=seed)
+        result=measure_rig_component(Rig.from_dict(data),poses,endpoints)
+        assert result['status']=='accepted_conditional',result
+        assert result['diagnostics']['wheelbase_range_m']>.05  # Old exact-contact gate rejected these.
+        assert abs(result['length_m']-4.5)<.025
+        assert result['diagnostics']['bundle']['contact_reprojection_rmse_px']<1.5
+        assert abs(result['diagnostics']['fitted_wheelbase_m']-2.7)<.025
+        assert result['accuracy_validated'] is False
+
+
+def test_joint_fit_rejects_wrong_contact_instead_of_hiding_it_in_mean_error():
+    data,poses,endpoints=scene()
+    poses[4]['front_contact_uv'][0]+=35
+    result=measure_rig_component(Rig.from_dict(data),poses,endpoints)
+    assert result['length_m'] is None
+    assert 'ground_contact_outlier' in result['reasons']
+
+
+def test_sparse_joint_fit_and_combination_use_refined_body_poses():
+    data,poses,endpoints=noisy_scene(seed=9,n=48)
+    _,p2,e2=noisy_scene(seed=10,n=48,body_shift=-6)
+    rig=Rig.from_dict(data)
+    parts=[dict(component_id='tractor',pose_observations=poses,endpoints=endpoints),
+           dict(component_id='trailer',pose_observations=p2,endpoints=e2)]
+    result=measure_rig_passage(rig,parts,composition_verified=True)
+    assert result['length_m']==pytest.approx(10.5,abs=.03),result
+    assert result['diagnostics']['length_range_m']<.05
+    assert all(p['diagnostics']['bundle']['converged'] for p in result['components'])

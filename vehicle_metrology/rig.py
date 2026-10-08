@@ -11,6 +11,7 @@ import numpy as np
 from scipy.optimize import least_squares
 
 from .geometry import Camera, _poses
+from .bundle import refine_component
 
 
 @dataclass
@@ -82,6 +83,7 @@ def _rotation(angle):
 def _pose_at(time, times, translations, headings, max_gap_s):
     if time < times[0]-1e-9 or time > times[-1]+1e-9:
         raise ValueError('endpoint_outside_pose_time_support')
+    time=float(np.clip(time,times[0],times[-1]))
     i=int(np.searchsorted(times,time))
     if i < len(times) and abs(times[i]-time) <= 1e-9:
         return translations[i],_rotation(headings[i])
@@ -139,15 +141,18 @@ def measure_rig_component(rig, pose_observations, endpoints, *, tolerance_m=.1,
     if max(rig.calibration_errors_m.values()) > tolerance_m/3:
         result['reasons']=['calibration_error_budget_exceeded']
         return result
-    rows=sorted(pose_observations,key=_timestamp)
-    times=np.asarray([_timestamp(o)+rig.offsets_s[rig.pose_camera] for o in rows])
-    if len(rows) < 2:
+    supplied_rows=sorted(pose_observations,key=_timestamp)
+    supplied_times=np.asarray([_timestamp(o)+rig.offsets_s[rig.pose_camera] for o in supplied_rows])
+    if len(supplied_rows) < 2:
         result['reasons']=['insufficient_ground_poses']
         return result
-    if np.any(np.diff(times) <= 0):
+    if np.any(np.diff(supplied_times) <= 0):
         raise ValueError('Ground pose timestamps must be distinct')
-    if any(o.get('visible') is not True for o in rows):
-        result['reasons']=['occluded_ground_contacts']
+    rows=[o for o in supplied_rows if o.get('visible') is True]
+    times=np.asarray([_timestamp(o)+rig.offsets_s[rig.pose_camera] for o in rows])
+    skipped_poses=len(supplied_rows)-len(rows)
+    if len(rows) < 2:
+        result['reasons']=['insufficient_visible_ground_poses']
         return result
     pose_camera=rig.cameras[rig.pose_camera]
     _pixels(pose_camera,[o[k] for o in rows for k in ('rear_contact_uv','front_contact_uv')])
@@ -161,49 +166,76 @@ def measure_rig_component(rig, pose_observations, endpoints, *, tolerance_m=.1,
         return result
     headings=np.unwrap(np.arctan2(rotations[:,1,0],rotations[:,0,0]))
     wheelbase_range=float(np.ptp(wheelbases))
-    if wheelbase_range > tolerance_m/2:
-        result['reasons']=['inconsistent_ground_anchors']
-        result['diagnostics']['wheelbase_range_m']=wheelbase_range
-        return result
+    contact_sigma=[o.get('sigma_px',1.) for o in rows]
+    if any(type(v) not in (int,float) or not np.isfinite(v) or v <= 0 for v in contact_sigma):
+        raise ValueError('Positive finite ground contact sigma_px required')
+    contact_sigma=np.asarray(contact_sigma,float)
     grouped={'front_extreme':[],'rear_extreme':[]}
-    seen=set();used_cameras=set();skipped=0
-    try:
-        for row in endpoints:
-            key=row.get('landmark_id');camera_id=row.get('camera_id')
-            if key not in grouped or camera_id not in rig.cameras:
-                raise ValueError('Unknown endpoint landmark_id or camera_id')
-            stamp=_timestamp(row)
-            identity=(key,camera_id,stamp)
-            if identity in seen: raise ValueError('Duplicate endpoint observation')
-            seen.add(identity)
-            if row.get('visible') is not True:
-                skipped+=1;continue
-            sigma=row.get('sigma_px')
-            if type(sigma) not in (int,float) or not np.isfinite(sigma) or sigma <= 0:
-                raise ValueError('Positive finite endpoint sigma_px required')
-            camera=rig.cameras[camera_id]
-            uv=_pixels(camera,[row['uv']])[0]
+    seen=set();used_cameras=set();skipped=0;endpoint_rows=[];unsupported={}
+    for row in endpoints:
+        key=row.get('landmark_id');camera_id=row.get('camera_id')
+        if key not in grouped or camera_id not in rig.cameras:
+            raise ValueError('Unknown endpoint landmark_id or camera_id')
+        stamp=_timestamp(row)
+        identity=(key,camera_id,stamp)
+        if identity in seen: raise ValueError('Duplicate endpoint observation')
+        seen.add(identity)
+        if row.get('visible') is not True:
+            skipped+=1;continue
+        sigma=row.get('sigma_px')
+        if type(sigma) not in (int,float) or not np.isfinite(sigma) or sigma <= 0:
+            raise ValueError('Positive finite endpoint sigma_px required')
+        camera=rig.cameras[camera_id]
+        uv=_pixels(camera,[row['uv']])[0]
+        try:
             T,R=_pose_at(stamp+rig.offsets_s[camera_id],times,translations,headings,max_pose_gap_s)
-            grouped[key].append((camera,uv,T,R,float(sigma)))
-            used_cameras.add(camera_id)
-    except ValueError as exc:
-        if str(exc) not in ('endpoint_outside_pose_time_support','pose_interpolation_gap'): raise
-        result['reasons']=[str(exc)]
-        return result
+        except ValueError as exc:
+            if str(exc) not in ('endpoint_outside_pose_time_support','pose_interpolation_gap'): raise
+            unsupported[str(exc)]=unsupported.get(str(exc),0)+1
+            continue
+        grouped[key].append((camera,uv,T,R,float(sigma)))
+        endpoint_rows.append(dict(camera_id=camera_id,point=0 if key=='rear_extreme' else 1,
+            uv=uv,sigma=float(sigma),time=stamp+rig.offsets_s[camera_id]))
+        used_cameras.add(camera_id)
     if min(map(len,grouped.values())) < 4:
         result['reasons']=['insufficient_visible_endpoints']
+        result['diagnostics']['unsupported_endpoint_observations']=unsupported
         return result
-    speed=float(np.max(np.linalg.norm(np.diff(translations,axis=0),axis=1)/np.diff(times)))
     timing_uncertainty=max(0. if k==rig.pose_camera else
                            rig.time_uncertainty_s[k]+rig.time_uncertainty_s[rig.pose_camera] for k in used_cameras)
     try:
         fitted={key:_fit_endpoint(views) for key,views in grouped.items()}
+        refined=refine_component(pose_camera,rig.cameras,times,translations,headings,
+            np.asarray([[row['rear_contact_uv'],row['front_contact_uv']] for row in rows]),
+            contact_sigma,float(np.median(wheelbases)),
+            np.asarray([fitted[k][0] for k in ('rear_extreme','front_extreme')]),endpoint_rows)
+        translations,headings=refined['translations'],refined['headings']
+        grouped={'front_extreme':[],'rear_extreme':[]}
+        for row in endpoint_rows:
+            T,R=_pose_at(row['time'],times,translations,headings,max_pose_gap_s)
+            key='rear_extreme' if row['point']==0 else 'front_extreme'
+            grouped[key].append((rig.cameras[row['camera_id']],row['uv'],T,R,row['sigma']))
+        for i,key in enumerate(('rear_extreme','front_extreme')):
+            _,diagnostic=_fit_endpoint(grouped[key])
+            diagnostic.update(refined['endpoints_diagnostics'][key])
+            diagnostic['converged']=refined['diagnostics']['converged']
+            fitted[key]=(refined['endpoints'][i],diagnostic)
     except (ValueError,np.linalg.LinAlgError) as exc:
         result['reasons']=['invalid_endpoint_geometry'];result['diagnostics']['detail']=str(exc)
         return result
     front,rear=fitted['front_extreme'][0],fitted['rear_extreme'][0]
     length=float(front[0]-rear[0])
     reasons=[]
+    if refined['diagnostics']['contact_reprojection_rmse_px'] > 3.:
+        reasons.append('high_contact_reprojection_error')
+    # Sparse gross errors must not disappear inside a whole-passage mean.
+    if refined['diagnostics']['contact_max_residual_px'] > 8.:
+        reasons.append('ground_contact_outlier')
+    refined_contacts=np.stack([translations,translations+refined['wheelbase_m']*
+        np.c_[np.cos(headings),np.sin(headings),np.zeros(len(rows))]],axis=1)
+    if not pose_camera.in_road(refined_contacts.reshape(-1,3)):
+        reasons.append('outside_calibrated_road')
+    speed=float(np.max(np.linalg.norm(np.diff(translations,axis=0),axis=1)/np.diff(times)))
     angular_speed=float(np.max(abs(np.diff(headings))/np.diff(times)))
     radius=max(np.linalg.norm(front[:2]),np.linalg.norm(rear[:2]))
     timing_displacement=float((speed+angular_speed*radius)*timing_uncertainty)
@@ -219,6 +251,10 @@ def measure_rig_component(rig, pose_observations, endpoints, *, tolerance_m=.1,
     result['diagnostics']=dict(endpoints={key:dict(body_xyz_m=p.tolist(),**d) for key,(p,d) in fitted.items()},
         used_cameras=sorted(used_cameras),observation_count=sum(map(len,grouped.values())),
         skipped_occluded_observations=skipped,wheelbase_range_m=wheelbase_range,
+        skipped_occluded_ground_poses=skipped_poses,unsupported_endpoint_observations=unsupported,
+        bundle=refined['diagnostics'],fitted_wheelbase_m=refined['wheelbase_m'],
+        fitted_poses=[dict(timestamp_s=float(t),xy_m=T[:2].tolist(),heading_rad=float(a))
+                      for t,T,a in zip(times,translations,headings)],
         timing_displacement_m=timing_displacement,calibration_check_errors_m=rig.calibration_errors_m,
         reliability='conditional_geometry_only_not_validated_metrological_confidence',
         unbounded_errors=['contact_localization','correlated_landmark_bias','road_nonplanarity',
@@ -251,10 +287,10 @@ def measure_rig_passage(rig, components, *, composition_verified=False, toleranc
         result['components'].append(dict(component_id=part['component_id'],**measured))
         if measured['length_m'] is None:
             continue
-        rows=sorted(part['pose_observations'],key=_timestamp)
-        T,R,_,_=_poses(rig.cameras[rig.pose_camera],rows)
-        times=np.asarray([_timestamp(row)+rig.offsets_s[rig.pose_camera] for row in rows])
-        headings=np.unwrap(np.arctan2(R[:,1,0],R[:,0,0]))
+        fitted_poses=measured['diagnostics']['fitted_poses']
+        T=np.asarray([[*p['xy_m'],0.] for p in fitted_poses])
+        times=np.asarray([p['timestamp_s'] for p in fitted_poses])
+        headings=np.asarray([p['heading_rad'] for p in fitted_poses])
         ends=np.asarray([measured['diagnostics']['endpoints'][k]['body_xyz_m']
                          for k in ('rear_extreme','front_extreme')])
         poses.append((times,T,headings,ends))
