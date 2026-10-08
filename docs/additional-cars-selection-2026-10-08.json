@@ -1,0 +1,2276 @@
+{
+  "selection_rule": "Every original audit row with detector_label == 'car' and comparison_eligible == false; include fragments, modified bodies, cargo and unresolved identities",
+  "comparison_sha256": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+  "profile_sha256": "ea43b6348de9468824541bf3ce2bb469478887bbfa48a1efaef7ea163409abf9",
+  "scope": "162 detector observations, not 162 established unique physical passages",
+  "rows": [
+    {
+      "id": "V1-003",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 2459,
+      "bbox": [
+        1004.7692260742188,
+        1108.150146484375,
+        576.8101196289062,
+        221.9351806640625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-003-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V1-007",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 5587,
+      "bbox": [
+        1033.43359375,
+        1053.946044921875,
+        522.51123046875,
+        246.546142578125
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-007-frame.jpg",
+      "prior_model_candidate": "Compact SUV, possible Mazda Tribute / Ford Escape",
+      "prior_note": "Exact badge and body version unresolved. Roof cargo present."
+    },
+    {
+      "id": "V1-008",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 5747,
+      "bbox": [
+        1023.568603515625,
+        1091.94482421875,
+        536.412353515625,
+        216.6282958984375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-008-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V1-010",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 6155,
+      "bbox": [
+        1055.1656494140625,
+        1104.51513671875,
+        476.0411376953125,
+        224.3052978515625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-010-frame.jpg",
+      "prior_model_candidate": "Compact hatchback; Toyota Vitz XP130 / Nissan Note E12 unresolved",
+      "prior_note": "Lamp and grille details do not securely distinguish the candidates. Excluded from numeric comparisons; do not infer the model from the estimated length."
+    },
+    {
+      "id": "V1-013",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 7071,
+      "bbox": [
+        1087.2445068359375,
+        1053.27392578125,
+        413.3109130859375,
+        223.4312744140625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-013-frame.jpg",
+      "prior_model_candidate": "Suzuki Jimny JB23 candidate",
+      "prior_note": "Exact variant and external spare/bumper extent need confirmation."
+    },
+    {
+      "id": "V1-015",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 7992,
+      "bbox": [
+        1039.4630126953125,
+        1062.204345703125,
+        506.0576171875,
+        239.916748046875
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-015-frame.jpg",
+      "prior_model_candidate": "Suzuki Vitara / Escudo LY candidate",
+      "prior_note": "Exact market and body variant unresolved."
+    },
+    {
+      "id": "V1-019",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 10410,
+      "bbox": [
+        440.22552490234375,
+        1157.1075439453125,
+        546.2938232421875,
+        169.650390625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-019-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V1-024",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 13651,
+      "bbox": [
+        1014.3793334960938,
+        1098.836181640625,
+        556.5962524414062,
+        219.8128662109375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-024-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V1-029",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 20394,
+      "bbox": [
+        989.0743408203125,
+        1053.2662353515625,
+        614.2142333984375,
+        279.609619140625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-029-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser 200",
+      "prior_note": "Exact facelift, trim and rear accessory extent unresolved."
+    },
+    {
+      "id": "V1-032",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 23765,
+      "bbox": [
+        1017.2546997070312,
+        1085.6593017578125,
+        559.5635375976562,
+        243.21435546875
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-032-frame.jpg",
+      "prior_model_candidate": "Toyota Wish; generation / bumper variant unresolved",
+      "prior_note": "Body generation and bumper configuration remain uncertain after second visual review. Catalogue variants are context only."
+    },
+    {
+      "id": "V1-034",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 24291,
+      "bbox": [
+        1075.6595458984375,
+        1083.37841796875,
+        439.8551025390625,
+        222.94482421875
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-034-frame.jpg",
+      "prior_model_candidate": "Toyota Passo / Daihatsu Boon",
+      "prior_note": "First versus second generation unresolved; no exact catalogue assigned."
+    },
+    {
+      "id": "V1-035",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 26059,
+      "bbox": [
+        2167.238525390625,
+        1072.5067138671875,
+        416.7099609375,
+        231.5189208984375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-035-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V1-038",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 26590,
+      "bbox": [
+        1033.5721435546875,
+        1052.212890625,
+        522.347900390625,
+        248.3873291015625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-038-frame.jpg",
+      "prior_model_candidate": "Suzuki Grand Vitara / Escudo JT",
+      "prior_note": "Rear spare and exact bumper/market version unresolved."
+    },
+    {
+      "id": "V1-039",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 26786,
+      "bbox": [
+        1036.6397705078125,
+        1078.683349609375,
+        515.2412109375,
+        243.982666015625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-039-frame.jpg",
+      "prior_model_candidate": "Toyota Ractis XP100 candidate",
+      "prior_note": "Full-frame review rejected the earlier Corolla Spacio label. Confirm generation before using any stock length as a reference."
+    },
+    {
+      "id": "V1-044",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 32023,
+      "bbox": [
+        1005.2344360351562,
+        1091.903076171875,
+        563.5137329101562,
+        240.9488525390625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-044-frame.jpg",
+      "prior_model_candidate": "Honda CR-V RD1",
+      "prior_note": "Roof carrier and bumper/rear-spare version unresolved."
+    },
+    {
+      "id": "V1-046",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 32828,
+      "bbox": [
+        2415.417236328125,
+        1099.9569091796875,
+        169.583740234375,
+        228.6717529296875
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-046-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V1-047",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 32915,
+      "bbox": [
+        996.7382202148438,
+        1047.83984375,
+        588.5275268554688,
+        279.009521484375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-047-frame.jpg",
+      "prior_model_candidate": "Nissan Serena C26 candidate",
+      "prior_note": "Exact aero bumper variant unresolved; roof box where present."
+    },
+    {
+      "id": "V1-048",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 33284,
+      "bbox": [
+        1006.2819213867188,
+        1084.5048828125,
+        565.4613647460938,
+        246.2021484375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-048-frame.jpg",
+      "prior_model_candidate": "Subaru Forester SH candidate",
+      "prior_note": "Exact market/body version unresolved."
+    },
+    {
+      "id": "V1-049",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 34501,
+      "bbox": [
+        1018.1256103515625,
+        1060.9140625,
+        542.9241943359375,
+        264.929443359375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-049-frame.jpg",
+      "prior_model_candidate": "Nissan NV200 / Mitsubishi Delica D:3",
+      "prior_note": "Badge unresolved; roof-mounted bicycles may affect silhouette."
+    },
+    {
+      "id": "V1-053",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 38531,
+      "bbox": [
+        1043.3797607421875,
+        1121.0531005859375,
+        506.98046875,
+        198.098876953125
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-053-frame.jpg",
+      "prior_model_candidate": "Toyota Probox / Succeed with long roof cargo",
+      "prior_note": "Roof cargo projects beyond body; stock body not full occupied length."
+    },
+    {
+      "id": "V1-054",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 38719,
+      "bbox": [
+        1012.1806030273438,
+        1065.1146240234375,
+        571.9041137695312,
+        262.8050537109375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-054-frame.jpg",
+      "prior_model_candidate": "Toyota Isis candidate",
+      "prior_note": "Exact bumper grade unresolved."
+    },
+    {
+      "id": "V1-058",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 44707,
+      "bbox": [
+        1029.216552734375,
+        1073.26611328125,
+        529.0224609375,
+        228.6939697265625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-058-frame.jpg",
+      "prior_model_candidate": "Subaru Forester SF modified",
+      "prior_note": "Custom body kit; stock length not actual vehicle envelope."
+    },
+    {
+      "id": "V2-001",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 2205,
+      "bbox": [
+        2386.22265625,
+        1123.26220703125,
+        196.8828125,
+        199.202392578125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-001-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-002",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 2291,
+      "bbox": [
+        1010.1378173828125,
+        1103.3243408203125,
+        555.9349365234375,
+        227.7108154296875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-002-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V2-003",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 2304,
+      "bbox": [
+        2346.137939453125,
+        1077.6514892578125,
+        240.088134765625,
+        253.919189453125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-003-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-005",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 2393,
+      "bbox": [
+        848.5387573242188,
+        1093.0926513671875,
+        518.6926879882812,
+        237.1776123046875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-005-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-006",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 2778,
+      "bbox": [
+        992.764404296875,
+        1049.4539794921875,
+        606.2635498046875,
+        283.5069580078125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-006-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Rear spare, towbar or bumper accessories prevent exact stock-envelope comparison."
+    },
+    {
+      "id": "V2-008",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 4796,
+      "bbox": [
+        1012.6441040039062,
+        1109.240478515625,
+        564.8573608398438,
+        223.442626953125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-008-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V2-009",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 9705,
+      "bbox": [
+        1982.962646484375,
+        979.5054931640625,
+        606.086181640625,
+        347.1416015625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-009-frame.jpg",
+      "prior_model_candidate": "Toyota Voxy R70 candidate",
+      "prior_note": "Only oblique/partial passage view; large roof cargo."
+    },
+    {
+      "id": "V2-013",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 15780,
+      "bbox": [
+        955.851806640625,
+        964.3465576171875,
+        677.6553955078125,
+        368.49560546875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-013-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Several wheelbase/body variants; roof carrier or aftermarket bumper may change envelope."
+    },
+    {
+      "id": "V2-014",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 15911,
+      "bbox": [
+        1006.0784301757812,
+        1081.6424560546875,
+        571.5549926757812,
+        247.179443359375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-014-frame.jpg",
+      "prior_model_candidate": "Toyota Gaia candidate",
+      "prior_note": "Early stock body reference; facelift/grade unresolved."
+    },
+    {
+      "id": "V2-016",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 18254,
+      "bbox": [
+        1011.3745727539062,
+        1109.084228515625,
+        550.3989868164062,
+        225.972412109375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-016-frame.jpg",
+      "prior_model_candidate": "Honda Vezel RU candidate",
+      "prior_note": "Exact market and bumper grade unresolved."
+    },
+    {
+      "id": "V2-018",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 21742,
+      "bbox": [
+        1038.998291015625,
+        1073.9044189453125,
+        502.05810546875,
+        252.888916015625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-018-frame.jpg",
+      "prior_model_candidate": "Toyota Sienta XP80 candidate",
+      "prior_note": "Full-frame review corrected an earlier XP170 generation label. Custom exterior styling and exact variant remain unconfirmed; stock first-generation length is context only."
+    },
+    {
+      "id": "V2-019",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 22489,
+      "bbox": [
+        974.4017333984375,
+        1053.9364013671875,
+        642.087158203125,
+        278.85546875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-019-frame.jpg",
+      "prior_model_candidate": "Lexus LX570 candidate",
+      "prior_note": "Visible body kit; stock length would not validate actual envelope."
+    },
+    {
+      "id": "V2-021",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 23381,
+      "bbox": [
+        2396.765869140625,
+        1090.0484619140625,
+        189.032958984375,
+        188.638427734375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-021-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-022",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 23503,
+      "bbox": [
+        1020.1670532226562,
+        1101.053466796875,
+        555.4385375976562,
+        231.9791259765625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-022-frame.jpg",
+      "prior_model_candidate": "Toyota C-HR candidate",
+      "prior_note": "Exact market and facelift unresolved."
+    },
+    {
+      "id": "V2-023",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 25629,
+      "bbox": [
+        2396.740478515625,
+        1090.41796875,
+        188.081787109375,
+        224.48779296875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-023-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-026",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 26059,
+      "bbox": [
+        983.1552734375,
+        1033.0489501953125,
+        641.4200439453125,
+        299.699951171875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-026-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser 200 Arctic Trucks modified",
+      "prior_note": "Large rear spare carrier and towbar extend stock body; actual envelope unknown."
+    },
+    {
+      "id": "V2-027",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 26064,
+      "bbox": [
+        895.78515625,
+        1037.552490234375,
+        647.1820068359375,
+        293.647216796875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-027-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-030",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 27303,
+      "bbox": [
+        1027.8199462890625,
+        1078.7142333984375,
+        523.8399658203125,
+        215.3692626953125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-030-frame.jpg",
+      "prior_model_candidate": "Older Toyota sedan/wagon, damaged",
+      "prior_note": "Missing or damaged bumpers; model and full actual length unresolved."
+    },
+    {
+      "id": "V2-031",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 27306,
+      "bbox": [
+        2386.52685546875,
+        1112.120361328125,
+        198.20458984375,
+        167.1787109375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-031-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-032",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 27453,
+      "bbox": [
+        1023.0370483398438,
+        1090.9617919921875,
+        539.8583374023438,
+        211.9091796875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-032-frame.jpg",
+      "prior_model_candidate": "Older Toyota sedan/wagon, damaged",
+      "prior_note": "Missing or damaged bumpers; model and full actual length unresolved."
+    },
+    {
+      "id": "V2-033",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 27613,
+      "bbox": [
+        1086.2115478515625,
+        1063.659912109375,
+        418.1654052734375,
+        222.71484375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-033-frame.jpg",
+      "prior_model_candidate": "Toyota Passo / Daihatsu Boon",
+      "prior_note": "First versus second generation unresolved; no exact catalogue assigned."
+    },
+    {
+      "id": "V2-035",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 28906,
+      "bbox": [
+        2407.534423828125,
+        1116.391845703125,
+        177.206298828125,
+        185.2408447265625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-035-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-036",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 29061,
+      "bbox": [
+        1200.5460205078125,
+        1093.7093505859375,
+        553.4078369140625,
+        236.1231689453125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-036-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-038",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 29090,
+      "bbox": [
+        678.9014892578125,
+        1107.861083984375,
+        544.59521484375,
+        219.69921875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-038-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-039",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 29113,
+      "bbox": [
+        285.96502685546875,
+        1115.1937255859375,
+        566.6185302734375,
+        207.544677734375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-039-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-041",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 29327,
+      "bbox": [
+        981.419677734375,
+        1045.9918212890625,
+        632.4383544921875,
+        288.3553466796875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-041-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser 70",
+      "prior_note": "Bullbar, roof load and other accessories alter envelope."
+    },
+    {
+      "id": "V2-042",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 30773,
+      "bbox": [
+        1042.5234375,
+        1102.1280517578125,
+        503.67138671875,
+        230.939697265625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-042-frame.jpg",
+      "prior_model_candidate": "Toyota Vitz XP10 candidate",
+      "prior_note": "Aero body version unresolved."
+    },
+    {
+      "id": "V2-043",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 30873,
+      "bbox": [
+        1028.1455078125,
+        1061.367919921875,
+        523.943359375,
+        216.875244140625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-043-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V2-047",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 31764,
+      "bbox": [
+        920.547119140625,
+        1100.6693115234375,
+        471.128173828125,
+        221.2265625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-047-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-049",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 33832,
+      "bbox": [
+        1005.5360717773438,
+        1112.8731689453125,
+        572.9047241210938,
+        220.81103515625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-049-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V2-050",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 33990,
+      "bbox": [
+        1027.6942138671875,
+        1083.37744140625,
+        537.3203125,
+        235.981689453125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-050-frame.jpg",
+      "prior_model_candidate": "Subaru Forester SG candidate",
+      "prior_note": "Visible body kit/wheels; exact envelope unresolved."
+    },
+    {
+      "id": "V2-052",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 35404,
+      "bbox": [
+        1030.0262451171875,
+        1074.280517578125,
+        529.2269287109375,
+        252.725830078125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-052-frame.jpg",
+      "prior_model_candidate": "Renault Captur / Kaptur candidate",
+      "prior_note": "Different markets have different dimensions; badge/version unresolved."
+    },
+    {
+      "id": "V2-053",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 35618,
+      "bbox": [
+        1042.5447998046875,
+        1053.0491943359375,
+        504.43896484375,
+        277.96484375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-053-frame.jpg",
+      "prior_model_candidate": "Mitsubishi Pajero iO / Pinin",
+      "prior_note": "Rear spare and exact version unresolved."
+    },
+    {
+      "id": "V2-054",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 34463,
+      "bbox": [
+        1727.101806640625,
+        1066.445556640625,
+        584.50439453125,
+        256.943115234375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-054-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same orange SUV stopped nearby with open door; not an independent catalogue comparison."
+    },
+    {
+      "id": "V2-055",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 35887,
+      "bbox": [
+        1029.642578125,
+        1093.4482421875,
+        534.611083984375,
+        228.424072265625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-055-frame.jpg",
+      "prior_model_candidate": "Toyota wagon; generation unresolved",
+      "prior_note": "Side-window and rear-lamp shapes do not securely support the earlier E160 assignment; no numeric comparison."
+    },
+    {
+      "id": "V2-057",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 37202,
+      "bbox": [
+        990.8359375,
+        1042.2152099609375,
+        604.0303955078125,
+        289.234375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-057-frame.jpg",
+      "prior_model_candidate": "Mitsubishi Pajero second generation",
+      "prior_note": "Rear spare, ladder and other accessories alter full envelope."
+    },
+    {
+      "id": "V2-058",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 38517,
+      "bbox": [
+        100.00540161132812,
+        991.5225219726562,
+        423.3137512207031,
+        275.09771728515625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-058-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-059",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 39254,
+      "bbox": [
+        2394.193115234375,
+        1081.8095703125,
+        194.0341796875,
+        230.327392578125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-059-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-060",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 39351,
+      "bbox": [
+        978.8985595703125,
+        1053.1195068359375,
+        618.44677734375,
+        279.7557373046875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-060-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser 200 towing trailer",
+      "prior_note": "Car-only detector box; whole combination requires bumper-to-trailer endpoint span."
+    },
+    {
+      "id": "V2-061",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 39574,
+      "bbox": [
+        960.0996704101562,
+        956.1504516601562,
+        667.3267211914062,
+        370.66802978515625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-061-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Body variant and roof/accessory envelope unresolved; catalogue context only."
+    },
+    {
+      "id": "V2-067",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 42150,
+      "bbox": [
+        1008.6439819335938,
+        1113.03759765625,
+        569.6559448242188,
+        220.3055419921875
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-067-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V2-074",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 43898,
+      "bbox": [
+        1003.3274536132812,
+        1057.66748046875,
+        585.3468627929688,
+        273.6192626953125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-074-frame.jpg",
+      "prior_model_candidate": "Toyota Ipsum ACM2x with roof cargo",
+      "prior_note": "Long roof load may alter envelope; stock body context only."
+    },
+    {
+      "id": "V2-075",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 43685,
+      "bbox": [
+        90.7491455078125,
+        1156.0223388671875,
+        626.406005859375,
+        231.663330078125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-075-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-076",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 44079,
+      "bbox": [
+        992.826171875,
+        1116.896240234375,
+        595.4951171875,
+        217.5712890625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-076-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model/variant unresolved",
+      "prior_note": "No dependable catalogue assignment from this view."
+    },
+    {
+      "id": "V2-078",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 44422,
+      "bbox": [
+        992.5780029296875,
+        1108.7978515625,
+        599.392822265625,
+        226.427001953125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-078-frame.jpg",
+      "prior_model_candidate": "Older sedan with damaged body",
+      "prior_note": "Damaged bumper, large spoiler and roof carrier; actual envelope unknown."
+    },
+    {
+      "id": "V2-079",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 44435,
+      "bbox": [
+        833.8550415039062,
+        1123.7587890625,
+        601.5281372070312,
+        206.906005859375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-079-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V2-080",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 44990,
+      "bbox": [
+        1366.6917724609375,
+        1058.4046630859375,
+        630.2259521484375,
+        279.90478515625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-080-frame.jpg",
+      "prior_model_candidate": "Toyota Voxy R80",
+      "prior_note": "Passage continues into the next recording. Not counted as an independent comparison."
+    },
+    {
+      "id": "V3-001",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 54,
+      "bbox": [
+        396.27618408203125,
+        1124.3319091796875,
+        615.2386474609375,
+        268.03662109375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-001-frame.jpg",
+      "prior_model_candidate": "Older sedan",
+      "prior_note": "Body damaged/modified and model unresolved."
+    },
+    {
+      "id": "V3-004",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 8395,
+      "bbox": [
+        965.4354858398438,
+        996.5082397460938,
+        657.3162231445312,
+        319.19927978515625
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-004-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Several wheelbase/body variants; roof carrier or aftermarket bumper may change envelope."
+    },
+    {
+      "id": "V3-005",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 10482,
+      "bbox": [
+        1007.3116455078125,
+        1118.532958984375,
+        583.1668701171875,
+        214.1207275390625
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-005-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V3-011",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 15161,
+      "bbox": [
+        1249.484619140625,
+        1049.4749755859375,
+        632.3497314453125,
+        285.7593994140625
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-011-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-012",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 15179,
+      "bbox": [
+        978.8646240234375,
+        1059.171875,
+        619.619140625,
+        274.932861328125
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-012-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Rear spare, towbar or bumper accessories prevent exact stock-envelope comparison."
+    },
+    {
+      "id": "V3-014",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 17237,
+      "bbox": [
+        1370.1234130859375,
+        1105.4783935546875,
+        519.9556884765625,
+        228.6663818359375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-014-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-016",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 17265,
+      "bbox": [
+        955.6475830078125,
+        1117.270751953125,
+        495.86328125,
+        213.991943359375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-016-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-018",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 23430,
+      "bbox": [
+        2397.78857421875,
+        1093.9105224609375,
+        190.458251953125,
+        214.455810546875
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-018-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-019",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 23539,
+      "bbox": [
+        996.6372680664062,
+        1074.634033203125,
+        585.3051147460938,
+        253.624755859375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-019-frame.jpg",
+      "prior_model_candidate": "Lexus RX AL10 candidate",
+      "prior_note": "Exact market/trim and external accessories unresolved."
+    },
+    {
+      "id": "V3-020",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 23834,
+      "bbox": [
+        1035.304443359375,
+        1073.41943359375,
+        524.43701171875,
+        227.3282470703125
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-020-frame.jpg",
+      "prior_model_candidate": "Nissan AD / Wingroad Y11 candidate",
+      "prior_note": "Visible towbar; full occupied envelope differs from stock body."
+    },
+    {
+      "id": "V3-023",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 25534,
+      "bbox": [
+        1019.1781616210938,
+        1114.9302978515625,
+        560.4248657226562,
+        218.75732421875
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-023-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model unresolved",
+      "prior_note": "Axio/Allion/Premio and generation require clearer identification."
+    },
+    {
+      "id": "V3-024",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 25725,
+      "bbox": [
+        985.9918823242188,
+        1056.7020263671875,
+        608.9786987304688,
+        274.21728515625
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-024-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Rear spare, towbar or bumper accessories prevent exact stock-envelope comparison."
+    },
+    {
+      "id": "V3-025",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 26385,
+      "bbox": [
+        1003.87646484375,
+        1111.68994140625,
+        583.9405517578125,
+        222.8018798828125
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-025-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V3-027",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 29401,
+      "bbox": [
+        1012.9484252929688,
+        1108.76513671875,
+        560.8362426757812,
+        218.0352783203125
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-027-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V3-028",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 29760,
+      "bbox": [
+        977.1161499023438,
+        1017.1310424804688,
+        643.3734741210938,
+        316.75628662109375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-028-frame.jpg",
+      "prior_model_candidate": "Nissan Safari / Patrol Y61 modified",
+      "prior_note": "Bullbar, snorkel and roof carrier prevent stock-length validation."
+    },
+    {
+      "id": "V3-031",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 33376,
+      "bbox": [
+        996.9822387695312,
+        1048.03271484375,
+        604.3480834960938,
+        282.0340576171875
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-031-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J150, 2017 facelift",
+      "prior_note": "Visible front bumper/body-kit configuration is not established as stock; stock dimensions are context only."
+    },
+    {
+      "id": "V3-032",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 36436,
+      "bbox": [
+        1296.120849609375,
+        1068.5513916015625,
+        594.78125,
+        264.457763671875
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-032-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-033",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 36454,
+      "bbox": [
+        1007.2926635742188,
+        1058.54150390625,
+        557.0145874023438,
+        266.644287109375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-033-frame.jpg",
+      "prior_model_candidate": "Toyota Wish ZGE20 with roof cargo",
+      "prior_note": "Rear bumper appears damaged; stock body context only."
+    },
+    {
+      "id": "V3-034",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 36465,
+      "bbox": [
+        1874.8505859375,
+        1049.8314208984375,
+        691.993896484375,
+        276.433349609375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-034-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-036",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 36562,
+      "bbox": [
+        511.54229736328125,
+        1028.6490478515625,
+        518.7195434570312,
+        259.6978759765625
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-036-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-037",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 36586,
+      "bbox": [
+        326.2402648925781,
+        996.6565551757812,
+        429.9120788574219,
+        233.95452880859375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-037-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-041",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 37816,
+      "bbox": [
+        462.5538330078125,
+        1111.6654052734375,
+        542.8282470703125,
+        212.74169921875
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-041-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V3-042",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 38937,
+      "bbox": [
+        998.5337524414062,
+        1061.9671630859375,
+        597.7045288085938,
+        271.7894287109375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-042-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Stock version versus rear accessories unresolved."
+    },
+    {
+      "id": "V3-043",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 39697,
+      "bbox": [
+        945.4385986328125,
+        973.20654296875,
+        703.5347900390625,
+        362.5859375
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-043-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Body variant and roof/accessory envelope unresolved; catalogue context only."
+    },
+    {
+      "id": "V3-044",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 39846,
+      "bbox": [
+        1011.0734252929688,
+        1101.3446044921875,
+        563.8381958007812,
+        231.0811767578125
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-044-frame.jpg",
+      "prior_model_candidate": "Toyota Wish ZGE20 with roof cargo",
+      "prior_note": "Rear bumper appears damaged and roof load present; unscored."
+    },
+    {
+      "id": "V3-046",
+      "video": "/home/user/Downloads/ST_2026-09-04_19-00-04.mp4",
+      "frame": 41583,
+      "bbox": [
+        998.1851806640625,
+        1089.3021240234375,
+        587.6131591796875,
+        242.5748291015625
+      ],
+      "image": "ST_2026-09-04_19-00-04/V3-046-frame.jpg",
+      "prior_model_candidate": "Toyota Ipsum ACM2x",
+      "prior_note": "Aero bumper and grade uncertain; unscored."
+    },
+    {
+      "id": "V4-004",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 7378,
+      "bbox": [
+        2431.7841796875,
+        1129.2447509765625,
+        153.278076171875,
+        189.8951416015625
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-004-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V4-006",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 7505,
+      "bbox": [
+        2314.616455078125,
+        1110.9102783203125,
+        267.78466796875,
+        222.3631591796875
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-006-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V4-007",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 7577,
+      "bbox": [
+        1004.7664184570312,
+        1102.72412109375,
+        588.9668579101562,
+        228.20849609375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-007-frame.jpg",
+      "prior_model_candidate": "Toyota Wish; generation / bumper variant unresolved",
+      "prior_note": "Body generation and bumper configuration remain uncertain after second visual review. Catalogue variants are context only."
+    },
+    {
+      "id": "V4-009",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 8331,
+      "bbox": [
+        948.4822387695312,
+        972.2252807617188,
+        704.5538940429688,
+        365.83392333984375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-009-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Several wheelbase/body variants; roof carrier or aftermarket bumper may change envelope."
+    },
+    {
+      "id": "V4-014",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 19455,
+      "bbox": [
+        2371.19091796875,
+        1106.493408203125,
+        213.69970703125,
+        191.28466796875
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-014-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V4-015",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 19551,
+      "bbox": [
+        1016.020263671875,
+        1078.725341796875,
+        545.18896484375,
+        250.0970458984375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-015-frame.jpg",
+      "prior_model_candidate": "Chery Tiggo 7 Pro candidate",
+      "prior_note": "Exact market/version unresolved; roof load present."
+    },
+    {
+      "id": "V4-017",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 22942,
+      "bbox": [
+        1085.4256591796875,
+        1075.5673828125,
+        428.982666015625,
+        222.73193359375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-017-frame.jpg",
+      "prior_model_candidate": "Small hatchback; Passo / March identity unresolved",
+      "prior_note": "Front and tail-lamp shapes do not securely identify the model. Excluded regardless of apparent agreement with a stock length."
+    },
+    {
+      "id": "V4-019",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 24531,
+      "bbox": [
+        1016.803955078125,
+        1034.625244140625,
+        567.63330078125,
+        282.714599609375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-019-frame.jpg",
+      "prior_model_candidate": "UAZ Patriot",
+      "prior_note": "Aftermarket tyres/suspension and rear spare; actual full length unknown."
+    },
+    {
+      "id": "V4-020",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 24894,
+      "bbox": [
+        1028.4930419921875,
+        1063.1982421875,
+        546.0877685546875,
+        247.8499755859375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-020-frame.jpg",
+      "prior_model_candidate": "Toyota Isis candidate",
+      "prior_note": "Exact bumper grade unresolved."
+    },
+    {
+      "id": "V4-022",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 26865,
+      "bbox": [
+        1926.0950927734375,
+        1088.36083984375,
+        651.5047607421875,
+        239.5264892578125
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-022-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V4-025",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 29934,
+      "bbox": [
+        1020.5126953125,
+        1065.668701171875,
+        550.5938720703125,
+        240.8929443359375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-025-frame.jpg",
+      "prior_model_candidate": "Toyota Harrier XU60 candidate",
+      "prior_note": "Exact generation/facelift and grade unresolved."
+    },
+    {
+      "id": "V4-028",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 34223,
+      "bbox": [
+        1051.5115966796875,
+        1102.07275390625,
+        486.6578369140625,
+        228.608154296875
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-028-frame.jpg",
+      "prior_model_candidate": "Honda Fit GD modified",
+      "prior_note": "Aero bumpers/body kit; stock length cannot validate actual envelope."
+    },
+    {
+      "id": "V4-029",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 35957,
+      "bbox": [
+        972.9337768554688,
+        1073.2049560546875,
+        637.5303344726562,
+        261.77880859375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-029-frame.jpg",
+      "prior_model_candidate": "Nissan Serena C26 candidate",
+      "prior_note": "Exact aero bumper variant unresolved; roof box where present."
+    },
+    {
+      "id": "V4-030",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 37318,
+      "bbox": [
+        1018.828857421875,
+        1100.7103271484375,
+        543.4166259765625,
+        224.724609375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-030-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V4-031",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 37897,
+      "bbox": [
+        979.1841430664062,
+        1054.70556640625,
+        623.4636840820312,
+        276.080078125
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-031-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J150, 2017 facelift",
+      "prior_note": "Visible rear towbar; stock bumper length excludes this projection."
+    },
+    {
+      "id": "V4-036",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 43359,
+      "bbox": [
+        1038.2095947265625,
+        1098.9051513671875,
+        530.316162109375,
+        226.6634521484375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-036-frame.jpg",
+      "prior_model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "prior_note": "Visible body and bumper damage; actual vehicle envelope cannot be validated with stock dimensions."
+    },
+    {
+      "id": "V5-002",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 379,
+      "bbox": [
+        951.2178955078125,
+        979.782470703125,
+        687.529052734375,
+        357.2711181640625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-002-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Several wheelbase/body variants; roof carrier or aftermarket bumper may change envelope."
+    },
+    {
+      "id": "V5-006",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 5705,
+      "bbox": [
+        2376.601806640625,
+        1103.2225341796875,
+        210.26318359375,
+        207.6748046875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-006-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-008",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 10073,
+      "bbox": [
+        1017.206787109375,
+        1108.4097900390625,
+        559.263916015625,
+        224.234130859375
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-008-frame.jpg",
+      "prior_model_candidate": "Toyota Ractis XP100 candidate",
+      "prior_note": "Full-frame review rejected the earlier Corolla Spacio label. Confirm generation before using any stock length as a reference."
+    },
+    {
+      "id": "V5-009",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 12886,
+      "bbox": [
+        2015.3973388671875,
+        1089.5562744140625,
+        564.0281982421875,
+        238.0501708984375
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-009-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-010",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 12908,
+      "bbox": [
+        1551.059814453125,
+        1080.3975830078125,
+        586.9443359375,
+        239.6539306640625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-010-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-012",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 12943,
+      "bbox": [
+        824.9662475585938,
+        1072.2218017578125,
+        500.64837646484375,
+        224.5552978515625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-012-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-013",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 12968,
+      "bbox": [
+        363.0139465332031,
+        1051.75341796875,
+        473.1517639160156,
+        214.785888671875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-013-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-015",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 13058,
+      "bbox": [
+        1040.6380615234375,
+        1072.403564453125,
+        516.63134765625,
+        226.0322265625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-015-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V5-016",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 13064,
+      "bbox": [
+        962.8496704101562,
+        1075.0965576171875,
+        507.73309326171875,
+        221.2396240234375
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-016-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-022",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 24663,
+      "bbox": [
+        976.5907592773438,
+        1035.438720703125,
+        625.0364379882812,
+        296.8443603515625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-022-frame.jpg",
+      "prior_model_candidate": "Toyota HiAce H200",
+      "prior_note": "Body variant and roof/accessory envelope unresolved; catalogue context only."
+    },
+    {
+      "id": "V5-023",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 25335,
+      "bbox": [
+        1060.617431640625,
+        1068.3511962890625,
+        495.552001953125,
+        259.186767578125
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-023-frame.jpg",
+      "prior_model_candidate": "Mitsubishi Pajero iO / Pinin",
+      "prior_note": "Rear spare and exact version unresolved."
+    },
+    {
+      "id": "V5-024",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 26667,
+      "bbox": [
+        1002.4729614257812,
+        1095.6812744140625,
+        589.0208129882812,
+        235.8377685546875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-024-frame.jpg",
+      "prior_model_candidate": "Toyota Ipsum ACM2x",
+      "prior_note": "Body kit/aero grade unresolved; catalogue context only."
+    },
+    {
+      "id": "V5-028",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 29958,
+      "bbox": [
+        1023.2080078125,
+        1090.7860107421875,
+        550.2000732421875,
+        228.3905029296875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-028-frame.jpg",
+      "prior_model_candidate": "Toyota Wish ZGE20 with roof cargo",
+      "prior_note": "Long roof cargo may exceed body endpoints; unscored."
+    },
+    {
+      "id": "V5-030",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 32513,
+      "bbox": [
+        969.7605590820312,
+        1060.9556884765625,
+        643.0712280273438,
+        271.59765625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-030-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser 200 towing trailer",
+      "prior_note": "Detector measures car and trailer separately, not the whole occupied combination."
+    },
+    {
+      "id": "V5-035",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 34913,
+      "bbox": [
+        1760.742431640625,
+        1100.9671630859375,
+        696.305419921875,
+        234.3544921875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-035-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-036",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 34936,
+      "bbox": [
+        1338.04052734375,
+        1102.8450927734375,
+        632.3131103515625,
+        230.8450927734375
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-036-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-038",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 35796,
+      "bbox": [
+        1002.9946899414062,
+        1024.6536865234375,
+        571.0099487304688,
+        308.8681640625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-038-frame.jpg",
+      "prior_model_candidate": "Toyota Noah R70",
+      "prior_note": "Roof load and exact bumper version unresolved."
+    },
+    {
+      "id": "V5-039",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 36443,
+      "bbox": [
+        1015.4320678710938,
+        1100.2711181640625,
+        539.9039916992188,
+        233.8018798828125
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-039-frame.jpg",
+      "prior_model_candidate": "Toyota Probox/Succeed later body",
+      "prior_note": "New bumper generation; early-body dimensions do not apply."
+    },
+    {
+      "id": "V5-040",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 36675,
+      "bbox": [
+        177.21426391601562,
+        956.762939453125,
+        423.4040832519531,
+        273.5994873046875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-040-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-045",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 43071,
+      "bbox": [
+        1018.8433227539062,
+        1108.634765625,
+        559.0902709960938,
+        222.5301513671875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-045-frame.jpg",
+      "prior_model_candidate": "Toyota Corolla Axio E160 candidate",
+      "prior_note": "Body damaged/modified; exact full envelope unresolved."
+    },
+    {
+      "id": "V5-046",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 43136,
+      "bbox": [
+        1476.0,
+        1064.3253173828125,
+        677.46435546875,
+        273.5159912109375
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-046-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-047",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 43190,
+      "bbox": [
+        441.860595703125,
+        1081.158935546875,
+        599.0098876953125,
+        245.37890625
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-047-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V5-049",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-00-04.mp4",
+      "frame": 44440,
+      "bbox": [
+        2074.77978515625,
+        1026.0985107421875,
+        513.6728515625,
+        300.3466796875
+      ],
+      "image": "ST_2026-09-07_16-00-04/V5-049-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-007",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 11103,
+      "bbox": [
+        2377.40771484375,
+        1098.6611328125,
+        210.610107421875,
+        227.8868408203125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-007-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-009",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 12699,
+      "bbox": [
+        1001.0181274414062,
+        1103.293701171875,
+        577.0939331054688,
+        226.22900390625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-009-frame.jpg",
+      "prior_model_candidate": "Toyota Wish ZNE10 with long roof load",
+      "prior_note": "Cargo may extend beyond stock bumper envelope; not scored."
+    },
+    {
+      "id": "V6-010",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 15373,
+      "bbox": [
+        965.3886108398438,
+        1077.28076171875,
+        669.0209350585938,
+        255.42578125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-010-frame.jpg",
+      "prior_model_candidate": "Mitsubishi L200 fourth generation",
+      "prior_note": "Front accessory and load mean stock body length is not physical truth."
+    },
+    {
+      "id": "V6-012",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 16243,
+      "bbox": [
+        945.7633666992188,
+        1085.6573486328125,
+        511.31622314453125,
+        226.8914794921875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-012-frame.jpg",
+      "prior_model_candidate": "Toyota Corolla Fielder E120",
+      "prior_note": "Rear bumper is visibly altered/damaged; stock comparison excluded."
+    },
+    {
+      "id": "V6-015",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 17689,
+      "bbox": [
+        868.17431640625,
+        1099.033447265625,
+        566.387939453125,
+        230.999267578125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-015-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-016",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 17716,
+      "bbox": [
+        486.14923095703125,
+        989.6507568359375,
+        476.6754150390625,
+        305.2039794921875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-016-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-028",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 23563,
+      "bbox": [
+        1022.1785888671875,
+        1034.1700439453125,
+        542.2738037109375,
+        277.4454345703125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-028-frame.jpg",
+      "prior_model_candidate": "Toyota TownAce / LiteAce Noah",
+      "prior_note": "Body kit and exact model variant unresolved."
+    },
+    {
+      "id": "V6-029",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 23773,
+      "bbox": [
+        999.927001953125,
+        1058.9229736328125,
+        583.553466796875,
+        273.9400634765625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-029-frame.jpg",
+      "prior_model_candidate": "Toyota Noah R70",
+      "prior_note": "Exact grade/bumper unresolved."
+    },
+    {
+      "id": "V6-031",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 25816,
+      "bbox": [
+        982.3881225585938,
+        1059.4130859375,
+        618.5145874023438,
+        273.9417724609375
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-031-frame.jpg",
+      "prior_model_candidate": "Toyota Prado J150 towing trailer",
+      "prior_note": "Stock tow-vehicle length does not include trailer/gap; unscored."
+    },
+    {
+      "id": "V6-032",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 25854,
+      "bbox": [
+        2418.345458984375,
+        1074.662841796875,
+        170.5517578125,
+        197.897705078125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-032-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-034",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 26042,
+      "bbox": [
+        1016.9210205078125,
+        1092.7322998046875,
+        559.146728515625,
+        216.2535400390625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-034-frame.jpg",
+      "prior_model_candidate": "Toyota Ipsum ACM2x modified",
+      "prior_note": "Damaged/custom bumpers, towbar and roof load; unscored."
+    },
+    {
+      "id": "V6-035",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 27172,
+      "bbox": [
+        1027.1346435546875,
+        1086.193359375,
+        539.2861328125,
+        219.7747802734375
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-035-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V6-036",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 27726,
+      "bbox": [
+        1007.944091796875,
+        1028.6617431640625,
+        568.2720947265625,
+        255.732177734375
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-036-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Rear spare/accessories and grade unresolved."
+    },
+    {
+      "id": "V6-037",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 27854,
+      "bbox": [
+        1028.682373046875,
+        1071.8681640625,
+        531.28759765625,
+        212.544921875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-037-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V6-038",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 28365,
+      "bbox": [
+        588.90966796875,
+        974.7923583984375,
+        404.4395751953125,
+        157.2325439453125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-038-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Repeated off-road/parked view of same sedan, partly occluded by pole."
+    },
+    {
+      "id": "V6-039",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 31282,
+      "bbox": [
+        1049.011962890625,
+        1093.8519287109375,
+        475.5958251953125,
+        231.2486572265625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-039-frame.jpg",
+      "prior_model_candidate": "Compact hatchback; Toyota ist candidate",
+      "prior_note": "Full-frame review rejected the earlier Fielder label. Exact model and generation remain unresolved; excluded from catalogue scoring."
+    },
+    {
+      "id": "V6-040",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 32797,
+      "bbox": [
+        1005.4711303710938,
+        1141.0272216796875,
+        582.9389038085938,
+        192.2276611328125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-040-frame.jpg",
+      "prior_model_candidate": "Sedan, exact model/variant unresolved",
+      "prior_note": "No catalogue number assigned without dependable model/body identification."
+    },
+    {
+      "id": "V6-042",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 34902,
+      "bbox": [
+        628.8656005859375,
+        971.4512329101562,
+        403.83154296875,
+        160.88641357421875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-042-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Repeated off-road/parked view of same sedan, partly occluded by pole."
+    },
+    {
+      "id": "V6-045",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 36858,
+      "bbox": [
+        1013.3424682617188,
+        1081.19775390625,
+        561.6699829101562,
+        249.56640625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-045-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same visually matching car reappears; conservatively excluded from independent comparison count."
+    },
+    {
+      "id": "V6-047",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 39808,
+      "bbox": [
+        2189.60009765625,
+        1088.31103515625,
+        397.0078125,
+        241.2442626953125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-047-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-048",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 39874,
+      "bbox": [
+        1041.0660400390625,
+        1072.438232421875,
+        501.448974609375,
+        251.600341796875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-048-frame.jpg",
+      "prior_model_candidate": "Chevrolet Niva / Lada Niva Travel older body",
+      "prior_note": "Exact rear spare/bumper configuration unresolved."
+    },
+    {
+      "id": "V6-049",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 41483,
+      "bbox": [
+        1976.6376953125,
+        1052.462890625,
+        611.346435546875,
+        276.6932373046875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-049-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-050",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 41504,
+      "bbox": [
+        1258.3016357421875,
+        1031.3128662109375,
+        591.7783203125,
+        287.877685546875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-050-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Spare/carrier/towbar and bumper configuration unresolved."
+    },
+    {
+      "id": "V6-051",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 41726,
+      "bbox": [
+        996.7986450195312,
+        968.56103515625,
+        593.0742797851562,
+        358.8741455078125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-051-frame.jpg",
+      "prior_model_candidate": "Toyota Land Cruiser Prado J120",
+      "prior_note": "Spare/carrier/towbar and bumper configuration unresolved."
+    },
+    {
+      "id": "V6-056",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 43821,
+      "bbox": [
+        978.1820068359375,
+        1073.7578125,
+        620.414794921875,
+        257.6627197265625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-056-frame.jpg",
+      "prior_model_candidate": "Toyota Prado J150 towing trailer",
+      "prior_note": "Car-only detection; whole occupied combination length unknown."
+    },
+    {
+      "id": "V6-058",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 44130,
+      "bbox": [
+        2406.951171875,
+        1142.4730224609375,
+        176.083251953125,
+        183.87646484375
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-058-frame.jpg",
+      "prior_model_candidate": "Track fragment",
+      "prior_note": "Same passage, fragmented scout track; excluded from comparison counts."
+    },
+    {
+      "id": "V6-059",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 44233,
+      "bbox": [
+        1058.874755859375,
+        1112.3768310546875,
+        467.8946533203125,
+        218.691162109375
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-059-frame.jpg",
+      "prior_model_candidate": "Toyota Passo / Daihatsu Boon",
+      "prior_note": "Exact generation/bumper variant unresolved."
+    },
+    {
+      "id": "V6-060",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 44973,
+      "bbox": [
+        1017.6853637695312,
+        1091.74462890625,
+        551.8468627929688,
+        220.7275390625
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-060-frame.jpg",
+      "prior_model_candidate": "Toyota sedan, exact model/variant unresolved",
+      "prior_note": "No dependable catalogue assignment from this view."
+    }
+  ]
+}

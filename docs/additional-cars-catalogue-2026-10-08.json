@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "selection_sha256": "dccc9134379cec02de583f6f0dd6ee2311b3fc96ac76d30369a462b647138098",
+  "frozen_profile_sha256": "ea43b6348de9468824541bf3ce2bb469478887bbfa48a1efaef7ea163409abf9",
+  "review_order": "Seven candidates chosen from visual/prior identity notes before their new capture estimates were inspected; catalogue ranges and scoring eligibility fixed before comparison.",
+  "dataset_role": "provisional_catalogue_context_only",
+  "accuracy_validated": false,
+  "limitations": [
+    "Vehicle identity, market and exact accessories are not independently confirmed.",
+    "Catalogue numbers describe listed stock variants, not the physical length of these individual vehicles.",
+    "These rows have not been added to model fitting or the earlier 78-case benchmark."
+  ],
+  "rows": [
+    {
+      "id": "V1-015",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "frame": 7992,
+      "bbox": [
+        1039.4630126953125,
+        1062.204345703125,
+        506.0576171875,
+        239.916748046875
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-015-frame.jpg",
+      "image_sha256": "0432174fe06abda7152b028b2fb39bf06c508fae6d03cec889409538a58a3424",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Suzuki Vitara / Escudo LY",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.175,
+        4.185
+      ],
+      "conditional_stock_body_comparison": true,
+      "review_note": "Compact upright crossover, angular rear lamps and short rear quarter match LY. Market, facelift and bumper specification remain provisional. No obvious longitudinal load extension.",
+      "sources": [
+        {
+          "title": "Suzuki digital library: fourth-generation Escudo (2015)",
+          "url": "https://www.suzuki.co.jp/suzuki_digital_library/1_auto/escudo.html",
+          "lengths_m": [
+            4.175
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Suzuki Turkey: Vitara Hybrid dimensions",
+          "url": "https://www.suzuki.com.tr/tr/otomobil/vitara-hibrit.html",
+          "lengths_m": [
+            4.185
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V1-048",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "frame": 33284,
+      "bbox": [
+        1006.2819213867188,
+        1084.5048828125,
+        565.4613647460938,
+        246.2021484375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-048-frame.jpg",
+      "image_sha256": "b536daf4c8210102d54dbd38c4492f042ceb737617d10f47c9aa154f4649eb75",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Subaru Forester SH",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.5593,
+        4.56
+      ],
+      "conditional_stock_body_comparison": true,
+      "review_note": "Upright wagon, SH triangular rear lamps, rectangular rear quarter and front profile. Roof crossbars do not visibly extend beyond body. Exact market/trim is not confirmed; US brochure is context for a stock SH, not a VIN match.",
+      "sources": [
+        {
+          "title": "Subaru 2009 Forester brochure, manufacturer document hosted by XR793; 179.5 inches = 4.5593 m",
+          "url": "https://xr793.com/wp-content/uploads/2017/03/2009-Subaru-Forester.pdf",
+          "lengths_m": [
+            4.5593
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Japanese new-car assessment report, Forester 2.0XS SH5 dimensions; hosted by Takata Foundation",
+          "url": "https://www.takatafound.or.jp/library/files/00227.pdf",
+          "lengths_m": [
+            4.56
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V2-016",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "frame": 18254,
+      "bbox": [
+        1011.3745727539062,
+        1109.084228515625,
+        550.3989868164062,
+        225.972412109375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-016-frame.jpg",
+      "image_sha256": "da4a1ce1de99e650085867054cc6d4ab40b4c1a0976e9053b2117d4dff40710b",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Honda Vezel RU",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.295,
+        4.34
+      ],
+      "conditional_stock_body_comparison": true,
+      "review_note": "RU silhouette, rear handle high in C-pillar and triangular rear quarter. Facelift/RS/Touring and market are unresolved; broad first-generation Japanese catalogue range retained.",
+      "sources": [
+        {
+          "title": "Honda archived Vezel specification (pre-facelift)",
+          "url": "https://www.honda.co.jp/auto-archive/vezel/2018/common/pdf/vezel_spec_list.pdf",
+          "lengths_m": [
+            4.295,
+            4.305
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Honda archived Vezel specification (facelift, RS/Touring)",
+          "url": "https://www.honda.co.jp/auto-archive/vezel/2021/common/pdf/vezel_spec_list.pdf",
+          "lengths_m": [
+            4.33,
+            4.34
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V2-022",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "frame": 23503,
+      "bbox": [
+        1020.1670532226562,
+        1101.053466796875,
+        555.4385375976562,
+        231.9791259765625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-022-frame.jpg",
+      "image_sha256": "69c333e842f11ddce3ec425dd25cb2e9b1062c0b81c525ea6ee83310bacf15b0",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Toyota C-HR first generation",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.36,
+        4.39
+      ],
+      "conditional_stock_body_comparison": true,
+      "review_note": "Distinctive sculpted side, high rear handle, rear spoiler and boomerang rear lamps. Year/grade unresolved, so retain both early and facelift/GR lengths.",
+      "sources": [
+        {
+          "title": "Toyota C-HR G, December 2016",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-CHR/201612/10107793/",
+          "lengths_m": [
+            4.36
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Toyota C-HR 2019 specification including GR Sport",
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/chr/2019-10/pdf/chr_main_s_201910.pdf",
+          "lengths_m": [
+            4.385,
+            4.39
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V1-044",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "frame": 32023,
+      "bbox": [
+        1005.2344360351562,
+        1091.903076171875,
+        563.5137329101562,
+        240.9488525390625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-044-frame.jpg",
+      "image_sha256": "de1d793d033d79fe77d13c04395618581ec4c57a6c3b57b7ee45aa7e22261016",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Honda CR-V RD1/RD2",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.385,
+        4.565
+      ],
+      "conditional_stock_body_comparison": false,
+      "review_note": "First-generation tall boxy body, high rear lamps and exterior spare profile. Front guard, rear spare and trim extent are not resolved. Catalogue context only; do not score physical length.",
+      "sources": [
+        {
+          "title": "Honda CR-V 96M specification; sport grille footnote",
+          "url": "https://www.honda.co.jp/auto-archive/cr-v/2001/shogen96.html",
+          "lengths_m": [
+            4.47,
+            4.565
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Honda CR-V 98M Fullmark/Performa specification",
+          "url": "https://www.honda.co.jp/auto-archive/cr-v/2001/shogen98.html",
+          "lengths_m": [
+            4.385,
+            4.48
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V2-014",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "frame": 15911,
+      "bbox": [
+        1006.0784301757812,
+        1081.6424560546875,
+        571.5549926757812,
+        247.179443359375
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-014-frame.jpg",
+      "image_sha256": "65253f8de712ad809934fa11b51aa32686c67980647014f2495a2bb55260f26b",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Toyota Gaia XM10",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.62,
+        4.62
+      ],
+      "conditional_stock_body_comparison": true,
+      "review_note": "Tall rounded MPV, separated rectangular rear-quarter glass and horizontal rear lamp match Gaia; stock body candidate. Exact trim unconfirmed; inspected base and aero catalogue examples have same overall length.",
+      "sources": [
+        {
+          "title": "Toyota Gaia ACM15G, August 2002",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-GAIA/200208/1011343/",
+          "lengths_m": [
+            4.62
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Toyota Gaia Aero Package, April 2004",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-GAIA/200404/10018514/",
+          "lengths_m": [
+            4.62
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V4-025",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "frame": 29934,
+      "bbox": [
+        1020.5126953125,
+        1065.668701171875,
+        550.5938720703125,
+        240.8929443359375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-025-frame.jpg",
+      "image_sha256": "34ad48b5c3ae93c7000ab8ea8f8be4b45558c13c580e2c7a49fa63f8bf5c3680",
+      "image_space": "corrected_full_resolution",
+      "model_candidate": "Toyota Harrier XU60",
+      "identity_status": "provisional_visual_inference",
+      "catalogue_interval_m": [
+        4.72,
+        4.77
+      ],
+      "conditional_stock_body_comparison": true,
+      "review_note": "XU60 roofline, pointed rear quarter, narrow lamps and grille; no obvious longitudinal roof load. Facelift, bumper and aero specification unresolved. Keep base/facelift/GR range.",
+      "sources": [
+        {
+          "title": "Toyota Harrier Grand, December 2013",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-HARRIER/201312/10085684/",
+          "lengths_m": [
+            4.72
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Toyota Harrier Elegance, June 2017",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-HARRIER/201706/10110217/",
+          "lengths_m": [
+            4.725
+          ],
+          "accessed": "2026-10-08"
+        },
+        {
+          "title": "Toyota Harrier Elegance GR Sport specifications",
+          "url": "https://toyota.jp/pages/contents/harrier/003_p_007/pdf/spec/harrier_grsport_spec_201709.pdf",
+          "lengths_m": [
+            4.77
+          ],
+          "accessed": "2026-10-08"
+        }
+      ],
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    }
+  ]
+}
