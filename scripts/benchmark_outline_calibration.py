@@ -19,6 +19,7 @@ from vehicle_metrology.catalogue_calibration import (
 )
 from vehicle_metrology.outline import FEATURE_NAMES, WEIGHTS_SHA256, geometry_signature, outline_features
 from web_app.workbench import Profile
+from vehicle_metrology.catalogue_labels import corrected_rows
 
 
 def digest(path):
@@ -31,10 +32,12 @@ def main():
     parser.add_argument('--manifest', type=Path, required=True)
     parser.add_argument('--masks', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
+    parser.add_argument('--catalogue-corrections', type=Path)
     args = parser.parse_args()
     data = json.loads(args.comparison.read_text())
     profile = Profile.model_validate(json.loads(args.manifest.read_text())['profile'])
     rows = [r for r in data['rows'] if r.get('comparison_eligible')]
+    rows = corrected_rows(rows, args.comparison, args.catalogue_corrections)
     if len({row['id'] for row in rows}) != len(rows):
         raise ValueError('Duplicate catalogue passage IDs')
     provenance = json.loads((args.masks/'mask-manifest.json').read_text())
@@ -58,14 +61,25 @@ def main():
     intervals = np.asarray([r['catalogue_length_range_m'] for r in rows], float)
     groups = np.asarray([catalogue_family(r['source_ids']) for r in rows])
     targets = intervals.mean(axis=1)
+    training_eligible = np.asarray([not r.get('stock_body_uncertain', False) for r in rows])
     options = dict(feature_sets={'outline_body': tuple(range(7))}, feature_names=FEATURE_NAMES)
-    predictions, folds = nested_predictions(features, targets, groups, **options)
+    predictions, folds = nested_predictions(features, targets, groups, training_eligible=training_eligible, **options)
+    stale_label_comparison = None
+    if args.catalogue_corrections:
+        original = {r['id']: r for r in data['rows']}
+        stale_targets = np.asarray([np.mean(original[r['id']]['catalogue_length_range_m']) for r in rows])
+        stale_predictions, _ = nested_predictions(features, stale_targets, groups,
+                                                  training_eligible=training_eligible, **options)
+        stale_label_comparison = dict(
+            note='Same corrected evaluation intervals, 14 family splits, image features and training eligibility; only training targets differ. Not the historical 15-family benchmark.',
+            summary=comparison_metrics(stale_predictions, intervals, groups),
+            rows=[dict(id=r['id'], predicted_m=float(p)) for r,p in zip(rows,stale_predictions)])
     baseline = np.asarray([r['length_m'] for r in rows])
     guarded = predictions.copy()
     unsupported = []
     for fold in folds:
         indices = fold.pop('heldout_indices')
-        training = groups != fold['heldout_group']
+        training = (groups != fold['heldout_group']) & training_eligible
         lo, hi = features[training].min(axis=0), features[training].max(axis=0)
         margin = .1*(hi-lo)
         for i in indices:
@@ -75,22 +89,25 @@ def main():
                 unsupported.append(rows[i]['id'])
         fold['heldout_ids'] = [rows[i]['id'] for i in indices]
         fold['training_ids'] = [r['id'] for r, yes in zip(rows, training) if yes]
-    fitted, scores = select_model(features, targets, groups, **options)
+    fitted, scores = select_model(features[training_eligible], targets[training_eligible], groups[training_eligible], **options)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     references = dict(reference_source='catalogue', physical_accuracy_validated=False,
         image_space='lens_corrected_full_frame',
         comparison_sha256=digest(args.comparison),
+        corrections_sha256=digest(args.catalogue_corrections) if args.catalogue_corrections else None,
         rows=[dict(id=r['id'], family=str(g), model_candidate=r['model_candidate'],
                    video=Path(r['video']).name, frame=r['frame'], bbox=r['bbox'],
-                   catalogue_interval_m=r['catalogue_length_range_m'], sources=r['catalogue_sources'])
-              for r, g in zip(rows, groups)])
+                   catalogue_interval_m=r['catalogue_length_range_m'], sources=r['catalogue_sources'],
+                   training_eligible=bool(eligible), stock_body_uncertain=r.get('stock_body_uncertain', False),
+                   reference_correction=r.get('reference_correction'), condition_note=r.get('condition_note'))
+              for r, g, eligible in zip(rows, groups, training_eligible)])
     reference_path = args.output_dir/'references.json'
     reference_path.write_text(json.dumps(references, indent=2, ensure_ascii=False)+'\n')
-    calibration = dict(version=1, calibration_id='st-catalogue-outline-20261008',
+    calibration = dict(version=1, calibration_id='st-catalogue-outline-20261008'+('-reviewed' if args.catalogue_corrections else ''),
         geometry_signature=geometry_signature(profile.model_dump(mode='json')), reference_source='catalogue',
         **{k: fitted[k] for k in ('mean', 'scale', 'coefficient', 'intercept')},
-        feature_bounds=np.stack([features.min(axis=0), features.max(axis=0)], axis=1).tolist(),
-        training_count=len(rows), training_family_count=len(set(groups)),
+        feature_bounds=np.stack([features[training_eligible].min(axis=0), features[training_eligible].max(axis=0)], axis=1).tolist(),
+        training_count=int(training_eligible.sum()), training_family_count=len(set(groups[training_eligible])),
         reference_manifest_sha256=digest(reference_path))
     exported = Profile.model_validate({**profile.model_dump(), 'outline_calibration': calibration})
     (args.output_dir/'calibration.json').write_text(exported.model_dump_json(indent=2)+'\n')
@@ -100,6 +117,9 @@ def main():
         failures_or_variant_dependent=int((~available).sum())+guarded_metrics['outside_10cm_even_optimistically']+guarded_metrics['variant_dependent'],
         note='Numeric error statistics describe the reported subset only. Review records count as unsuccessful measurements.')
     result = dict(accuracy_validated=False, dataset_role='development_catalogue_check',
+        stale_training_labels=stale_label_comparison,
+        training_ineligible_ids=[r['id'] for r,e in zip(rows,training_eligible) if not e],
+        corrections_sha256=digest(args.catalogue_corrections) if args.catalogue_corrections else None,
         summary=dict(existing=comparison_metrics(baseline, intervals, groups),
                      outline=comparison_metrics(predictions, intervals, groups),
                      guarded_runtime=guarded_metrics),
@@ -111,7 +131,8 @@ def main():
             'Nested family exclusion selects regularization without the excluded family labels.',
             'Single corrected capture frame; the retained temporal baseline is a separate estimate.',
             'Guarded runtime saves a review without numeric length outside training feature ranges or with ambiguous temporal identity; it does not silently restore the old estimate.',
-            'All 78 eligible passages are included; missed/unidentified/custom/loaded vehicles remain outside catalogue scoring.'
+            'All 78 eligible passages are included; missed/unidentified/custom/loaded vehicles remain outside catalogue scoring.',
+            'Visibly damaged/uncertain stock bodies do not train coefficients, but remain in catalogue comparison denominators; their catalogue agreement is not physical accuracy.'
         ],
         inputs_sha256=dict(comparison=digest(args.comparison), coordinate_manifest=digest(args.manifest),
                            masks=digest(args.masks/'mask-manifest.json'),

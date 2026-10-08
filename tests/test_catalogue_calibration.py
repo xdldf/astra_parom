@@ -32,6 +32,7 @@ def test_aliases_and_generations_cannot_leak_between_families():
     assert catalogue_family(['prado_2013']) == catalogue_family(['prado_2017'])
     assert catalogue_family(['noah_2014']) == catalogue_family(['voxy_2014', 'voxy_aero'])
     assert catalogue_family(['fielder_2012']) == catalogue_family(['fielder_2006'])
+    assert catalogue_family(['wish_ae10_early', 'wish_ae10_late']) == catalogue_family(['wish_2009'])
     with pytest.raises(ValueError, match='explicit split family'):
         catalogue_family(['unknown'])
     with pytest.raises(ValueError, match='different split families'):
@@ -71,3 +72,19 @@ def test_ambiguous_intervals_do_not_count_as_unconditional_passes():
     assert metrics['variant_dependent'] == 1
     assert metrics['outside_10cm_even_optimistically'] == 1
     assert metrics['optimistic_interval_max_m'] == pytest.approx(.3)
+
+
+def test_damaged_stock_reference_cannot_train_any_fold_but_still_gets_a_prediction():
+    rng = np.random.default_rng(852)
+    features = rng.normal(size=(18, 9))
+    groups = np.repeat(['a', 'b', 'c', 'd', 'e', 'f'], 3)
+    target = 4.5 + .2*features[:, 0]
+    eligible = np.ones(18, bool)
+    eligible[1] = False
+    before, folds = nested_predictions(features, target, groups, training_eligible=eligible)
+    target[1] = 80
+    after, after_folds = nested_predictions(features, target, groups, training_eligible=eligible)
+    np.testing.assert_array_equal(before, after)
+    assert np.isfinite(after).all() and len(after) == 18
+    assert folds == after_folds
+    assert folds[1]['model']['training_count'] == 14

@@ -144,16 +144,20 @@ def select_model(features, target, groups, *, feature_sets=None, feature_names=N
     return fit_ridge(features, target, groups, best['feature_set'], best['alpha'], **options), scores
 
 
-def nested_predictions(features, target, groups, *, feature_sets=None, feature_names=None):
+def nested_predictions(features, target, groups, *, feature_sets=None, feature_names=None, training_eligible=None):
     """No outer-fold label enters inner selection or the final fold model."""
     features, target, groups = np.asarray(features), np.asarray(target), np.asarray(groups)
+    training_eligible = np.ones(len(target), dtype=bool) if training_eligible is None else np.asarray(training_eligible, dtype=bool)
+    if training_eligible.shape != target.shape:
+        raise ValueError('Training eligibility must match every passage')
     if len(set(groups)) < 4:
         raise ValueError('Need at least four families for nested evaluation')
     predictions = np.full(len(target), np.nan)
     folds = []
     for group in sorted(set(groups)):
         test = groups == group
-        model, scores = select_model(features[~test], target[~test], groups[~test],
+        training = (~test) & training_eligible
+        model, scores = select_model(features[training], target[training], groups[training],
                                     feature_sets=feature_sets, feature_names=feature_names)
         predictions[test] = predict(model, features[test])
         folds.append(dict(heldout_group=str(group), heldout_indices=np.flatnonzero(test).tolist(),

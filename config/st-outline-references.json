@@ -3,6 +3,7 @@
   "physical_accuracy_validated": false,
   "image_space": "lens_corrected_full_frame",
   "comparison_sha256": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+  "corrections_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
   "rows": [
     {
       "id": "V1-001",
@@ -30,7 +31,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201701/10108200/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-002",
@@ -68,7 +73,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-004",
@@ -106,7 +115,11 @@
           "publisher": "Toyota",
           "note": "Grade dependent bumper length; interval is not statistical uncertainty."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-006",
@@ -135,7 +148,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-009",
@@ -173,7 +190,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-011",
@@ -202,7 +223,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-012",
@@ -239,7 +264,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-014",
@@ -268,7 +297,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-017",
@@ -297,7 +330,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-018",
@@ -326,7 +363,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-020",
@@ -355,7 +396,11 @@
           "publisher": "Toyota",
           "note": "CBA-TRJ150W; visual generation identification remains conditional."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-021",
@@ -383,7 +428,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-YARIS_CROSS/202008/10130870/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-022",
@@ -412,7 +461,11 @@
           "publisher": "Toyota",
           "note": "Other bumper/RS grades can differ; body variant must match."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-026",
@@ -450,7 +503,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-027",
@@ -479,7 +536,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-033",
@@ -518,7 +579,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-036",
@@ -555,7 +620,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-040",
@@ -593,7 +662,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-045",
@@ -650,12 +723,16 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-050",
-      "family": "spacio",
-      "model_candidate": "Toyota Corolla Spacio E120",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
       "video": "ST_2026-09-04_18-00-04.mp4",
       "frame": 34826,
       "bbox": [
@@ -665,41 +742,54 @@
         237.871337890625
       ],
       "catalogue_interval_m": [
-        4.24,
-        4.275
+        4.55,
+        4.56
       ],
       "sources": [
         {
-          "model": "Toyota Corolla Spacio E120 early",
+          "model": "Toyota Wish AE10 2003",
           "length_m": [
-            4.24,
-            4.255
+            4.55,
+            4.55
           ],
-          "url": "https://www.takatafound.or.jp/library/files/00203.pdf",
-          "publisher": "JNCAP assessment archive",
-          "note": "Early 1.5 FWD: 4240 mm; 1.8 4WD: 4255 mm per separate Toyota catalogue."
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
         },
         {
-          "model": "Toyota Corolla Spacio E120 early 4WD",
+          "model": "Toyota Wish AE10 2005 facelift",
           "length_m": [
-            4.255,
-            4.255
+            4.56,
+            4.56
           ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200107/1010073/",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
           "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
-        },
-        {
-          "model": "Toyota Corolla Spacio E120 facelift 4WD",
-          "length_m": [
-            4.275,
-            4.275
-          ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200304/10004009/",
-          "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": {
+        "previous_model_candidate": "Toyota Corolla Spacio E120",
+        "previous_source_ids": [
+          "spacio_early",
+          "spacio_early_4wd",
+          "spacio_late"
+        ],
+        "correction_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+        "review_method": "Assistant visual re-review of full corrected frames against primary manufacturer photographs; not a VIN or trim verification. Review prompted by residuals, so this is development evidence.",
+        "visual_references": [
+          {
+            "model": "Toyota Corolla Spacio E120",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004359/index.html"
+          },
+          {
+            "model": "Toyota Wish first generation",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html"
+          }
+        ]
+      },
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
     },
     {
       "id": "V1-055",
@@ -728,7 +818,11 @@
           "publisher": "Toyota",
           "note": "Other bumper/RS grades can differ; body variant must match."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V1-056",
@@ -757,7 +851,11 @@
           "publisher": "Honda",
           "note": "Freed versus Freed+ body variant interval; not statistical uncertainty."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-004",
@@ -786,7 +884,11 @@
           "publisher": "Toyota",
           "note": "Daihatsu Be-go sibling visually similar; badge not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-007",
@@ -815,7 +917,11 @@
           "publisher": "Honda",
           "note": "Honda specifies 3900 mm for the standard body and 3920 mm for the 2007 RS. Exact observed grade is unconfirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-011",
@@ -853,7 +959,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-012",
@@ -882,7 +992,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-015",
@@ -911,12 +1025,16 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-017",
-      "family": "spacio",
-      "model_candidate": "Toyota Corolla Spacio E120",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
       "video": "ST_2026-09-04_18-30-04.mp4",
       "frame": 19519,
       "bbox": [
@@ -926,46 +1044,59 @@
         240.766845703125
       ],
       "catalogue_interval_m": [
-        4.24,
-        4.275
+        4.55,
+        4.56
       ],
       "sources": [
         {
-          "model": "Toyota Corolla Spacio E120 early",
+          "model": "Toyota Wish AE10 2003",
           "length_m": [
-            4.24,
-            4.255
+            4.55,
+            4.55
           ],
-          "url": "https://www.takatafound.or.jp/library/files/00203.pdf",
-          "publisher": "JNCAP assessment archive",
-          "note": "Early 1.5 FWD: 4240 mm; 1.8 4WD: 4255 mm per separate Toyota catalogue."
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
         },
         {
-          "model": "Toyota Corolla Spacio E120 early 4WD",
+          "model": "Toyota Wish AE10 2005 facelift",
           "length_m": [
-            4.255,
-            4.255
+            4.56,
+            4.56
           ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200107/1010073/",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
           "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
-        },
-        {
-          "model": "Toyota Corolla Spacio E120 facelift 4WD",
-          "length_m": [
-            4.275,
-            4.275
-          ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200304/10004009/",
-          "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": {
+        "previous_model_candidate": "Toyota Corolla Spacio E120",
+        "previous_source_ids": [
+          "spacio_early",
+          "spacio_early_4wd",
+          "spacio_late"
+        ],
+        "correction_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+        "review_method": "Assistant visual re-review of full corrected frames against primary manufacturer photographs; not a VIN or trim verification. Review prompted by residuals, so this is development evidence.",
+        "visual_references": [
+          {
+            "model": "Toyota Corolla Spacio E120",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004359/index.html"
+          },
+          {
+            "model": "Toyota Wish first generation",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html"
+          }
+        ]
+      },
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
     },
     {
       "id": "V2-020",
-      "family": "spacio",
-      "model_candidate": "Toyota Corolla Spacio E120",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
       "video": "ST_2026-09-04_18-30-04.mp4",
       "frame": 22668,
       "bbox": [
@@ -975,41 +1106,54 @@
         241.954345703125
       ],
       "catalogue_interval_m": [
-        4.24,
-        4.275
+        4.55,
+        4.56
       ],
       "sources": [
         {
-          "model": "Toyota Corolla Spacio E120 early",
+          "model": "Toyota Wish AE10 2003",
           "length_m": [
-            4.24,
-            4.255
+            4.55,
+            4.55
           ],
-          "url": "https://www.takatafound.or.jp/library/files/00203.pdf",
-          "publisher": "JNCAP assessment archive",
-          "note": "Early 1.5 FWD: 4240 mm; 1.8 4WD: 4255 mm per separate Toyota catalogue."
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
         },
         {
-          "model": "Toyota Corolla Spacio E120 early 4WD",
+          "model": "Toyota Wish AE10 2005 facelift",
           "length_m": [
-            4.255,
-            4.255
+            4.56,
+            4.56
           ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200107/1010073/",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
           "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
-        },
-        {
-          "model": "Toyota Corolla Spacio E120 facelift 4WD",
-          "length_m": [
-            4.275,
-            4.275
-          ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200304/10004009/",
-          "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
         }
-      ]
+      ],
+      "training_eligible": false,
+      "stock_body_uncertain": true,
+      "reference_correction": {
+        "previous_model_candidate": "Toyota Corolla Spacio E120",
+        "previous_source_ids": [
+          "spacio_early",
+          "spacio_early_4wd",
+          "spacio_late"
+        ],
+        "correction_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+        "review_method": "Assistant visual re-review of full corrected frames against primary manufacturer photographs; not a VIN or trim verification. Review prompted by residuals, so this is development evidence.",
+        "visual_references": [
+          {
+            "model": "Toyota Corolla Spacio E120",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004359/index.html"
+          },
+          {
+            "model": "Toyota Wish first generation",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html"
+          }
+        ]
+      },
+      "condition_note": "Front bumper cover appears missing/damaged in the corrected frame. Stock catalogue length is not the actual filmed extremity and must not train the estimator."
     },
     {
       "id": "V2-024",
@@ -1048,12 +1192,16 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-034",
-      "family": "spacio",
-      "model_candidate": "Toyota Corolla Spacio E120",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
       "video": "ST_2026-09-04_18-30-04.mp4",
       "frame": 27814,
       "bbox": [
@@ -1063,41 +1211,54 @@
         236.0167236328125
       ],
       "catalogue_interval_m": [
-        4.24,
-        4.275
+        4.55,
+        4.56
       ],
       "sources": [
         {
-          "model": "Toyota Corolla Spacio E120 early",
+          "model": "Toyota Wish AE10 2003",
           "length_m": [
-            4.24,
-            4.255
+            4.55,
+            4.55
           ],
-          "url": "https://www.takatafound.or.jp/library/files/00203.pdf",
-          "publisher": "JNCAP assessment archive",
-          "note": "Early 1.5 FWD: 4240 mm; 1.8 4WD: 4255 mm per separate Toyota catalogue."
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
         },
         {
-          "model": "Toyota Corolla Spacio E120 early 4WD",
+          "model": "Toyota Wish AE10 2005 facelift",
           "length_m": [
-            4.255,
-            4.255
+            4.56,
+            4.56
           ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200107/1010073/",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
           "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
-        },
-        {
-          "model": "Toyota Corolla Spacio E120 facelift 4WD",
-          "length_m": [
-            4.275,
-            4.275
-          ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200304/10004009/",
-          "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": {
+        "previous_model_candidate": "Toyota Corolla Spacio E120",
+        "previous_source_ids": [
+          "spacio_early",
+          "spacio_early_4wd",
+          "spacio_late"
+        ],
+        "correction_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+        "review_method": "Assistant visual re-review of full corrected frames against primary manufacturer photographs; not a VIN or trim verification. Review prompted by residuals, so this is development evidence.",
+        "visual_references": [
+          {
+            "model": "Toyota Corolla Spacio E120",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004359/index.html"
+          },
+          {
+            "model": "Toyota Wish first generation",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html"
+          }
+        ]
+      },
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
     },
     {
       "id": "V2-037",
@@ -1136,7 +1297,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-044",
@@ -1164,7 +1329,11 @@
           "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60017618/index.html",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-045",
@@ -1193,12 +1362,16 @@
           "publisher": "Toyota",
           "note": "Other bumper/RS grades can differ; body variant must match."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-046",
-      "family": "spacio",
-      "model_candidate": "Toyota Corolla Spacio E120",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
       "video": "ST_2026-09-04_18-30-04.mp4",
       "frame": 31868,
       "bbox": [
@@ -1208,41 +1381,54 @@
         221.9857177734375
       ],
       "catalogue_interval_m": [
-        4.24,
-        4.275
+        4.55,
+        4.56
       ],
       "sources": [
         {
-          "model": "Toyota Corolla Spacio E120 early",
+          "model": "Toyota Wish AE10 2003",
           "length_m": [
-            4.24,
-            4.255
+            4.55,
+            4.55
           ],
-          "url": "https://www.takatafound.or.jp/library/files/00203.pdf",
-          "publisher": "JNCAP assessment archive",
-          "note": "Early 1.5 FWD: 4240 mm; 1.8 4WD: 4255 mm per separate Toyota catalogue."
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
         },
         {
-          "model": "Toyota Corolla Spacio E120 early 4WD",
+          "model": "Toyota Wish AE10 2005 facelift",
           "length_m": [
-            4.255,
-            4.255
+            4.56,
+            4.56
           ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200107/1010073/",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
           "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
-        },
-        {
-          "model": "Toyota Corolla Spacio E120 facelift 4WD",
-          "length_m": [
-            4.275,
-            4.275
-          ],
-          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_SPACIO/200304/10004009/",
-          "publisher": "Toyota",
-          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": {
+        "previous_model_candidate": "Toyota Corolla Spacio E120",
+        "previous_source_ids": [
+          "spacio_early",
+          "spacio_early_4wd",
+          "spacio_late"
+        ],
+        "correction_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+        "review_method": "Assistant visual re-review of full corrected frames against primary manufacturer photographs; not a VIN or trim verification. Review prompted by residuals, so this is development evidence.",
+        "visual_references": [
+          {
+            "model": "Toyota Corolla Spacio E120",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004359/index.html"
+          },
+          {
+            "model": "Toyota Wish first generation",
+            "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html"
+          }
+        ]
+      },
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
     },
     {
       "id": "V2-048",
@@ -1270,7 +1456,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-YARIS_CROSS/202008/10130870/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-051",
@@ -1327,7 +1517,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V2-068",
@@ -1366,7 +1560,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-002",
@@ -1405,7 +1603,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-010",
@@ -1444,7 +1646,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-013",
@@ -1482,7 +1688,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-015",
@@ -1511,7 +1721,11 @@
           "publisher": "Toyota",
           "note": "Other bumper/RS grades can differ; body variant must match."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-017",
@@ -1548,7 +1762,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-021",
@@ -1577,7 +1795,11 @@
           "publisher": "Toyota",
           "note": "Other bumper/RS grades can differ; body variant must match."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-022",
@@ -1614,7 +1836,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-026",
@@ -1652,7 +1878,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-030",
@@ -1681,7 +1911,11 @@
           "publisher": "Honda",
           "note": "Honda specifies 3900 mm for the standard body and 3920 mm for the 2007 RS. Exact observed grade is unconfirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-035",
@@ -1718,7 +1952,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-038",
@@ -1755,7 +1993,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V3-047",
@@ -1793,7 +2035,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-001",
@@ -1822,7 +2068,11 @@
           "publisher": "Toyota",
           "note": "Stock body; excludes nonstandard accessories. PDF specification page 4."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-002",
@@ -1851,7 +2101,11 @@
           "publisher": "Honda",
           "note": "Freed versus Freed+ body variant interval; not statistical uncertainty."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-005",
@@ -1889,7 +2143,11 @@
           "publisher": "Toyota",
           "note": "Grade dependent bumper length; interval is not statistical uncertainty."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-008",
@@ -1918,7 +2176,11 @@
           "publisher": "Toyota",
           "note": "Stock body; excludes nonstandard accessories. PDF specification page 4."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-010",
@@ -1955,7 +2217,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-013",
@@ -1994,7 +2260,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-016",
@@ -2033,7 +2303,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-018",
@@ -2072,7 +2346,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-021",
@@ -2109,7 +2387,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-023",
@@ -2138,7 +2420,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V4-024",
@@ -2177,7 +2463,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-004",
@@ -2216,7 +2506,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-005",
@@ -2253,7 +2547,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-007",
@@ -2282,7 +2580,11 @@
           "publisher": "Nissan",
           "note": "Market and grade not verified for observed vehicle; brochure page 11."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-011",
@@ -2321,7 +2623,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-033",
@@ -2360,7 +2666,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-034",
@@ -2398,7 +2708,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-037",
@@ -2436,7 +2750,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V5-048",
@@ -2475,7 +2793,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-004",
@@ -2503,7 +2825,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201701/10108200/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-006",
@@ -2540,7 +2866,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-008",
@@ -2569,7 +2899,11 @@
           "publisher": "Toyota",
           "note": "Stock body; excludes nonstandard accessories. PDF specification page 4."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-013",
@@ -2598,7 +2932,11 @@
           "publisher": "Toyota",
           "note": "Daihatsu Be-go sibling visually similar; badge not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-014",
@@ -2635,7 +2973,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-023",
@@ -2672,7 +3014,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-041",
@@ -2709,7 +3055,11 @@
           "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
           "publisher": "Toyota"
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-043",
@@ -2738,7 +3088,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     },
     {
       "id": "V6-055",
@@ -2776,7 +3130,11 @@
           "publisher": "Toyota",
           "note": "Stock dimensions; exact observed vehicle variant not confirmed."
         }
-      ]
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "reference_correction": null,
+      "condition_note": null
     }
   ]
 }

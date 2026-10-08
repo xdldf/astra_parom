@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "base_comparison_sha256": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+  "review_method": "Assistant visual re-review of full corrected frames against primary manufacturer photographs; not a VIN or trim verification. Review prompted by residuals, so this is development evidence.",
+  "visual_references": [
+    {
+      "model": "Toyota Corolla Spacio E120",
+      "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004359/index.html"
+    },
+    {
+      "model": "Toyota Wish first generation",
+      "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html"
+    }
+  ],
+  "sources": {
+    "wish_ae10_early": {
+      "model": "Toyota Wish AE10 2003",
+      "length_m": [
+        4.55,
+        4.55
+      ],
+      "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+      "publisher": "Toyota",
+      "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
+    },
+    "wish_ae10_late": {
+      "model": "Toyota Wish AE10 2005 facelift",
+      "length_m": [
+        4.56,
+        4.56
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
+      "publisher": "Toyota",
+      "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
+    }
+  },
+  "corrections": [
+    {
+      "id": "V1-050",
+      "previous_source_ids": [
+        "spacio_early",
+        "spacio_early_4wd",
+        "spacio_late"
+      ],
+      "previous_model_candidate": "Toyota Corolla Spacio E120",
+      "corrected_image_sha256": "79460a55d76abdd92003fece001238ec5f5c5dcdaa8b95a5d96ba8d2571f0dba",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "source_ids": [
+        "wish_ae10_early",
+        "wish_ae10_late"
+      ],
+      "review_note": "Re-reviewed against Toyota manufacturer photographs: elongated rear quarter glazing, nearly straight window beltline, tapered nose and rear lamps below the quarter glass match first-generation Wish, rather than the shorter Corolla Spacio E120 body. Exact trim and facelift remain unresolved.",
+      "stock_body_uncertain": false,
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
+    },
+    {
+      "id": "V2-017",
+      "previous_source_ids": [
+        "spacio_early",
+        "spacio_early_4wd",
+        "spacio_late"
+      ],
+      "previous_model_candidate": "Toyota Corolla Spacio E120",
+      "corrected_image_sha256": "fbbe0508006b86291388daf65c9b4cb5a7731568f00aadd16323a0c267f23aee",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "source_ids": [
+        "wish_ae10_early",
+        "wish_ae10_late"
+      ],
+      "review_note": "Re-reviewed against Toyota manufacturer photographs: elongated rear quarter glazing, nearly straight window beltline, tapered nose and rear lamps below the quarter glass match first-generation Wish, rather than the shorter Corolla Spacio E120 body. Exact trim and facelift remain unresolved.",
+      "stock_body_uncertain": false,
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
+    },
+    {
+      "id": "V2-020",
+      "previous_source_ids": [
+        "spacio_early",
+        "spacio_early_4wd",
+        "spacio_late"
+      ],
+      "previous_model_candidate": "Toyota Corolla Spacio E120",
+      "corrected_image_sha256": "5305cd81a30e1ffdef0e93e602686474aaa783207b257d7d0a3f7728ed70d98e",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "source_ids": [
+        "wish_ae10_early",
+        "wish_ae10_late"
+      ],
+      "review_note": "Re-reviewed against Toyota manufacturer photographs: elongated rear quarter glazing, nearly straight window beltline, tapered nose and rear lamps below the quarter glass match first-generation Wish, rather than the shorter Corolla Spacio E120 body. Exact trim and facelift remain unresolved.",
+      "stock_body_uncertain": true,
+      "condition_note": "Front bumper cover appears missing/damaged in the corrected frame. Stock catalogue length is not the actual filmed extremity and must not train the estimator."
+    },
+    {
+      "id": "V2-034",
+      "previous_source_ids": [
+        "spacio_early",
+        "spacio_early_4wd",
+        "spacio_late"
+      ],
+      "previous_model_candidate": "Toyota Corolla Spacio E120",
+      "corrected_image_sha256": "25d80b27d22c64e934e9de9a68fa96da8c3495c144a81140d32d59f29d77728c",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "source_ids": [
+        "wish_ae10_early",
+        "wish_ae10_late"
+      ],
+      "review_note": "Re-reviewed against Toyota manufacturer photographs: elongated rear quarter glazing, nearly straight window beltline, tapered nose and rear lamps below the quarter glass match first-generation Wish, rather than the shorter Corolla Spacio E120 body. Exact trim and facelift remain unresolved.",
+      "stock_body_uncertain": false,
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
+    },
+    {
+      "id": "V2-046",
+      "previous_source_ids": [
+        "spacio_early",
+        "spacio_early_4wd",
+        "spacio_late"
+      ],
+      "previous_model_candidate": "Toyota Corolla Spacio E120",
+      "corrected_image_sha256": "a87b3a196362682f95179d3cec8de9fe4b35f486d65d2a620361c1f80b12a21c",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "source_ids": [
+        "wish_ae10_early",
+        "wish_ae10_late"
+      ],
+      "review_note": "Re-reviewed against Toyota manufacturer photographs: elongated rear quarter glazing, nearly straight window beltline, tapered nose and rear lamps below the quarter glass match first-generation Wish, rather than the shorter Corolla Spacio E120 body. Exact trim and facelift remain unresolved.",
+      "stock_body_uncertain": false,
+      "condition_note": "No independent physical measurement; possible modifications remain unverified."
+    }
+  ]
+}

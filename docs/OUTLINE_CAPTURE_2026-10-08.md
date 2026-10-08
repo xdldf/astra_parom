@@ -15,7 +15,9 @@ The station now supports a vehicle-outline estimator in the actual saved-capture
 - The preview/studio box estimate remains a preliminary value. The outline estimate is calculated on capture. The outline coefficients are a frozen catalogue model; later evaluation labels are saved in JSON but do not silently retrain these coefficients.
 - The profile is bound to its exact image size, lens correction and road polygon. Changing that geometry invalidates the outline calibration. This model is accepted only in estimate mode.
 
-## Results and remaining failures
+## Initial results and remaining failures
+
+**Superseded catalogue labels:** the five Spacio candidates below were re-reviewed as first-generation Wish. The current supplied profile uses the corrected references and excludes one visibly damaged body from training. See [the reference review](REFERENCE_REVIEW_2026-10-08.md) for the revised 14-family comparison and exact runtime results. The following table preserves the initial 15-family experiment for audit history.
 
 All 78 previously eligible catalogue passages from the six videos were retained. The feature design was developed after examining errors in those videos, so these are development results, not a fresh final test. Each model family is excluded from its own coefficient fitting and inner regularization selection; no tested family's length labels enter that fold.
 
@@ -45,7 +47,7 @@ Install the optional official checkpoint; its SHA-256 is pinned and checked befo
 
 On Windows use `.venv\Scripts\python.exe` instead. Restart the app after updating the code. In the station select the intended source, load `config/st-outline-calibration.json` with the calibration JSON control, then open a recording. Alternatively import it in **Калибровка** and choose **Сохранить и применить** for the appropriate source. The station's existing CUDA requirement is unchanged. The checkpoint is installed locally, not committed as a 54 MB binary.
 
-The supplied profile matches these ST recordings only. `config/st-outline-references.json` records the 78 source frames, candidate identities, catalogue intervals, split families and manufacturer source URLs; its hash is embedded in the profile. It contains no asserted physical ground truth. The original `config/st-calibration.json` remains available as the previous estimator.
+The supplied profile matches these ST recordings only. `config/st-outline-references.json` records the 78 source frames, revised candidate identities, catalogue intervals, split families, training eligibility and manufacturer source URLs; its hash is embedded in the profile. The revised fit uses 77 passages and 14 families. It contains no asserted physical ground truth. The original `config/st-calibration.json` remains available as the previous estimator.
 
 In this workspace, the checkpoint is installed and the new profile has been saved as the local recorded-video configuration (`web_app/data/operator-calibration.json`); no previous saved operator profile existed. Reload the application to pick it up. This local setting is ignored by Git; other installations must load the supplied JSON themselves. No live IP-camera service was restarted.
 
@@ -63,7 +65,8 @@ These commands use the earlier local video audit and corrected full-frame eviden
   --comparison runs/catalogue_verify_20261008/comparison.json \
   --manifest runs/catalogue_verify_20261008/manifest.json \
   --masks runs/outline_runtime_20261008/masks \
-  --output-dir runs/outline_runtime_20261008
+  --catalogue-corrections config/st-catalogue-corrections.json \
+  --output-dir runs/outline_reviewed_20261008
 ```
 
 `results.json` contains every fold, prediction, review and failure. `calibration.json` is loadable by the station; `references.json` records catalogue provenance. Missing masks stop export rather than silently removing difficult cars. The original full-duration audit and masks remain local under ignored `runs/`; these large inputs are needed to reproduce the benchmark.
