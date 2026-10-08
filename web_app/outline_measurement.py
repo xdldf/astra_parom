@@ -12,6 +12,7 @@ from vehicle_metrology.outline import WEIGHTS_NAME, WEIGHTS_SHA256, outline_feat
 
 ROOT = Path(__file__).resolve().parents[1]
 lock = threading.Lock()
+UNAVAILABLE_WARNING = 'Контурная оценка недоступна. Длина не назначена; исходная оценка рамки и полный кадр сохранены для проверки.'
 
 
 @lru_cache(maxsize=1)
@@ -39,17 +40,33 @@ def infer_outline(image, expected_box, *, device=None):
     matches.sort(reverse=True)
     if not matches or matches[0][0] < .5 or result.masks is None:
         raise ValueError('No matching vehicle silhouette')
-    if len(matches) > 1 and matches[1][0] > .4:
-        raise ValueError('Ambiguous vehicle silhouette')
+    # Class-aware NMS can retain the same car as both car and truck. Only
+    # collapse near-identical boxes AND masks; overlapping cars remain ambiguous.
     iou, i, box = matches[0]
     mask = result.masks.data[i].cpu().numpy().astype(np.uint8)
+    competing = []
+    duplicates = 0
+    for candidate_iou, candidate_index, candidate_box in matches[1:]:
+        if candidate_iou <= .4:
+            continue
+        candidate_mask = result.masks.data[candidate_index].cpu().numpy().astype(bool)
+        same_box = box_iou(box, candidate_box) >= .9
+        intersection = np.count_nonzero((mask != 0) & candidate_mask)
+        union = np.count_nonzero((mask != 0) | candidate_mask)
+        if same_box and union and intersection/union >= .9:
+            duplicates += 1
+        else:
+            competing.append(candidate_index)
+    if competing:
+        raise ValueError('Ambiguous vehicle silhouette')
     if mask.shape != image.shape[:2]:
         raise ValueError('Silhouette resolution differs from corrected frame')
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
     contour = max(contours, key=cv2.contourArea)
     return mask, dict(bbox=box, iou=iou, confidence=float(result.boxes.conf[i]),
                       detector_class=int(result.boxes.cls[i]),
-                      contour=contour[:, 0].tolist(), image_space='lens_corrected_full_frame')
+                      contour=contour[:, 0].tolist(), image_space='lens_corrected_full_frame',
+                      duplicate_proposals_ignored=duplicates)
 
 
 def apply_outline(profile, measured, image, *, label):
@@ -85,6 +102,7 @@ def apply_outline(profile, measured, image, *, label):
         # This is a coarse applicability guard, not an accuracy interval.
         margin = .1*(upper-lower)
         if np.any(features < lower-margin) or np.any(features > upper+margin):
+            evidence['failure_code'] = 'outside_feature_range'
             raise ValueError('Silhouette is outside the catalogue training feature range')
         evidence.update(status='estimated', length_m=candidate)
         result.update(length_m=candidate, status='outline_estimate', approximate=True,
@@ -97,5 +115,5 @@ def apply_outline(profile, measured, image, *, label):
         evidence['reason'] = str(exc)
         result['quality_reasons'].append('outline_unavailable')
         result.update(length_m=None, approximate=False, status='capture_review', cm_per_px=None, coefficient=None)
-        result['warnings'].append('Контурная оценка недоступна. Длина не назначена; исходная оценка рамки и полный кадр сохранены для проверки.')
+        result['warnings'].append(UNAVAILABLE_WARNING)
     return result

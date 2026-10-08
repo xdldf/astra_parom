@@ -136,6 +136,10 @@ class WheelCalibration(OutlineCalibration):
     feature_bounds: tuple[tuple[float, float], ...] = Field(min_length=9, max_length=9)
 
 
+class WheelRecoveryCalibration(WheelCalibration):
+    training_frame_count: int = Field(ge=10)
+
+
 class Profile(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     version: Literal[1] = 1
@@ -148,6 +152,7 @@ class Profile(BaseModel):
     survey_calibration: SurveyCalibration | None = None
     outline_calibration: OutlineCalibration | None = None
     wheel_calibration: WheelCalibration | None = None
+    wheel_recovery_calibration: WheelRecoveryCalibration | None = None
     measurement_line_x: float | None = Field(None, ge=0)
     line_tolerance_px: float = Field(10, ge=1, le=100)
     accuracy_tolerance_m: float = Field(.1, gt=0, le=1)
@@ -206,6 +211,10 @@ class Profile(BaseModel):
             from vehicle_metrology.outline import geometry_signature
             if not self.outline_calibration or self.wheel_calibration.geometry_signature != geometry_signature(self.model_dump(mode='json')):
                 raise ValueError('Wheel calibration requires its matching geometry and outline fallback calibration')
+        if self.wheel_recovery_calibration:
+            from vehicle_metrology.outline import geometry_signature
+            if not self.wheel_calibration or self.wheel_recovery_calibration.geometry_signature != geometry_signature(self.model_dump(mode='json')):
+                raise ValueError('Wheel recovery requires its matching geometry and primary wheel calibration')
         profile_scale(self)
         return self
 

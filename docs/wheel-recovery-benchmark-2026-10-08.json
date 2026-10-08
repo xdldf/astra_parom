@@ -1,0 +1,1092 @@
+{
+  "accuracy_validated": false,
+  "dataset_role": "development_catalogue_check",
+  "summary": {
+    "primary": {
+      "count": 70,
+      "family_count": 14,
+      "midpoint_mae_m": 0.0358733338015827,
+      "family_balanced_midpoint_mae_m": 0.03746068486486426,
+      "optimistic_interval_mae_m": 0.028100033507143272,
+      "optimistic_interval_max_m": 0.14958160450476932,
+      "outside_10cm_even_optimistically": 3,
+      "within_10cm_for_entire_interval": 65,
+      "variant_dependent": 2,
+      "total_passages": 78,
+      "review_without_length": 8,
+      "unsuccessful_or_variant_dependent": 13
+    },
+    "recovery": {
+      "count": 77,
+      "family_count": 14,
+      "midpoint_mae_m": 0.03675738273618351,
+      "family_balanced_midpoint_mae_m": 0.038580043802762636,
+      "optimistic_interval_mae_m": 0.029024711672524104,
+      "optimistic_interval_max_m": 0.14958160450476932,
+      "outside_10cm_even_optimistically": 3,
+      "within_10cm_for_entire_interval": 71,
+      "variant_dependent": 3,
+      "total_passages": 78,
+      "review_without_length": 1,
+      "unsuccessful_or_variant_dependent": 7
+    }
+  },
+  "recovered_ids": [
+    "V1-002",
+    "V1-009",
+    "V1-017",
+    "V1-045",
+    "V1-055",
+    "V2-046",
+    "V6-014"
+  ],
+  "failed_passages": [],
+  "frames_without_wheel_pair": [
+    {
+      "id": "V6-004",
+      "frame": 8526
+    }
+  ],
+  "training_count": 77,
+  "training_frame_count": 198,
+  "limitations": [
+    "Catalogue identities/variants remain provisional; this does not prove physical accuracy.",
+    "Recovery policy and image features were developed on these videos after examining their errors.",
+    "Every catalogue passage remains in the denominator, including missing wheels, reviews and damaged bodies.",
+    "Family exclusion prevents tested family labels entering coefficient fitting or regularization selection.",
+    "Missing wheel anchors do not enter inner selection scores; they retain runtime primary/review fallback.",
+    "This is anchor inference using a model trained on broader views, not a new temporal runtime estimator.",
+    "No claim of complete detector recall or accuracy on the 258 unscored audit candidates."
+  ],
+  "inputs_sha256": {
+    "comparison": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+    "manifest": "f109b11c2b8e4010485763c47ab7c373c75de9bbc9417b283c04a3df73ed9f3d",
+    "extraction": "45265c9009205544bb90dcddfc090f29bd4bd07a1e71eb188283372b019f645a",
+    "masks": "4ccbfc67e74d205e4b7993dee3cbfdb35140df620523177c270ecf8f54b9ee3e",
+    "detections": "1990e72664880cec2e28e5670afae2c73d0aea490ae777f82fbc47fc8b7794f5",
+    "primary_results": "7b5790dcfa41d6ab67d10d402bb07a719c3e85e32e101f1140d06410c1869a44",
+    "primary_profile": "0c7816c08409487dbf94247c863fce5c4c40b02cf79b0ae30ffd15fec3270e39",
+    "corrections": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+    "script": "4cdeaa4c411d3b4602b80bf6f1d8a108d030a1c04bc5819db2e00043ab696134",
+    "fit": "0985e4ea5b67fd9f4d08f816a9ed3a3b05bd0adbc3168da31a07522d70fe1859",
+    "outline_runtime": "c2f995bfe4fe05e17666a344adbe0a3fcd3bbe9720e2b8f4bb7312668972a895",
+    "wheel_runtime": "3d7645c75010e7ca391960b0b0ee3bfa862ddee8dcbb8203c6048f361eb26103"
+  },
+  "rows": [
+    {
+      "id": "V1-001",
+      "catalogue_interval_m": [
+        3.945,
+        3.945
+      ],
+      "previous_runtime_m": 3.97060038029216,
+      "runtime_m": 3.97060038029216,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-002",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 4.596284651291014,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V1-004",
+      "catalogue_interval_m": [
+        4.36,
+        4.41
+      ],
+      "previous_runtime_m": 4.415531004027273,
+      "runtime_m": 4.415531004027273,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-006",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "previous_runtime_m": 4.017860554473908,
+      "runtime_m": 4.017860554473908,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-009",
+      "catalogue_interval_m": [
+        3.75,
+        3.785
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 3.836583159504122,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V1-011",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "previous_runtime_m": 4.543703373149788,
+      "runtime_m": 4.543703373149788,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-012",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.710479863384254,
+      "runtime_m": 4.710479863384254,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-014",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "previous_runtime_m": 4.49814841222273,
+      "runtime_m": 4.49814841222273,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-017",
+      "catalogue_interval_m": [
+        3.94,
+        3.94
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 3.9478489780829658,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V1-018",
+      "catalogue_interval_m": [
+        4.6,
+        4.61
+      ],
+      "previous_runtime_m": 4.595237201416833,
+      "runtime_m": 4.595237201416833,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-020",
+      "catalogue_interval_m": [
+        4.76,
+        4.76
+      ],
+      "previous_runtime_m": 4.8010816306349104,
+      "runtime_m": 4.8010816306349104,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-021",
+      "catalogue_interval_m": [
+        4.18,
+        4.18
+      ],
+      "previous_runtime_m": 4.1782513685939735,
+      "runtime_m": 4.1782513685939735,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-022",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "previous_runtime_m": 3.8777476650539584,
+      "runtime_m": 3.8777476650539584,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-026",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.562099602443156,
+      "runtime_m": 4.562099602443156,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-027",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "previous_runtime_m": 3.976007022820012,
+      "runtime_m": 3.976007022820012,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-033",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.392286708135129,
+      "runtime_m": 4.392286708135129,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-036",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "previous_runtime_m": 4.206798145808963,
+      "runtime_m": 4.206798145808963,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-040",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.554912515139493,
+      "runtime_m": 4.554912515139493,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-045",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 4.664058699193685,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V1-050",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "previous_runtime_m": 4.523519599401735,
+      "runtime_m": 4.523519599401735,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V1-055",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 3.9558509351544537,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V1-056",
+      "catalogue_interval_m": [
+        4.265,
+        4.295
+      ],
+      "previous_runtime_m": 4.29471025310236,
+      "runtime_m": 4.29471025310236,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-004",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "previous_runtime_m": 4.076486001313578,
+      "runtime_m": 4.076486001313578,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-007",
+      "catalogue_interval_m": [
+        3.9,
+        3.92
+      ],
+      "previous_runtime_m": 3.900958472939677,
+      "runtime_m": 3.900958472939677,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-011",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.610533695337261,
+      "runtime_m": 4.610533695337261,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-012",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "previous_runtime_m": 3.951947060909576,
+      "runtime_m": 3.951947060909576,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-015",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "previous_runtime_m": 4.539980262395767,
+      "runtime_m": 4.539980262395767,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-017",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "previous_runtime_m": 4.562948446891703,
+      "runtime_m": 4.562948446891703,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-020",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "previous_runtime_m": 4.471615488516129,
+      "runtime_m": 4.471615488516129,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-024",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.745553801328481,
+      "runtime_m": 4.745553801328481,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-034",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "previous_runtime_m": 4.522276910100178,
+      "runtime_m": 4.522276910100178,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-037",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.447602261311205,
+      "runtime_m": 4.447602261311205,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-044",
+      "catalogue_interval_m": [
+        4.36,
+        4.36
+      ],
+      "previous_runtime_m": 4.437795924760555,
+      "runtime_m": 4.437795924760555,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-045",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "previous_runtime_m": 3.927660546154771,
+      "runtime_m": 3.927660546154771,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-046",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 4.518737851574452,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V2-048",
+      "catalogue_interval_m": [
+        4.18,
+        4.18
+      ],
+      "previous_runtime_m": 4.14114166359317,
+      "runtime_m": 4.14114166359317,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-051",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.728381641115021,
+      "runtime_m": 4.728381641115021,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V2-068",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.376915475155745,
+      "runtime_m": 4.376915475155745,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-002",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.676645569115989,
+      "runtime_m": 4.676645569115989,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-010",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.387786785978693,
+      "runtime_m": 4.387786785978693,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-013",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.579980148866508,
+      "runtime_m": 4.579980148866508,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-015",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "previous_runtime_m": 3.8559549032428118,
+      "runtime_m": 3.8559549032428118,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-017",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "previous_runtime_m": 4.185563883087581,
+      "runtime_m": 4.185563883087581,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-021",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "previous_runtime_m": 3.9110816751836537,
+      "runtime_m": 3.9110816751836537,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-022",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "previous_runtime_m": 4.210368607861147,
+      "runtime_m": 4.210368607861147,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-026",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.583734030026425,
+      "runtime_m": 4.583734030026425,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-030",
+      "catalogue_interval_m": [
+        3.9,
+        3.92
+      ],
+      "previous_runtime_m": 3.93057191529093,
+      "runtime_m": 3.93057191529093,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-035",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.764908117233882,
+      "runtime_m": 4.764908117233882,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-038",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "previous_runtime_m": 4.298337394457952,
+      "runtime_m": 4.298337394457952,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V3-047",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.636947455732566,
+      "runtime_m": 4.636947455732566,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-001",
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "previous_runtime_m": 4.933466302435656,
+      "runtime_m": 4.933466302435656,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-002",
+      "catalogue_interval_m": [
+        4.265,
+        4.295
+      ],
+      "previous_runtime_m": 4.298509598686974,
+      "runtime_m": 4.298509598686974,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-005",
+      "catalogue_interval_m": [
+        4.36,
+        4.41
+      ],
+      "previous_runtime_m": 4.345098309250461,
+      "runtime_m": 4.345098309250461,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-008",
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "previous_runtime_m": 4.939437831939753,
+      "runtime_m": 4.939437831939753,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-010",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.7073940797134775,
+      "runtime_m": 4.7073940797134775,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-013",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.638329458757832,
+      "runtime_m": 4.638329458757832,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-016",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.768149479207162,
+      "runtime_m": 4.768149479207162,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-018",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.387726306613125,
+      "runtime_m": 4.387726306613125,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-021",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "calibration_role": "primary",
+      "reason": "Requires an accepted outline or a feature-range-only outline rejection"
+    },
+    {
+      "id": "V4-023",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "previous_runtime_m": 4.508439199140421,
+      "runtime_m": 4.508439199140421,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V4-024",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.380693848889762,
+      "runtime_m": 4.380693848889762,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-004",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.722388642290982,
+      "runtime_m": 4.722388642290982,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-005",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "previous_runtime_m": 4.652462516185874,
+      "runtime_m": 4.652462516185874,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-007",
+      "catalogue_interval_m": [
+        5.14,
+        5.14
+      ],
+      "previous_runtime_m": 5.063452437727804,
+      "runtime_m": 5.063452437727804,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-011",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.376391217883286,
+      "runtime_m": 4.376391217883286,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-033",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "previous_runtime_m": 4.389037190370911,
+      "runtime_m": 4.389037190370911,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-034",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.638991432359474,
+      "runtime_m": 4.638991432359474,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-037",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.537778857127133,
+      "runtime_m": 4.537778857127133,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V5-048",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "previous_runtime_m": 4.733503095313232,
+      "runtime_m": 4.733503095313232,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-004",
+      "catalogue_interval_m": [
+        3.945,
+        3.945
+      ],
+      "previous_runtime_m": 3.975796959459945,
+      "runtime_m": 3.975796959459945,
+      "status": "outline_estimate",
+      "wheel_status": "fallback",
+      "calibration_role": "primary",
+      "reason": "An unambiguous pair of visible wheels was not found"
+    },
+    {
+      "id": "V6-006",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "previous_runtime_m": 4.647424878700717,
+      "runtime_m": 4.647424878700717,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-008",
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "previous_runtime_m": 4.9745816045047695,
+      "runtime_m": 4.9745816045047695,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-013",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "previous_runtime_m": 4.048972827054099,
+      "runtime_m": 4.048972827054099,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-014",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "previous_runtime_m": null,
+      "runtime_m": 4.5745860686890785,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "recovery",
+      "reason": null
+    },
+    {
+      "id": "V6-023",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "previous_runtime_m": 4.204246910037608,
+      "runtime_m": 4.204246910037608,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-041",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "previous_runtime_m": 4.246476053829755,
+      "runtime_m": 4.246476053829755,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-043",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "previous_runtime_m": 4.534203419968288,
+      "runtime_m": 4.534203419968288,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    },
+    {
+      "id": "V6-055",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "previous_runtime_m": 4.605436320549299,
+      "runtime_m": 4.605436320549299,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "calibration_role": "primary",
+      "reason": null
+    }
+  ],
+  "full_results_sha256": "395e83accc27407febde869b2c4f0d43a603eeefc46ade1ac003d9726a6167df"
+}

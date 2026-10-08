@@ -1,0 +1,5002 @@
+{
+  "reference_source": "catalogue",
+  "physical_accuracy_validated": false,
+  "image_space": "lens_corrected_full_frame",
+  "comparison_sha256": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+  "corrections_sha256": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+  "extraction_sha256": "45265c9009205544bb90dcddfc090f29bd4bd07a1e71eb188283372b019f645a",
+  "rows": [
+    {
+      "id": "V1-001",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130, 2017 facelift",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 2236,
+      "catalogue_interval_m": [
+        3.945,
+        3.945
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2017 F",
+          "length_m": [
+            3.945,
+            3.945
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201701/10108200/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 2175,
+          "bbox": [
+            1427.0623779296875,
+            1093.262939453125,
+            509.5469970703125,
+            232.516357421875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 2236,
+          "bbox": [
+            1052.9844970703125,
+            1104.1649169921875,
+            490.470458984375,
+            224.49951171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 2300,
+          "bbox": [
+            596.7089233398438,
+            1113.1636962890625,
+            489.13751220703125,
+            214.1617431640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-002",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 901,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 901,
+          "bbox": [
+            658.859130859375,
+            1089.6558837890625,
+            549.421630859375,
+            237.837646484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-004",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E160",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 3650,
+      "catalogue_interval_m": [
+        4.36,
+        4.41
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E160, 2012",
+          "length_m": [
+            4.36,
+            4.36
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60017618/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Corolla Fielder E160, 2015 facelift",
+          "length_m": [
+            4.4,
+            4.41
+          ],
+          "url": "https://toyota.jp/pages/contents/corollafielder/003_p_005/pdf/spec/corollafielder_spec_201503.pdf",
+          "publisher": "Toyota",
+          "note": "Grade dependent bumper length; interval is not statistical uncertainty."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 3575,
+          "bbox": [
+            1229.91064453125,
+            1094.8924560546875,
+            549.3306884765625,
+            228.7696533203125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 3650,
+          "bbox": [
+            1025.532958984375,
+            1097.7520751953125,
+            535.3463134765625,
+            222.8160400390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 3725,
+          "bbox": [
+            599.7723999023438,
+            1097.56982421875,
+            515.3162231445312,
+            218.3123779296875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-006",
+      "family": "ractis",
+      "model_candidate": "Toyota Ractis XP120",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 5396,
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ractis XP120",
+          "length_m": [
+            3.995,
+            3.995
+          ],
+          "url": "https://www.toyota.co.jp/jpn/company/history/75years/vehicle_lineage/car/id60017308/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 5325,
+          "bbox": [
+            1373.900390625,
+            1070.599853515625,
+            503.1497802734375,
+            237.982177734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5396,
+          "bbox": [
+            1052.9554443359375,
+            1072.4739990234375,
+            479.07373046875,
+            231.8966064453125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5450,
+          "bbox": [
+            829.6568603515625,
+            1067.628662109375,
+            457.5892333984375,
+            228.1578369140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-009",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP90",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 5969,
+      "catalogue_interval_m": [
+        3.75,
+        3.785
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP90, 2005 F",
+          "length_m": [
+            3.75,
+            3.75
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/200502/10026141/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Vitz XP90 facelift",
+          "length_m": [
+            3.785,
+            3.785
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/200708/10042845/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 5900,
+          "bbox": [
+            1346.4534912109375,
+            1075.4534912109375,
+            469.4786376953125,
+            230.9874267578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5969,
+          "bbox": [
+            1065.837646484375,
+            1085.63037109375,
+            452.559814453125,
+            217.88330078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 6025,
+          "bbox": [
+            686.6371459960938,
+            1079.776123046875,
+            434.07305908203125,
+            217.49267578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-011",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum SXM10/SXM15",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 6334,
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum SXM10/SXM15",
+          "length_m": [
+            4.53,
+            4.53
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000241/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 6300,
+          "bbox": [
+            1318.1785888671875,
+            1040.38232421875,
+            567.1700439453125,
+            273.9781494140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 6334,
+          "bbox": [
+            1017.8958129882812,
+            1049.4527587890625,
+            550.4524536132812,
+            273.4039306640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 6400,
+          "bbox": [
+            724.50048828125,
+            1056.5472412109375,
+            546.7962646484375,
+            267.246826171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-012",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Noah R80",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 6723,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Noah R80, 2014 standard body",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/noah/2014-09/pdf/noah_main_s_201409.pdf",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Noah R80, 2014 Si",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 6650,
+          "bbox": [
+            1290.0203857421875,
+            985.6725463867188,
+            580.1605224609375,
+            306.62738037109375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 6723,
+          "bbox": [
+            1015.4365234375,
+            998.1517944335938,
+            559.962646484375,
+            300.38262939453125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 6775,
+          "bbox": [
+            785.914794921875,
+            1003.1966552734375,
+            548.8197021484375,
+            294.5465087890625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-014",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum SXM10/SXM15",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 7290,
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum SXM10/SXM15",
+          "length_m": [
+            4.53,
+            4.53
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000241/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 7225,
+          "bbox": [
+            1224.6219482421875,
+            1048.1839599609375,
+            554.760986328125,
+            263.0240478515625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 7290,
+          "bbox": [
+            1024.995361328125,
+            1053.2076416015625,
+            541.0482177734375,
+            255.9420166015625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 7350,
+          "bbox": [
+            709.0402221679688,
+            1055.99853515625,
+            530.6226196289062,
+            252.986328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-017",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Yaris XP210",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 9955,
+      "catalogue_interval_m": [
+        3.94,
+        3.94
+      ],
+      "sources": [
+        {
+          "model": "Toyota Yaris XP210",
+          "length_m": [
+            3.94,
+            3.94
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-YARIS/202004/10127879/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 9955,
+          "bbox": [
+            1031.2666015625,
+            1130.9234619140625,
+            521.976806640625,
+            200.3736572265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 10025,
+          "bbox": [
+            778.7902221679688,
+            1135.5914306640625,
+            516.8987426757812,
+            194.6798095703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-018",
+      "family": "rav4",
+      "model_candidate": "Toyota RAV4 XA50",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 11897,
+      "catalogue_interval_m": [
+        4.6,
+        4.61
+      ],
+      "sources": [
+        {
+          "model": "Toyota RAV4 XA50",
+          "length_m": [
+            4.6,
+            4.61
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/rav4/2019-04/pdf/rav4_main_s_201904.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 11897,
+          "bbox": [
+            1006.5400390625,
+            1086.907470703125,
+            574.2664794921875,
+            246.0533447265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-020",
+      "family": "prado",
+      "model_candidate": "Toyota Land Cruiser Prado J150, 2013 facelift",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 12612,
+      "catalogue_interval_m": [
+        4.76,
+        4.76
+      ],
+      "sources": [
+        {
+          "model": "Toyota Land Cruiser Prado J150, 2013 TX",
+          "length_m": [
+            4.76,
+            4.76
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-LAND_CRUISER_PRADO/201309/10084725/",
+          "publisher": "Toyota",
+          "note": "CBA-TRJ150W; visual generation identification remains conditional."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 12550,
+          "bbox": [
+            1358.2198486328125,
+            1016.6095581054688,
+            590.1680908203125,
+            278.90765380859375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 12612,
+          "bbox": [
+            997.4478149414062,
+            1036.9873046875,
+            585.6953735351562,
+            286.2498779296875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 12650,
+          "bbox": [
+            686.9719848632812,
+            1051.9014892578125,
+            596.4512329101562,
+            274.1689453125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-021",
+      "family": "yaris_cross",
+      "model_candidate": "Toyota Yaris Cross XP210",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 12904,
+      "catalogue_interval_m": [
+        4.18,
+        4.18
+      ],
+      "sources": [
+        {
+          "model": "Toyota Yaris Cross XP210, 2020 X",
+          "length_m": [
+            4.18,
+            4.18
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-YARIS_CROSS/202008/10130870/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 12904,
+          "bbox": [
+            1038.0758056640625,
+            1092.210693359375,
+            512.9256591796875,
+            232.934326171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 12975,
+          "bbox": [
+            787.6463623046875,
+            1098.89794921875,
+            518.2584228515625,
+            229.45947265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-022",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130 early",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 13125,
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2010 U",
+          "length_m": [
+            3.885,
+            3.885
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201012/10067124/",
+          "publisher": "Toyota",
+          "note": "Other bumper/RS grades can differ; body variant must match."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 13075,
+          "bbox": [
+            1418.67041015625,
+            1097.6458740234375,
+            507.1483154296875,
+            234.095703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 13125,
+          "bbox": [
+            1050.64306640625,
+            1108.745849609375,
+            487.981689453125,
+            222.4765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 13175,
+          "bbox": [
+            662.1610107421875,
+            1117.8565673828125,
+            488.0672607421875,
+            209.5390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-026",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 16101,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 16075,
+          "bbox": [
+            1280.0252685546875,
+            1092.455322265625,
+            608.4873046875,
+            241.89208984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 16101,
+          "bbox": [
+            997.0508422851562,
+            1103.859619140625,
+            596.1721801757812,
+            230.8504638671875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 16125,
+          "bbox": [
+            733.7395629882812,
+            1105.9327392578125,
+            593.0523071289062,
+            224.6553955078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-027",
+      "family": "ractis",
+      "model_candidate": "Toyota Ractis XP120",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 16242,
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ractis XP120",
+          "length_m": [
+            3.995,
+            3.995
+          ],
+          "url": "https://www.toyota.co.jp/jpn/company/history/75years/vehicle_lineage/car/id60017308/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 16200,
+          "bbox": [
+            1391.9111328125,
+            1089.46240234375,
+            525.41015625,
+            244.7762451171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 16242,
+          "bbox": [
+            1038.9334716796875,
+            1100.3553466796875,
+            506.779541015625,
+            233.055419921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 16275,
+          "bbox": [
+            754.0379638671875,
+            1101.731689453125,
+            501.1424560546875,
+            227.01953125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-033",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 24190,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 24150,
+          "bbox": [
+            1575.288818359375,
+            1061.87646484375,
+            590.41162109375,
+            256.0660400390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 24190,
+          "bbox": [
+            1024.5587158203125,
+            1087.96484375,
+            529.596923828125,
+            223.501953125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 24225,
+          "bbox": [
+            624.021728515625,
+            1055.64697265625,
+            496.8614501953125,
+            243.1873779296875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-036",
+      "family": "probox_succeed",
+      "model_candidate": "Toyota Probox / Succeed early body",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 26106,
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "sources": [
+        {
+          "model": "Toyota Probox wagon, 2002",
+          "length_m": [
+            4.195,
+            4.195
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012554A/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Succeed wagon, 2002 TX",
+          "length_m": [
+            4.3,
+            4.3
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 26106,
+          "bbox": [
+            1080.804443359375,
+            1077.0679931640625,
+            500.6619873046875,
+            228.3006591796875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 26125,
+          "bbox": [
+            707.0731811523438,
+            1053.069580078125,
+            474.16021728515625,
+            242.1602783203125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": "Ambiguous vehicle silhouette"
+        }
+      ]
+    },
+    {
+      "id": "V1-040",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 27430,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 27400,
+          "bbox": [
+            1371.870361328125,
+            1051.2098388671875,
+            590.6014404296875,
+            269.08203125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 27430,
+          "bbox": [
+            1018.7365112304688,
+            1059.865478515625,
+            550.4688110351562,
+            256.8140869140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 27475,
+          "bbox": [
+            545.4052734375,
+            1064.5997314453125,
+            538.3321533203125,
+            253.0953369140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-045",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy / Noah R80",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 32477,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Noah R80, 2014 standard body",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/noah/2014-09/pdf/noah_main_s_201409.pdf",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Noah R80, 2014 Si",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 32425,
+          "bbox": [
+            1312.159423828125,
+            1020.3676147460938,
+            603.4713134765625,
+            311.68658447265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 32477,
+          "bbox": [
+            1005.3156127929688,
+            1025.4254150390625,
+            572.2691040039062,
+            302.779541015625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 32550,
+          "bbox": [
+            714.7232666015625,
+            1024.143798828125,
+            559.9910888671875,
+            300.15087890625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-050",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 34826,
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish AE10 2003",
+          "length_m": [
+            4.55,
+            4.55
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
+        },
+        {
+          "model": "Toyota Wish AE10 2005 facelift",
+          "length_m": [
+            4.56,
+            4.56
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
+          "publisher": "Toyota",
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 34800,
+          "bbox": [
+            1401.5482177734375,
+            1086.56640625,
+            604.162841796875,
+            247.072509765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 34826,
+          "bbox": [
+            997.9105224609375,
+            1095.3736572265625,
+            578.1112060546875,
+            237.871337890625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 34850,
+          "bbox": [
+            664.1204223632812,
+            1105.458740234375,
+            575.6873168945312,
+            224.407958984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-055",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130 early",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 41628,
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2010 U",
+          "length_m": [
+            3.885,
+            3.885
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201012/10067124/",
+          "publisher": "Toyota",
+          "note": "Other bumper/RS grades can differ; body variant must match."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 41628,
+          "bbox": [
+            1063.3438720703125,
+            1089.1524658203125,
+            458.9547119140625,
+            217.905517578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 41700,
+          "bbox": [
+            726.1098022460938,
+            1085.7540283203125,
+            450.32513427734375,
+            214.589111328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V1-056",
+      "family": "freed",
+      "model_candidate": "Honda Freed GB5–GB8",
+      "video": "ST_2026-09-04_18-00-04.mp4",
+      "anchor_frame": 41856,
+      "catalogue_interval_m": [
+        4.265,
+        4.295
+      ],
+      "sources": [
+        {
+          "model": "Honda Freed GB5–GB8",
+          "length_m": [
+            4.265,
+            4.295
+          ],
+          "url": "https://www.honda.co.jp/auto-archive/freed/2019/common/pdf/freed_spec_list.pdf",
+          "publisher": "Honda",
+          "note": "Freed versus Freed+ body variant interval; not statistical uncertainty."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 41800,
+          "bbox": [
+            1267.2186279296875,
+            1070.9580078125,
+            542.6456298828125,
+            261.1265869140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 41856,
+          "bbox": [
+            1038.905517578125,
+            1064.7569580078125,
+            511.7296142578125,
+            254.7149658203125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 41925,
+          "bbox": [
+            813.5827026367188,
+            1058.4478759765625,
+            490.21978759765625,
+            242.225830078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-004",
+      "family": "rush",
+      "model_candidate": "Toyota Rush / Daihatsu Be-go J200",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 2383,
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "sources": [
+        {
+          "model": "Toyota Rush J200/J210, 2006 X",
+          "length_m": [
+            3.995,
+            3.995
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-RUSH/200601/10031995/",
+          "publisher": "Toyota",
+          "note": "Daihatsu Be-go sibling visually similar; badge not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 2383,
+          "bbox": [
+            1066.3631591796875,
+            1090.73583984375,
+            526.2257080078125,
+            244.4876708984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-007",
+      "family": "fit",
+      "model_candidate": "Honda Fit GE",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 2991,
+      "catalogue_interval_m": [
+        3.9,
+        3.92
+      ],
+      "sources": [
+        {
+          "model": "Honda Fit GE, standard / RS candidate",
+          "length_m": [
+            3.9,
+            3.92
+          ],
+          "url": "https://www.honda.co.jp/factbook/auto/fit/200710/20.html",
+          "publisher": "Honda",
+          "note": "Honda specifies 3900 mm for the standard body and 3920 mm for the 2007 RS. Exact observed grade is unconfirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 2975,
+          "bbox": [
+            1316.1824951171875,
+            1080.033203125,
+            490.3636474609375,
+            247.3450927734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 2991,
+          "bbox": [
+            1049.9625244140625,
+            1093.71484375,
+            479.772705078125,
+            234.61767578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 3025,
+          "bbox": [
+            567.3588256835938,
+            1117.0657958984375,
+            489.81256103515625,
+            210.8492431640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-011",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 12815,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 12800,
+          "bbox": [
+            1235.8690185546875,
+            1076.176025390625,
+            579.1968994140625,
+            247.4656982421875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 12815,
+          "bbox": [
+            1005.6666259765625,
+            1084.026123046875,
+            565.404296875,
+            240.732421875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 12850,
+          "bbox": [
+            514.7390747070312,
+            1095.9793701171875,
+            549.8931274414062,
+            229.47607421875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-012",
+      "family": "ractis",
+      "model_candidate": "Toyota Ractis XP120",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 15059,
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ractis XP120",
+          "length_m": [
+            3.995,
+            3.995
+          ],
+          "url": "https://www.toyota.co.jp/jpn/company/history/75years/vehicle_lineage/car/id60017308/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 15025,
+          "bbox": [
+            1533.6314697265625,
+            1087.013427734375,
+            540.6744384765625,
+            246.6005859375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 15059,
+          "bbox": [
+            1035.62744140625,
+            1101.5811767578125,
+            507.79638671875,
+            232.2725830078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 15075,
+          "bbox": [
+            789.3675537109375,
+            1099.6021728515625,
+            496.7879638671875,
+            230.5943603515625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-015",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum SXM10/SXM15",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 16099,
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum SXM10/SXM15",
+          "length_m": [
+            4.53,
+            4.53
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000241/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 16075,
+          "bbox": [
+            1310.432861328125,
+            1072.506103515625,
+            573.9539794921875,
+            248.99267578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 16099,
+          "bbox": [
+            1018.3963012695312,
+            1074.5732421875,
+            549.0523071289062,
+            245.8753662109375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 16125,
+          "bbox": [
+            670.3856201171875,
+            1078.191162109375,
+            543.03076171875,
+            243.971435546875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-017",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 19519,
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish AE10 2003",
+          "length_m": [
+            4.55,
+            4.55
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
+        },
+        {
+          "model": "Toyota Wish AE10 2005 facelift",
+          "length_m": [
+            4.56,
+            4.56
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
+          "publisher": "Toyota",
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 19500,
+          "bbox": [
+            1258.2794189453125,
+            1074.57763671875,
+            579.1302490234375,
+            254.997802734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 19519,
+          "bbox": [
+            1012.528564453125,
+            1088.83349609375,
+            568.1597900390625,
+            240.766845703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 19550,
+          "bbox": [
+            633.3821411132812,
+            1105.445068359375,
+            574.9130249023438,
+            221.2099609375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-020",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 22668,
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish AE10 2003",
+          "length_m": [
+            4.55,
+            4.55
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
+        },
+        {
+          "model": "Toyota Wish AE10 2005 facelift",
+          "length_m": [
+            4.56,
+            4.56
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
+          "publisher": "Toyota",
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
+        }
+      ],
+      "training_eligible": false,
+      "stock_body_uncertain": true,
+      "frames": [
+        {
+          "frame": 22625,
+          "bbox": [
+            1505.93798828125,
+            1076.5533447265625,
+            601.57958984375,
+            256.543701171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 22668,
+          "bbox": [
+            1020.0690307617188,
+            1086.104736328125,
+            548.9500122070312,
+            241.954345703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 22700,
+          "bbox": [
+            677.7478637695312,
+            1072.423828125,
+            510.20684814453125,
+            234.6004638671875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-024",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy R80",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 25727,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 25700,
+          "bbox": [
+            1437.4210205078125,
+            1045.0745849609375,
+            630.5355224609375,
+            288.1112060546875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 25727,
+          "bbox": [
+            1002.0306396484375,
+            1053.4278564453125,
+            594.1844482421875,
+            278.6036376953125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 25750,
+          "bbox": [
+            640.34716796875,
+            1065.6585693359375,
+            589.7476806640625,
+            263.2542724609375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-034",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 27814,
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish AE10 2003",
+          "length_m": [
+            4.55,
+            4.55
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
+        },
+        {
+          "model": "Toyota Wish AE10 2005 facelift",
+          "length_m": [
+            4.56,
+            4.56
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
+          "publisher": "Toyota",
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 27750,
+          "bbox": [
+            1265.2674560546875,
+            1066.940185546875,
+            568.1964111328125,
+            248.740234375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 27814,
+          "bbox": [
+            1020.60986328125,
+            1074.9774169921875,
+            545.064697265625,
+            236.0167236328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 27875,
+          "bbox": [
+            837.4331665039062,
+            1071.0576171875,
+            541.2827758789062,
+            240.528564453125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-037",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 29071,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 29071,
+          "bbox": [
+            1025.4208984375,
+            1100.615234375,
+            543.9979248046875,
+            226.7996826171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-044",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E160 early",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 31623,
+      "catalogue_interval_m": [
+        4.36,
+        4.36
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E160, 2012",
+          "length_m": [
+            4.36,
+            4.36
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60017618/index.html",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 31623,
+          "bbox": [
+            1025.3646240234375,
+            1083.6864013671875,
+            534.666259765625,
+            232.82958984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 31675,
+          "bbox": [
+            576.9330444335938,
+            1062.4580078125,
+            476.07232666015625,
+            224.9703369140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-045",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130, 2014-style front",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 31754,
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2010 U",
+          "length_m": [
+            3.885,
+            3.885
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201012/10067124/",
+          "publisher": "Toyota",
+          "note": "Other bumper/RS grades can differ; body variant must match."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 31725,
+          "bbox": [
+            1428.1678466796875,
+            1081.6461181640625,
+            496.08837890625,
+            228.16552734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 31754,
+          "bbox": [
+            1059.763916015625,
+            1092.865234375,
+            471.6806640625,
+            222.337646484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-046",
+      "family": "wish",
+      "model_candidate": "Toyota Wish AE10 (first generation), exact trim unresolved",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 31868,
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish AE10 2003",
+          "length_m": [
+            4.55,
+            4.55
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60007858/index.html",
+          "publisher": "Toyota",
+          "note": "Representative 1.8 X 2WD/4WD; exact filmed trim not confirmed."
+        },
+        {
+          "model": "Toyota Wish AE10 2005 facelift",
+          "length_m": [
+            4.56,
+            4.56
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-WISH/200509/10029625/",
+          "publisher": "Toyota",
+          "note": "2005 X grade; factory catalogue, exact filmed trim not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 31825,
+          "bbox": [
+            1494.6571044921875,
+            1048.527587890625,
+            567.4908447265625,
+            229.0177001953125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 31868,
+          "bbox": [
+            1030.30126953125,
+            1055.4622802734375,
+            520.7144775390625,
+            221.9857177734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 31925,
+          "bbox": [
+            721.48388671875,
+            1056.7271728515625,
+            503.7335205078125,
+            218.515380859375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-048",
+      "family": "yaris_cross",
+      "model_candidate": "Toyota Yaris Cross XP210",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 32282,
+      "catalogue_interval_m": [
+        4.18,
+        4.18
+      ],
+      "sources": [
+        {
+          "model": "Toyota Yaris Cross XP210, 2020 X",
+          "length_m": [
+            4.18,
+            4.18
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-YARIS_CROSS/202008/10130870/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 32282,
+          "bbox": [
+            1038.19189453125,
+            1080.7021484375,
+            516.3646240234375,
+            252.319580078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 32350,
+          "bbox": [
+            829.8370361328125,
+            1075.3414306640625,
+            500.1033935546875,
+            252.344970703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-051",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy / Noah R80",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 34259,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Noah R80, 2014 standard body",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/noah/2014-09/pdf/noah_main_s_201409.pdf",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Noah R80, 2014 Si",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 34200,
+          "bbox": [
+            1205.2012939453125,
+            1046.206298828125,
+            601.982177734375,
+            279.6749267578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 34259,
+          "bbox": [
+            1009.89501953125,
+            1050.3505859375,
+            567.6807861328125,
+            271.0123291015625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V2-068",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-04_18-30-04.mp4",
+      "anchor_frame": 43467,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 43467,
+          "bbox": [
+            1013.886474609375,
+            1116.5155029296875,
+            556.244384765625,
+            215.4840087890625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-002",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy R80",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 2006,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 2006,
+          "bbox": [
+            983.5401611328125,
+            1075.82568359375,
+            620.8931884765625,
+            259.385498046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 2075,
+          "bbox": [
+            666.3159790039062,
+            1084.3734130859375,
+            624.7384643554688,
+            290.1929931640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-010",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 15030,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 15000,
+          "bbox": [
+            1383.880126953125,
+            1105.607177734375,
+            588.28125,
+            232.1666259765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 15030,
+          "bbox": [
+            1012.5431518554688,
+            1115.2484130859375,
+            555.7870483398438,
+            218.496337890625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 15050,
+          "bbox": [
+            737.9910278320312,
+            1116.11962890625,
+            554.5017700195312,
+            214.3028564453125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-013",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 17161,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 17125,
+          "bbox": [
+            1471.6484375,
+            1075.658447265625,
+            639.150146484375,
+            261.907470703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 17161,
+          "bbox": [
+            1003.4948120117188,
+            1084.7513427734375,
+            588.9556274414062,
+            250.50927734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 17200,
+          "bbox": [
+            449.6632995605469,
+            1088.4271240234375,
+            578.0277404785156,
+            238.930419921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-015",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130, 2014-style front",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 17259,
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2010 U",
+          "length_m": [
+            3.885,
+            3.885
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201012/10067124/",
+          "publisher": "Toyota",
+          "note": "Other bumper/RS grades can differ; body variant must match."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 17259,
+          "bbox": [
+            1048.409423828125,
+            1113.9954833984375,
+            498.6656494140625,
+            219.9725341796875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-017",
+      "family": "probox_succeed",
+      "model_candidate": "Toyota Probox / Succeed early body",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 22071,
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "sources": [
+        {
+          "model": "Toyota Probox wagon, 2002",
+          "length_m": [
+            4.195,
+            4.195
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012554A/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Succeed wagon, 2002 TX",
+          "length_m": [
+            4.3,
+            4.3
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 22050,
+          "bbox": [
+            1424.7894287109375,
+            1098.6475830078125,
+            568.8048095703125,
+            236.7078857421875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 22071,
+          "bbox": [
+            1011.0386352539062,
+            1112.80419921875,
+            548.5366821289062,
+            221.28662109375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 22100,
+          "bbox": [
+            540.0116577148438,
+            1130.73291015625,
+            559.0379028320312,
+            196.627197265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-021",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130, 2014-style front",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 23958,
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2010 U",
+          "length_m": [
+            3.885,
+            3.885
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201012/10067124/",
+          "publisher": "Toyota",
+          "note": "Other bumper/RS grades can differ; body variant must match."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 23925,
+          "bbox": [
+            1421.1363525390625,
+            1097.3460693359375,
+            515.4351806640625,
+            236.47998046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 23958,
+          "bbox": [
+            1052.74755859375,
+            1108.7916259765625,
+            485.8668212890625,
+            222.1641845703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 24000,
+          "bbox": [
+            596.23583984375,
+            1116.6337890625,
+            488.8251953125,
+            211.3360595703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-022",
+      "family": "probox_succeed",
+      "model_candidate": "Toyota Probox / Succeed early body",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 24107,
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "sources": [
+        {
+          "model": "Toyota Probox wagon, 2002",
+          "length_m": [
+            4.195,
+            4.195
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012554A/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Succeed wagon, 2002 TX",
+          "length_m": [
+            4.3,
+            4.3
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 24075,
+          "bbox": [
+            1387.949951171875,
+            1062.370361328125,
+            544.4825439453125,
+            264.601318359375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 24107,
+          "bbox": [
+            1033.6666259765625,
+            1079.260498046875,
+            521.91455078125,
+            248.8214111328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 24150,
+          "bbox": [
+            680.7731323242188,
+            1077.6781005859375,
+            510.43658447265625,
+            248.9219970703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-026",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 27319,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 27275,
+          "bbox": [
+            1540.1944580078125,
+            1060.488525390625,
+            597.5941162109375,
+            246.1912841796875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 27319,
+          "bbox": [
+            1015.414794921875,
+            1086.8338623046875,
+            565.3656005859375,
+            236.855224609375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 27375,
+          "bbox": [
+            564.064697265625,
+            1064.3377685546875,
+            513.0068359375,
+            230.1834716796875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-030",
+      "family": "fit",
+      "model_candidate": "Honda Fit GE",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 32676,
+      "catalogue_interval_m": [
+        3.9,
+        3.92
+      ],
+      "sources": [
+        {
+          "model": "Honda Fit GE, standard / RS candidate",
+          "length_m": [
+            3.9,
+            3.92
+          ],
+          "url": "https://www.honda.co.jp/factbook/auto/fit/200710/20.html",
+          "publisher": "Honda",
+          "note": "Honda specifies 3900 mm for the standard body and 3920 mm for the 2007 RS. Exact observed grade is unconfirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 32650,
+          "bbox": [
+            1443.509521484375,
+            1085.81689453125,
+            507.8143310546875,
+            238.923583984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 32676,
+          "bbox": [
+            1046.17529296875,
+            1096.6368408203125,
+            480.3775634765625,
+            231.1807861328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 32700,
+          "bbox": [
+            741.894287109375,
+            1085.943115234375,
+            456.260009765625,
+            235.432373046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-035",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Noah R80",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 36522,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Noah R80, 2014 standard body",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/noah/2014-09/pdf/noah_main_s_201409.pdf",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Noah R80, 2014 Si",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 36522,
+          "bbox": [
+            1008.1054077148438,
+            1051.5167236328125,
+            576.3732299804688,
+            272.0989990234375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 36550,
+          "bbox": [
+            648.2587890625,
+            1045.265625,
+            543.064453125,
+            262.4713134765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-038",
+      "family": "probox_succeed",
+      "model_candidate": "Toyota Probox / Succeed",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 37784,
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "sources": [
+        {
+          "model": "Toyota Probox wagon, 2002",
+          "length_m": [
+            4.195,
+            4.195
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012554A/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Succeed wagon, 2002 TX",
+          "length_m": [
+            4.3,
+            4.3
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 37784,
+          "bbox": [
+            1058.618896484375,
+            1102.7606201171875,
+            551.396240234375,
+            230.46435546875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 37850,
+          "bbox": [
+            1208.3895263671875,
+            1056.003173828125,
+            744.3150634765625,
+            280.4925537109375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V3-047",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-04_19-00-04.mp4",
+      "anchor_frame": 44030,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 44000,
+          "bbox": [
+            1428.891357421875,
+            1073.8895263671875,
+            606.75244140625,
+            253.822998046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 44030,
+          "bbox": [
+            1004.5755615234375,
+            1088.7269287109375,
+            574.973388671875,
+            241.1085205078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 44075,
+          "bbox": [
+            530.8142700195312,
+            1100.32568359375,
+            563.2355346679688,
+            228.3681640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-001",
+      "family": "prado",
+      "model_candidate": "Toyota Land Cruiser Prado J150, 2017 facelift",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 2736,
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "sources": [
+        {
+          "model": "Toyota Land Cruiser Prado J150, 2017 facelift",
+          "length_m": [
+            4.825,
+            4.825
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/landcruiserprado/2017-09/pdf/landcruiserprado_main_s_201709.pdf",
+          "publisher": "Toyota",
+          "note": "Stock body; excludes nonstandard accessories. PDF specification page 4."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 2725,
+          "bbox": [
+            1179.170166015625,
+            1056.86083984375,
+            636.6788330078125,
+            281.384521484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 2736,
+          "bbox": [
+            998.2137451171875,
+            1061.4910888671875,
+            623.364013671875,
+            270.8126220703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 2750,
+          "bbox": [
+            761.2595825195312,
+            1063.891357421875,
+            621.0867309570312,
+            264.9000244140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-002",
+      "family": "freed",
+      "model_candidate": "Honda Freed GB5–GB8",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 4659,
+      "catalogue_interval_m": [
+        4.265,
+        4.295
+      ],
+      "sources": [
+        {
+          "model": "Honda Freed GB5–GB8",
+          "length_m": [
+            4.265,
+            4.295
+          ],
+          "url": "https://www.honda.co.jp/auto-archive/freed/2019/common/pdf/freed_spec_list.pdf",
+          "publisher": "Honda",
+          "note": "Freed versus Freed+ body variant interval; not statistical uncertainty."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 4625,
+          "bbox": [
+            1573.4326171875,
+            1066.530517578125,
+            586.599365234375,
+            264.528076171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 4659,
+          "bbox": [
+            1032.1153564453125,
+            1066.8968505859375,
+            515.562744140625,
+            253.9798583984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 4700,
+          "bbox": [
+            643.4766235351562,
+            1056.6807861328125,
+            492.36700439453125,
+            245.19384765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-005",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E160",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 7459,
+      "catalogue_interval_m": [
+        4.36,
+        4.41
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E160, 2012",
+          "length_m": [
+            4.36,
+            4.36
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60017618/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Corolla Fielder E160, 2015 facelift",
+          "length_m": [
+            4.4,
+            4.41
+          ],
+          "url": "https://toyota.jp/pages/contents/corollafielder/003_p_005/pdf/spec/corollafielder_spec_201503.pdf",
+          "publisher": "Toyota",
+          "note": "Grade dependent bumper length; interval is not statistical uncertainty."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 7459,
+          "bbox": [
+            1048.7413330078125,
+            1121.966064453125,
+            569.16845703125,
+            214.8350830078125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 7475,
+          "bbox": [
+            738.2550048828125,
+            1127.79052734375,
+            563.414306640625,
+            201.290283203125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-008",
+      "family": "prado",
+      "model_candidate": "Toyota Land Cruiser Prado J150, 2017 facelift",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 8223,
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "sources": [
+        {
+          "model": "Toyota Land Cruiser Prado J150, 2017 facelift",
+          "length_m": [
+            4.825,
+            4.825
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/landcruiserprado/2017-09/pdf/landcruiserprado_main_s_201709.pdf",
+          "publisher": "Toyota",
+          "note": "Stock body; excludes nonstandard accessories. PDF specification page 4."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 8200,
+          "bbox": [
+            1245.2681884765625,
+            1051.0224609375,
+            645.703125,
+            285.3336181640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 8223,
+          "bbox": [
+            984.543212890625,
+            1058.6563720703125,
+            621.8154296875,
+            273.4659423828125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 8275,
+          "bbox": [
+            528.37890625,
+            1064.0460205078125,
+            595.07958984375,
+            262.2913818359375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": "error return without exception set"
+        }
+      ]
+    },
+    {
+      "id": "V4-010",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Noah R80",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 8516,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Noah R80, 2014 standard body",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/noah/2014-09/pdf/noah_main_s_201409.pdf",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Noah R80, 2014 Si",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-NOAH/201401/10086685/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 8500,
+          "bbox": [
+            1298.104736328125,
+            1035.3404541015625,
+            589.6524658203125,
+            273.608642578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 8516,
+          "bbox": [
+            1021.3418579101562,
+            1045.34423828125,
+            556.6836547851562,
+            259.3446044921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 8550,
+          "bbox": [
+            560.93115234375,
+            1044.1912841796875,
+            542.1146240234375,
+            252.9764404296875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-013",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy R80",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 19317,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 19275,
+          "bbox": [
+            1451.3870849609375,
+            1046.909423828125,
+            630.0587158203125,
+            289.2244873046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 19317,
+          "bbox": [
+            1000.6221313476562,
+            1058.2933349609375,
+            584.0578002929688,
+            272.598388671875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 19350,
+          "bbox": [
+            633.9439086914062,
+            1061.3404541015625,
+            583.7525024414062,
+            266.822998046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-016",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy R80",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 20622,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 20600,
+          "bbox": [
+            1407.17578125,
+            1040.2796630859375,
+            617.82666015625,
+            274.63525390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 20622,
+          "bbox": [
+            1009.2916259765625,
+            1047.7154541015625,
+            564.7540283203125,
+            262.3033447265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 20650,
+          "bbox": [
+            508.6538391113281,
+            1041.510009765625,
+            543.5379333496094,
+            251.8736572265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-018",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 23235,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 23200,
+          "bbox": [
+            1613.5792236328125,
+            1088.29345703125,
+            595.1639404296875,
+            230.059326171875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 23235,
+          "bbox": [
+            1025.7281494140625,
+            1091.2537841796875,
+            532.0711669921875,
+            222.7261962890625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 23250,
+          "bbox": [
+            812.2948608398438,
+            1088.395751953125,
+            514.6174926757812,
+            217.768798828125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-021",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum ACM2x",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 26380,
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum ACM2x, 2001",
+          "length_m": [
+            4.65,
+            4.65
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200105/1009936/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Ipsum ACM2x, 2007 240i",
+          "length_m": [
+            4.69,
+            4.69
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 26380,
+          "bbox": [
+            994.49267578125,
+            1126.2777099609375,
+            593.51904296875,
+            204.44140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 26400,
+          "bbox": [
+            362.7061462402344,
+            1111.1893310546875,
+            604.2106018066406,
+            222.7835693359375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-023",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum SXM10/SXM15",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 26914,
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum SXM10/SXM15",
+          "length_m": [
+            4.53,
+            4.53
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000241/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 26900,
+          "bbox": [
+            1224.2991943359375,
+            1086.2965087890625,
+            591.8409423828125,
+            249.586181640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 26914,
+          "bbox": [
+            983.8306884765625,
+            1089.543212890625,
+            565.9112548828125,
+            242.077880859375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 26950,
+          "bbox": [
+            454.0046081542969,
+            1089.3126220703125,
+            563.8851623535156,
+            235.160888671875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V4-024",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-07_15-30-01.mp4",
+      "anchor_frame": 29552,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 29525,
+          "bbox": [
+            1480.8092041015625,
+            1086.958251953125,
+            574.7122802734375,
+            228.899169921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 29552,
+          "bbox": [
+            1041.5206298828125,
+            1081.7288818359375,
+            519.14892578125,
+            221.0582275390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 29575,
+          "bbox": [
+            682.3451538085938,
+            1066.96337890625,
+            486.39715576171875,
+            220.8822021484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-004",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy R80",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 3088,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 3025,
+          "bbox": [
+            1238.6260986328125,
+            1057.3197021484375,
+            597.175048828125,
+            269.0946044921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 3088,
+          "bbox": [
+            1008.3775634765625,
+            1002.494140625,
+            574.419677734375,
+            322.71875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-005",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum ACM2x, later body candidate",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 5226,
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum ACM2x, 2001",
+          "length_m": [
+            4.65,
+            4.65
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200105/1009936/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Ipsum ACM2x, 2007 240i",
+          "length_m": [
+            4.69,
+            4.69
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 5200,
+          "bbox": [
+            1483.1048583984375,
+            1058.183837890625,
+            612.8092041015625,
+            257.2037353515625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5226,
+          "bbox": [
+            1021.5926513671875,
+            1062.6614990234375,
+            552.8101806640625,
+            242.9273681640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5250,
+          "bbox": [
+            636.5484619140625,
+            1059.56982421875,
+            539.3143310546875,
+            238.153564453125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-007",
+      "family": "patrol",
+      "model_candidate": "Nissan Patrol Y62",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 5854,
+      "catalogue_interval_m": [
+        5.14,
+        5.14
+      ],
+      "sources": [
+        {
+          "model": "Nissan Patrol Y62",
+          "length_m": [
+            5.14,
+            5.14
+          ],
+          "url": "https://www.nissan.co.mz/media/lbmddaef/patrol-rhd-eng.pdf",
+          "publisher": "Nissan",
+          "note": "Market and grade not verified for observed vehicle; brochure page 11."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 5825,
+          "bbox": [
+            1267.601806640625,
+            1035.416748046875,
+            663.247802734375,
+            299.7672119140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5854,
+          "bbox": [
+            979.6158447265625,
+            1038.0565185546875,
+            624.5338134765625,
+            292.57861328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 5900,
+          "bbox": [
+            609.04443359375,
+            1036.5648193359375,
+            598.3533935546875,
+            282.634521484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-011",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 12933,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 12933,
+          "bbox": [
+            1025.8408203125,
+            1073.58740234375,
+            524.028564453125,
+            234.3314208984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-033",
+      "family": "fielder",
+      "model_candidate": "Toyota Corolla Fielder E140 candidate",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 33713,
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "sources": [
+        {
+          "model": "Toyota Corolla Fielder E140 early",
+          "length_m": [
+            4.41,
+            4.41
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004263/index.html",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Corolla Fielder E140 facelift",
+          "length_m": [
+            4.42,
+            4.42
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-COROLLA_FIELDER/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 33675,
+          "bbox": [
+            1546.1685791015625,
+            1078.705322265625,
+            572.8653564453125,
+            220.457275390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 33713,
+          "bbox": [
+            1028.3033447265625,
+            1079.392822265625,
+            520.7606201171875,
+            216.6055908203125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 33750,
+          "bbox": [
+            623.3727416992188,
+            1077.28564453125,
+            494.26165771484375,
+            211.103271484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-034",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 34844,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 34825,
+          "bbox": [
+            1311.861572265625,
+            1076.724609375,
+            596.3319091796875,
+            258.6416015625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 34844,
+          "bbox": [
+            1009.7576293945312,
+            1100.043212890625,
+            568.8472290039062,
+            229.63037109375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 34875,
+          "bbox": [
+            583.5628662109375,
+            1003.9002685546875,
+            531.824462890625,
+            319.3458251953125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-037",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 34961,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 34961,
+          "bbox": [
+            990.8121948242188,
+            1107.7342529296875,
+            595.0059204101562,
+            227.7266845703125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 35000,
+          "bbox": [
+            596.27734375,
+            1105.984375,
+            567.755859375,
+            223.4744873046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V5-048",
+      "family": "noah_voxy",
+      "model_candidate": "Toyota Voxy R80",
+      "video": "ST_2026-09-07_16-00-04.mp4",
+      "anchor_frame": 43159,
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "sources": [
+        {
+          "model": "Toyota Voxy R80 standard",
+          "length_m": [
+            4.695,
+            4.695
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/201401/10086699/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        },
+        {
+          "model": "Toyota Voxy R80 aero",
+          "length_m": [
+            4.71,
+            4.71
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VOXY/nenpi/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 43150,
+          "bbox": [
+            1204.753173828125,
+            1068.129638671875,
+            638.0660400390625,
+            269.34130859375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 43159,
+          "bbox": [
+            1028.20654296875,
+            1075.656005859375,
+            617.9244384765625,
+            261.5198974609375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-004",
+      "family": "vitz_yaris",
+      "model_candidate": "Toyota Vitz XP130, 2017 facelift",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 8526,
+      "catalogue_interval_m": [
+        3.945,
+        3.945
+      ],
+      "sources": [
+        {
+          "model": "Toyota Vitz XP130, 2017 F",
+          "length_m": [
+            3.945,
+            3.945
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-VITZ/201701/10108200/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 8475,
+          "bbox": [
+            1500.83251953125,
+            1112.1180419921875,
+            545.033935546875,
+            223.638671875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 8526,
+          "bbox": [
+            1037.365234375,
+            1120.47607421875,
+            506.4617919921875,
+            212.087646484375
+          ],
+          "status": "ok",
+          "wheel_status": "unavailable",
+          "initial_failure": null
+        },
+        {
+          "frame": 8575,
+          "bbox": [
+            585.7052612304688,
+            1121.6314697265625,
+            497.95745849609375,
+            203.5555419921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-006",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum ACM2x",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 10463,
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum ACM2x, 2001",
+          "length_m": [
+            4.65,
+            4.65
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200105/1009936/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Ipsum ACM2x, 2007 240i",
+          "length_m": [
+            4.69,
+            4.69
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 10425,
+          "bbox": [
+            1399.9381103515625,
+            1005.8661499023438,
+            588.4644775390625,
+            294.28448486328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 10463,
+          "bbox": [
+            1015.7562866210938,
+            1032.6490478515625,
+            552.0873413085938,
+            269.2728271484375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 10500,
+          "bbox": [
+            523.3936767578125,
+            1084.7611083984375,
+            589.128173828125,
+            242.858642578125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-008",
+      "family": "prado",
+      "model_candidate": "Toyota Land Cruiser Prado J150, 2017 facelift",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 11167,
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "sources": [
+        {
+          "model": "Toyota Land Cruiser Prado J150, 2017 facelift",
+          "length_m": [
+            4.825,
+            4.825
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/landcruiserprado/2017-09/pdf/landcruiserprado_main_s_201709.pdf",
+          "publisher": "Toyota",
+          "note": "Stock body; excludes nonstandard accessories. PDF specification page 4."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 11150,
+          "bbox": [
+            1317.8975830078125,
+            1069.347412109375,
+            675.389892578125,
+            264.7828369140625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 11167,
+          "bbox": [
+            934.1627197265625,
+            1075.232666015625,
+            642.7783203125,
+            257.63134765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 11175,
+          "bbox": [
+            755.7000122070312,
+            1076.197265625,
+            631.5651245117188,
+            254.4383544921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-013",
+      "family": "rush",
+      "model_candidate": "Toyota Rush / Daihatsu Be-go J200",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 17603,
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "sources": [
+        {
+          "model": "Toyota Rush J200/J210, 2006 X",
+          "length_m": [
+            3.995,
+            3.995
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-RUSH/200601/10031995/",
+          "publisher": "Toyota",
+          "note": "Daihatsu Be-go sibling visually similar; badge not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 17575,
+          "bbox": [
+            1562.0455322265625,
+            1050.3367919921875,
+            526.1168212890625,
+            257.2703857421875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 17603,
+          "bbox": [
+            1053.278564453125,
+            1065.0699462890625,
+            488.115966796875,
+            240.369873046875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-014",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum ACM2x",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 17662,
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum ACM2x, 2001",
+          "length_m": [
+            4.65,
+            4.65
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200105/1009936/",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Ipsum ACM2x, 2007 240i",
+          "length_m": [
+            4.69,
+            4.69
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 17650,
+          "bbox": [
+            1483.9935302734375,
+            1091.1707763671875,
+            648.4732666015625,
+            246.24072265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 17662,
+          "bbox": [
+            1292.287841796875,
+            1088.5570068359375,
+            626.1153564453125,
+            247.845458984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-023",
+      "family": "probox_succeed",
+      "model_candidate": "Toyota Probox / Succeed early",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 21873,
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "sources": [
+        {
+          "model": "Toyota Probox wagon, 2002",
+          "length_m": [
+            4.195,
+            4.195
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012554A/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Succeed wagon, 2002 TX",
+          "length_m": [
+            4.3,
+            4.3
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 21825,
+          "bbox": [
+            1451.1524658203125,
+            1084.703125,
+            561.519287109375,
+            251.2977294921875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 21873,
+          "bbox": [
+            1030.67626953125,
+            1096.09033203125,
+            526.244873046875,
+            235.4986572265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 21900,
+          "bbox": [
+            754.3409423828125,
+            1095.75341796875,
+            524.9876708984375,
+            232.3514404296875
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-041",
+      "family": "probox_succeed",
+      "model_candidate": "Toyota Probox / Succeed early",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 32964,
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "sources": [
+        {
+          "model": "Toyota Probox wagon, 2002",
+          "length_m": [
+            4.195,
+            4.195
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012554A/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Succeed wagon, 2002 TX",
+          "length_m": [
+            4.3,
+            4.3
+          ],
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SUCCEED_WAGON/200207/1011258/",
+          "publisher": "Toyota"
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 32925,
+          "bbox": [
+            1379.665771484375,
+            1070.2113037109375,
+            532.6236572265625,
+            237.1988525390625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 32964,
+          "bbox": [
+            1048.6427001953125,
+            1074.300048828125,
+            491.7442626953125,
+            221.55859375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 33025,
+          "bbox": [
+            594.595458984375,
+            1044.824462890625,
+            468.12109375,
+            221.92236328125
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-043",
+      "family": "ipsum",
+      "model_candidate": "Toyota Ipsum SXM10/SXM15",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 35175,
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "sources": [
+        {
+          "model": "Toyota Ipsum SXM10/SXM15",
+          "length_m": [
+            4.53,
+            4.53
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000241/",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 35150,
+          "bbox": [
+            1405.59814453125,
+            1062.7777099609375,
+            600.0736083984375,
+            274.2376708984375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 35175,
+          "bbox": [
+            1016.30126953125,
+            1081.787353515625,
+            569.48876953125,
+            250.1614990234375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 35200,
+          "bbox": [
+            657.02783203125,
+            1080.001953125,
+            532.1861572265625,
+            245.8997802734375
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    },
+    {
+      "id": "V6-055",
+      "family": "wish",
+      "model_candidate": "Toyota Wish ZGE20",
+      "video": "ST_2026-09-07_16-30-04.mp4",
+      "anchor_frame": 43622,
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "sources": [
+        {
+          "model": "Toyota Wish ZGE20, 2009",
+          "length_m": [
+            4.59,
+            4.59
+          ],
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000991/index.html",
+          "publisher": "Toyota"
+        },
+        {
+          "model": "Toyota Wish ZGE20 facelift",
+          "length_m": [
+            4.6,
+            4.6
+          ],
+          "url": "https://toyota.jp/pages/contents/carlineup/archive/wish/2015-05/pdf/wish_main_s_201505.pdf",
+          "publisher": "Toyota",
+          "note": "Stock dimensions; exact observed vehicle variant not confirmed."
+        }
+      ],
+      "training_eligible": true,
+      "stock_body_uncertain": false,
+      "frames": [
+        {
+          "frame": 43600,
+          "bbox": [
+            1313.408935546875,
+            1077.443603515625,
+            592.0333251953125,
+            252.11572265625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 43622,
+          "bbox": [
+            1002.5516357421875,
+            1085.6397705078125,
+            572.1536865234375,
+            243.4039306640625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        },
+        {
+          "frame": 43650,
+          "bbox": [
+            689.6785888671875,
+            1092.6875,
+            567.5606689453125,
+            235.6884765625
+          ],
+          "status": "ok",
+          "wheel_status": "ok",
+          "initial_failure": null
+        }
+      ]
+    }
+  ]
+}

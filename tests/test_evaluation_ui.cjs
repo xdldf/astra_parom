@@ -71,3 +71,13 @@ test('wheel overlays use corrected full-frame coordinates, retain the outline ba
  assert.equal(page.elements.get('wheel1').attributes.points,'');
  assert.equal(page.elements.get('basis').textContent,'');
 });
+test('recovery result renders when the rejected primary outline has no numeric baseline',async()=>{
+ const page=await ui();page.record.measurement={warnings:['Резервная оценка'],
+  outline:{status:'unavailable',failure_code:'outside_feature_range',baseline_length_m:4.4,contour:[[100,50],[300,150]]},
+  wheels:{status:'estimated',calibration_role:'recovery',baseline_length_m:null,pair:[]}};
+ page.respond(()=>({data:{rows:[page.record],count:1}}));await page.run('load()');
+ assert.match(page.elements.get('basis').textContent,/Резервная оценка/);
+ assert.match(page.elements.get('basis').textContent,/4.400 м/);
+ assert.doesNotMatch(page.elements.get('basis').textContent,/не назначена/);
+ assert.equal(page.elements.get('measured').textContent,'4.200 м');
+});
