@@ -21,3 +21,20 @@ def test_state_retains_intermediate_detections_for_each_browser_cursor(monkeypat
     for index in range(130):camera.publish_result(dict(detections=[]),20+index)
     a=stream.state(camera.id,0)
     assert len(a['results'])==128 and a['result_gap']
+
+
+def test_completed_video_keeps_final_detections_until_browser_closes(tmp_path,monkeypatch):
+    import cv2
+    video=tmp_path/'last-frame.avi'
+    writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+    writer.write(np.zeros((500,600,3),np.uint8));writer.release()
+    monkeypatch.setattr(wb,'require_gpu',lambda:0)
+    monkeypatch.setitem(wb.media,'finished',dict(kind='video',path=video,fps=25,frames=1))
+    camera=stream.Camera(stream.Start(media_id='finished',profile=wb.Profile(image_size=(600,500))))
+    monkeypatch.setitem(stream.sessions,camera.id,camera)
+    camera.publish_result(dict(detections=[dict(bbox=[100,100,100,50])]),0)
+    camera.produce()
+    state=stream.state(camera.id)
+    assert state['ended'] and len(state['results'])==1
+    stream.close(camera.id)
+    assert camera.id not in stream.sessions

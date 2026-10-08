@@ -192,6 +192,7 @@ class Capture(BaseModel):
     label: Literal['car','truck','bus','motorcycle','manual car','selected car']='car'
     source: Literal['manual','yolo26x','yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x']='manual'
     temporal: bool = False
+    review_fallback: bool = False
     actor: str=Field('Оператор',min_length=1,max_length=100)
     front_media_id: str | None = None
     front_session_id: str | None = None
@@ -258,7 +259,15 @@ def capture_crossing(payload: CrossingCapture):
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
     if found['frame'] is None:
-        return dict(captured=False,**found)
+        # Both endpoints were observed. Keep the nearer actual frame when even
+        # the recording contains no usable centred box (never interpolate pixels).
+        line = payload.profile.measurement_line_x
+        frame, box = min(((payload.before_frame,payload.before_bbox),(payload.frame,payload.bbox)),
+                        key=lambda row:abs(row[1][0]+row[1][2]/2-line))
+        values = payload.model_dump(exclude={'before_frame','before_bbox'})
+        values.update(frame=frame,bbox=box,temporal=False,review_fallback=True)
+        record = capture(Capture.model_validate(values))
+        return dict(captured=True,record=record,**{**found,'frame':frame,'review_fallback':True})
     detection = found.pop('detection')
     values = payload.model_dump(exclude={'before_frame','before_bbox'})
     values.update(frame=found['frame'],bbox=detection['bbox'],label=detection['label'],
@@ -276,6 +285,9 @@ def capture(payload: Capture):
     if payload.temporal:
         from web_app.temporal_capture import refine_video
         refine_video(payload, result)
+    if payload.review_fallback:
+        from web_app.temporal_capture import prepare_review_measurement
+        prepare_review_measurement(payload.profile, result)
     front_image=None
     paired=None
     evidence=[]
@@ -325,7 +337,7 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
     source_key=hashlib.sha256(json.dumps(identity).encode()).hexdigest()
     source=dict(media_id=payload.media_id,frame=payload.frame,bbox=list(payload.bbox),label=payload.label,
                 detector=payload.source,measurement=measured,measured_length_m=measured['length_m'],
-                calibration=payload.profile.model_dump())
+                calibration=payload.profile.model_dump(exclude={'evaluation_samples'}))
     if paired:
         source['front_camera']=paired
     if camera_note:
@@ -343,8 +355,10 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
     margin=max(20,int(bw*.08))
     crop=image[max(0,y-margin):min(image.shape[0],y+bh+margin),max(0,x-margin):min(image.shape[1],x+bw+margin)]
     # Encode outside the SQLite write transaction so operators can continue saving.
-    photos={record['id']+'-side.jpg':crop}
+    photos={record['id']+'-side.jpg':crop, record['id']+'-frame.jpg':image}
     record['side_photo']=record['id']+'-side.jpg'
+    record['full_frame_photo']=record['id']+'-frame.jpg'
+    source['image_space']='lens_corrected_full_frame'
     if front_evidence and front_image is not None and paired:
         # Keep the simultaneous image as evidence; the readable cab can pass
         # earlier than the centre of a long truck reaches the measurement line.
@@ -576,7 +590,7 @@ def client_screen(request: Request,response: Response,station_id: str=Query('def
 
 @router.get('/photos/{filename}')
 def photo(filename: str, thumbnail: bool=False):
-    if not re.fullmatch(r'[0-9a-f]{32}-(?:side|front|plate)\.jpg',filename):
+    if not re.fullmatch(r'[0-9a-f]{32}-(?:side|front|plate|frame)\.jpg',filename):
         raise HTTPException(404,'Фото не найдено')
     path=DATA/filename
     if not path.is_file(): raise HTTPException(404,'Фото не найдено')

@@ -26,6 +26,8 @@ from web_app.workbench import router as workbench_router
 app.include_router(workbench_router)
 from web_app.station import router as station_router
 app.include_router(station_router)
+from web_app.evaluation_review import router as evaluation_router
+app.include_router(evaluation_router)
 from web_app.video_stream import router as stream_router
 app.include_router(stream_router)
 from web_app.ip_cameras import router as ip_router
@@ -194,6 +196,11 @@ async def index():
 @app.get('/calibration', response_class=HTMLResponse)
 def calibration_studio():
     return FileResponse(Path(__file__).parent / 'static' / 'index.html')
+
+
+@app.get('/evaluation', response_class=HTMLResponse)
+def evaluation_review():
+    return FileResponse(Path(__file__).parent / 'static' / 'evaluation.html')
 
 
 @app.post("/api/upload-video")

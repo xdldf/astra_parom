@@ -316,7 +316,7 @@ def test_simultaneous_capture_is_idempotent_and_has_no_orphan_photos(client,monk
     assert all(r.status_code==200 for r in results)
     assert len({r.json()['id'] for r in results})==1
     assert client.get('/api/station/vehicles').json()['count']==1
-    assert len(list(station.DATA.glob('*.jpg')))==1
+    assert len(list(station.DATA.glob('*.jpg')))==2  # crop and full corrected frame
 
 
 def test_customer_etag_is_scoped_to_desk_and_changes_with_publication(client):

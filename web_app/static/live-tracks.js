@@ -2,7 +2,7 @@
 class LiveTracks {
   constructor(){this.rows=[];this.next=1;}
   update(detections,time){
-    this.rows=this.rows.filter(t=>time-t.time<3);
+    this.rows=this.rows.filter(t=>time-t.time<3||(!t.sent&&t.review));
     const used=new Set();
     return detections.map(d=>{
       let best=null,score=.2;
@@ -13,9 +13,26 @@ class LiveTracks {
         const iou=area/(w*h+c*e-area);
         if(iou>score){score=iou;best=t;}
       }
+      if(!best){
+        const possible=this.rows.filter(t=>!used.has(t.id)&&time>t.time&&time-t.time<=2&&LiveTracks.plausible(t.box,d.bbox));
+        if(possible.length===1&&detections.filter(other=>LiveTracks.plausible(possible[0].box,other.bbox)).length===1)best=possible[0];
+      }
       if(!best){best={id:this.next++,sent:false};this.rows.push(best);}
       best.previous=best.box?{box:best.box,time:best.time}:null;best.box=d.bbox;best.time=time;used.add(best.id);return best;
     });
+  }
+  static plausible(a,b){
+    const [x,y,w,h]=a,[u,v,c,d]=b;
+    return Math.min(w,c)>0&&Math.min(h,d)>0&&w/c>=.6&&w/c<=1.67&&h/d>=.6&&h/d<=1.67&&
+      Math.min(y+h,v+d)-Math.max(y,v)>=.6*Math.min(h,d)&&Math.abs(x+w/2-u-c/2)<=2*Math.max(w,c);
+  }
+  remember(track,snapshot,detection){
+    if(detection.depth==null||detection.status==='outside_road')return;
+    const distance=Math.abs(detection.line_offset_px||0)+(detection.status==='clipped'?snapshot.source.profile.image_size[0]:0);
+    if(!track.review||distance<track.review.distance)track.review={snapshot,detection,distance,time:track.time};
+  }
+  reviewsDue(time,force=false){
+    return this.rows.filter(t=>!t.sent&&t.review&&(force||time-t.time>=.8||time-t.review.time>=2));
   }
 }
 if(typeof module!=='undefined')module.exports=LiveTracks;

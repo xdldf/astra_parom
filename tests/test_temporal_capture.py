@@ -210,7 +210,8 @@ def test_pending_capture_waits_for_post_line_frames(setup,monkeypatch):
     assert len(calls)==1
     track.update(sent=False,pending=pending)
     camera.flush_pending(14)
-    assert len(calls)==1 and not track.get('pending')
+    assert len(calls)==2 and not track.get('pending')
+    assert calls[-1][1]['review_fallback'] and track['sent']
 
 
 def test_uncalibrated_crossing_is_reviewed_without_relaxing_line_gate(setup,monkeypatch):
@@ -491,7 +492,7 @@ def test_slow_vehicle_that_never_crosses_still_requires_review(setup,monkeypatch
     assert not camera.side.windows
 
 
-@pytest.mark.parametrize('cancel',['reconnect','automatic_off','expired'])
+@pytest.mark.parametrize('cancel',['reconnect','automatic_off'])
 def test_waiting_slow_passage_is_discarded_when_invalidated(setup,monkeypatch,cancel):
     _,profile=setup
     camera=ip.Station(ip.Settings(),profile)
@@ -506,3 +507,47 @@ def test_waiting_slow_passage_is_discarded_when_invalidated(setup,monkeypatch,ca
     camera.flush_pending(15.1 if cancel=='expired' else 11)
     assert not calls and not camera.saved and not track.get('pending')
     assert 'passage_frames' not in track and not camera.side.windows
+
+
+@pytest.mark.parametrize('mode',['strict','estimate'])
+def test_ip_keeps_off_line_observation_even_after_live_buffer_expires(setup,monkeypatch,mode):
+    path,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':mode})
+    camera=ip.Station(ip.Settings(),profile)
+    monkeypatch.setattr(ip.time,'monotonic',lambda:30.)
+    image=np.full((500,600,3),90,np.uint8)
+    packet=ip.Packet(3,10,cv2.imencode('.jpg',image)[1].tobytes())
+    detection=dict(bbox=[150,150,100,75],label='car')
+    track=dict(id='missed',sent=False,stamp=10,box=detection['bbox'],
+               review=((packet,None,None),detection,camera.side.epoch,100))
+    camera.tracks=[track]
+    camera.flush_reviews(10.5)
+    assert not camera.saved
+    camera.flush_reviews(30)
+    record=camera.saved['missed']
+    assert record['length_m']==(5 if mode=='estimate' else None)
+    assert record['source']['frame']==3 and record['source']['bbox']==detection['bbox']
+    assert cv2.imread(str(path/record['full_frame_photo'])).shape==image.shape
+    assert track['sent'] and not track.get('review')
+    camera.flush_reviews(31)
+    assert len(camera.saved)==1
+
+
+def test_video_crossing_without_any_centred_box_saves_real_endpoint(setup,monkeypatch):
+    path,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':'estimate'})
+    video=path/'jump.avi'
+    writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+    for i in range(10):writer.write(np.full((500,600,3),i*20,np.uint8))
+    writer.release()
+    monkeypatch.setitem(wb.media,'jump',dict(path=video,kind='video',fps=25,frames=10))
+    monkeypatch.setattr(wb,'detect_vehicles',lambda image,*a,**k:[
+        dict(bbox=[180 if image.mean()<100 else 310,150,100,75],label='car')])
+    result=station.capture_crossing(station.CrossingCapture(media_id='jump',profile=profile,
+        before_frame=0,before_bbox=[180,150,100,75],frame=9,bbox=[310,150,100,75]))
+    assert result['captured'] and result['review_fallback'] and result['frame']==9
+    record=result['record']
+    assert record['length_m']==pytest.approx(5)
+    assert record['full_frame_photo']
+    assert record['source']['measurement']['line_offset_px']==60
+    assert not record['source']['measurement']['at_measurement_line']

@@ -84,6 +84,40 @@ def capture_candidate(detection):
                                                  detection['status'] in {'outside_calibration','calibration_review'})
 
 
+def review_candidate(detection):
+    """Keep real on-road observations even if no box ever reaches the line."""
+    return detection.get('depth') is not None and detection['status'] != 'outside_road'
+
+
+def prepare_review_measurement(profile, result):
+    from vehicle_metrology.bbox_scale import measure_box
+    measured = result['detections'][0]
+    if not review_candidate(measured):
+        return
+    if measured['status'] == 'clipped':
+        measured = dict(measured, quality_reasons=[*measured.get('quality_reasons',[]),'clipped'],
+                        warnings=[*measured.get('warnings',[]),'Автомобиль обрезан границей кадра. Длина не назначена.'])
+    if measured['status'] == 'waiting_for_line':
+        original = measured
+        measured = {**measured, **measure_box(measured['bbox'], profile.polygon,
+            wb.profile_scale(profile), profile.image_size, estimate=profile.measurement_mode == 'estimate')}
+        measured.update(at_measurement_line=False, line_offset_px=original['line_offset_px'],
+                        single_frame_status='waiting_for_line')
+        measured['quality_reasons'] = [*measured.get('quality_reasons', []), 'missed_measurement_line']
+        measured['warnings'].append('Центр автомобиля не попал на линию. Сохранён реальный кадр для проверки.')
+        # Off-line values are useful for evaluation, but are never strict measurements.
+        if profile.measurement_mode == 'strict':
+            measured['length_m'] = None
+        measured['approximate'] = measured['length_m'] is not None
+    if measured['length_m'] is None:
+        measured.setdefault('single_frame_status',measured['status'])
+        measured['quality_reasons']=list(dict.fromkeys([*measured.get('quality_reasons',[]),measured['status']]))
+        measured['status'] = 'capture_review'
+    elif not measured.get('at_measurement_line') and profile.measurement_line_x is not None:
+        measured['status'] = 'approximate'
+    result['detections'][0] = measured
+
+
 def refinement_candidate(measured):
     # A jittery first box can fall outside depth support while its actual
     # neighbours at the line are calibrated. Let those frames prove the fit.

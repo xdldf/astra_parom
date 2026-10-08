@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Проверка длины автомобилей</title><link rel="stylesheet" href="/static/evaluation.css?v=1"></head>
+<body>
+<header><a href="/">← Станция</a><h1>Проверка длины автомобилей</h1><a id="export" hidden download>Скачать калибровку JSON</a></header>
+<main>
+  <div class="toolbar"><label>Очередь <select id="state"><option value="pending">Новые кадры</option><option value="skipped">Пропущенные</option><option value="labeled">Проверенные</option></select></label>
+    <label>Оператор <input id="actor" maxlength="100" value="Оператор"></label>
+    <button id="refresh">Обновить</button><span id="count" role="status"></span></div>
+  <p id="message" role="status" aria-live="polite"></p>
+  <section id="empty" hidden><h2>В этой очереди нет кадров</h2><p>Новые проезды появятся после автоматического измерения. Нажмите «Обновить».</p></section>
+  <article id="review" hidden>
+    <div class="image-toolbar"><span id="identity"></span><label><input id="showBox" type="checkbox" checked> Выделить автомобиль</label></div>
+    <a id="full" target="_blank" rel="noopener" title="Открыть полный кадр"><div class="frame"><img id="photo" alt="Полный кадр боковой камеры с обнаруженным автомобилем"><span id="box" aria-hidden="true"></span></div></a>
+    <div class="measurement"><span>Измеренная длина</span><strong id="measured"></strong><span id="quality"></span></div>
+    <form id="form"><label for="actual">Фактическая длина автомобиля, м</label><div class="entry"><input id="actual" type="number" min="0.01" max="40" step="0.001" required placeholder="Например, 4.725" inputmode="decimal" autocomplete="off"><button id="save" type="submit" class="primary">Сохранить и далее</button><button id="skip" type="button">Пропустить</button></div>
+      <p>Введите длину, проверенную по независимому измерению или точной модели автомобиля. Сохраняйте только полную рамку нужного автомобиля. Если не уверены, нажмите «Пропустить».</p>
+    </form>
+  </article>
+  <nav aria-label="Кадры"><button id="previous" disabled>← Предыдущий</button><button id="next" disabled>Следующий →</button></nav>
+  <p class="note">Полные кадры и исходная оценка камеры сохраняются для сравнения. Фактические длины входят в JSON как данные оценки и, для подходящих рамок, как эталоны совместимой калибровки. Чтобы использовать новые эталоны в измерении, загрузите JSON в «Калибровка» и нажмите «Сохранить и применить». Пропущенные кадры доступны в отдельной очереди.</p>
+</main><script src="/static/evaluation.js?v=2"></script>
+</body></html>

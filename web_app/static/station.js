@@ -85,10 +85,12 @@ function measurementNote(record){
   const approximate=record.length_m!=null&&approximateMeasurement(record);
   if(record.length_m!=null&&!approximate)return '';
   const m=record.source?.measurement;
-  const reasons=approximate&&m?.quality_reasons?.length?m.quality_reasons:m?.temporal?.reasons?.length?m.temporal.reasons:[record.measurement_reason||m?.status];
+  const reasons=m?.quality_reasons?.length?m.quality_reasons:m?.temporal?.reasons?.length?m.temporal.reasons:[record.measurement_reason||m?.status];
   const texts={
     insufficient_temporal_frames:'Недостаточно кадров автомобиля у линии.',
     missing_line_evidence:'Нет пригодного кадра на линии измерения.',
+    missed_measurement_line:'Центр автомобиля не попал на линию. Полный кадр сохранён для проверки.',
+    capture_review:'Автомобиль сохранён для проверки без надёжной длины.',
     line_not_bracketed:'Не хватает кадров до и после линии.',
     ambiguous_vehicle_association:'Рамки автомобилей пересекаются: нужно проверить проезд.',
     unstable_temporal_length:'Длина по кадрам расходится больше допуска.',
@@ -452,7 +454,7 @@ function selectedVideoDetector(){
 }
 function calibrationLabel(){const p=liveSource?.profile||importedProfile;selectedVideoDetector();if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
 async function workbench(path,body){const response=await fetch('/api/workbench'+path,body instanceof FormData?{method:'POST',body}:body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
-async function stopStream(){const id=streamId;streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';selectedVideoDetector();if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
+async function stopStream(){const id=streamId;if(id)await flushVideoReviews(Infinity,true);streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';selectedVideoDetector();if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
 async function startStream({throwOnError=false}={}){
  if(streamStarting||streamId)return;if(!liveSource){toast('Откройте видео');return;}streamStarting=true;
  try{const response=await fetch('/api/stream/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_id:liveSource.media.id,profile:liveSource.profile,frame:streamFrame,front_media_id:liveSource.frontMedia?.id,front_offset_seconds:liveSource.frontOffset??3})});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));streamId=data.id;streamResultCursor=0;liveGeneration++;liveTracks=new LiveTracks();liveSnapshot=null;$('operatorDetection').src='/api/stream/'+streamId+'/video';if(liveSource.frontMedia)$('frontStream').src='/api/stream/'+streamId+'/front';$('streamPlay').textContent='Ⅱ Пауза';pollStream(streamId,liveGeneration);}
@@ -472,6 +474,7 @@ async function pollStream(id,generation){
  $('liveCar').replaceChildren();result.detections.forEach((d,i)=>{const option=document.createElement('option');option.value=i;option.textContent=(i+1)+': '+d.label+' · '+(d.length_m==null?'длина не измерена':d.length_m.toFixed(2)+' м');$('liveCar').append(option);});$('captureLive').disabled=!result.detections.length;
       const tracks=liveTracks.update(result.detections,frame/source.media.fps);
       if($('autoMeasure').checked){for(let i=0;i<result.detections.length;i++){const d=result.detections[i],t=tracks[i];if(t.sent)continue;
+        liveTracks.remember(t,{source,frame},d);
         if(captureCandidate(d)){t.sent=true;queueLive({source,frame},d).catch(e=>{t.sent=false;toast(e.message);});continue;}
         const line=source.profile.measurement_line_x,prev=t.previous;
         if(line!=null&&prev&&d.depth!=null){const before=prev.box[0]+prev.box[2]/2-line,after=d.bbox[0]+d.bbox[2]/2-line;
@@ -480,6 +483,7 @@ async function pollStream(id,generation){
         }}
 
  }
+ await flushVideoReviews((liveSnapshot?.frame??streamFrame)/source.media.fps,!!state.ended);
  }catch(e){if(id===streamId){$('detectionStatus').textContent=e.message;await stopStream();}return;}
  if(id===streamId)streamTimer=setTimeout(()=>pollStream(id,generation),100);
 }
@@ -492,8 +496,15 @@ $('captureLive').onclick=()=>action(async()=>{const snapshot=structuredClone(liv
 try{const saved=JSON.parse(localStorage.getItem('ferryVideo'));if(saved?.media&&saved?.profile){liveSource=saved;calibrationLabel();$('liveStatus').textContent=saved.media.name;}}catch{}
 window.addEventListener('pagehide',()=>{if(streamId)fetch('/api/stream/'+streamId,{method:'DELETE',keepalive:true});});
 function captureCandidate(d){return d.length_m!=null||(d.at_measurement_line&&['outside_calibration','calibration_review'].includes(d.status));}
-async function queueLive(snapshot,d){
-  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:snapshot.source.profile.detector_model??'yolo26n',temporal:true,actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
+async function flushVideoReviews(time,force=false){
+  if(!$('autoMeasure').checked)return;
+  for(const t of liveTracks.reviewsDue(time,force)){
+    t.sent=true;
+    try{await queueLive(t.review.snapshot,t.review.detection,true);}catch(e){t.sent=false;toast(e.message);}
+  }
+}
+async function queueLive(snapshot,d,reviewFallback=false){
+  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:snapshot.source.profile.detector_model??'yolo26n',temporal:!reviewFallback,review_fallback:reviewFallback,actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
   await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+record.id));return record;
 }
 $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
@@ -517,7 +528,7 @@ async function captureCrossing(source,frame,original,previous){
   await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+result.record.id));return true;
 }
 
-$('expandMeasurement').onclick=()=>{if(!current?.side_photo)return;$('measurementTitle').textContent='Фото измеренного автомобиля';$('expandedMeasurement').src=$('selectedMeasurement').src;$('measurementCaption').textContent=`${current.plate||'Номер не указан'} · ${lengthText(current.measured_length_m)}${current.source?' · кадр '+current.source.frame:''}`;$('measurementDialog').showModal();};
+$('expandMeasurement').onclick=()=>{if(!current?.side_photo)return;$('measurementTitle').textContent='Фото измеренного автомобиля';$('expandedMeasurement').src=current.full_frame_photo?'/api/station/photos/'+encodeURIComponent(current.full_frame_photo):$('selectedMeasurement').src;$('measurementCaption').textContent=`${current.plate||'Номер не указан'} · ${lengthText(current.measured_length_m)}${current.source?' · кадр '+current.source.frame:''}`;$('measurementDialog').showModal();};
 $('closeMeasurement').onclick=()=>$('measurementDialog').close();
 $('measurementDialog').onclick=e=>{if(e.target!==$('measurementDialog'))return;const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();};
 

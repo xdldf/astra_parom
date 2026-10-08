@@ -9,6 +9,12 @@ APPROVED = {'Подтвержден', 'Оплачен'}
 revision = 0
 
 
+def verified_record(record, item):
+    return (record.get('calibration_reference') == item and
+            (record['status'] in APPROVED or
+             (record.get('evaluation', {}).get('state') == 'labeled' and record['status'] != 'Отклонён')))
+
+
 def invalidate():
     global revision
     revision += 1
@@ -26,7 +32,7 @@ def approved_snapshot(database, generation, ids):
         for row in rows:
             item=json.loads(row['value']);ident=item['reference']['vehicle_id']
             record=station.find(db,ident)
-            if record['status'] in APPROVED and record.get('calibration_reference')==item:
+            if verified_record(record,item):
                 result[ident]=item
         return result
 
@@ -51,11 +57,14 @@ def geometry_key(profile):
 
 
 def merge(profile):
+    from web_app.evaluation_review import samples_for
+    profile = profile.model_copy(update={'evaluation_samples':samples_for(profile)})
     if profile.survey_calibration:
         # Vehicle-derived scale must not silently enter a ruler/road-plane fit.
         return profile
     from web_app import station, workbench
     references = [r for r in profile.references if not r.vehicle_id]
+    reviewed = []
     key = geometry_key(profile)
     with station.connect() as db:
         rows = db.execute("SELECT value FROM settings WHERE key LIKE ?", (PREFIX+'%',)).fetchall()
@@ -65,11 +74,19 @@ def merge(profile):
                 continue
             record = station.find(db, item['reference']['vehicle_id'])
             # A stale export cannot resurrect a withdrawn or no-longer-approved reference.
-            if record['status'] not in APPROVED or record.get('calibration_reference') != item:
+            if not verified_record(record,item):
                 continue
-            references.append(workbench.Reference.model_validate(item['reference']))
+            ref=workbench.Reference.model_validate(item['reference'])
+            if record.get('evaluation',{}).get('state')=='labeled':
+                reviewed.append(ref)
+            else:
+                references.append(ref)
     if len(references) > 100:
         raise HTTPException(409, 'Больше 100 эталонов. Удалите лишние проверенные эталоны перед сохранением.')
+    # Keep all labels in evaluation_samples; bound the active scale fit.
+    capacity=100-len(references)
+    if capacity:
+        references.extend(sorted(reviewed,key=lambda r:(r.verified_at or '',r.vehicle_id))[-capacity:])
     data = profile.model_dump()
     data['references'] = [r.model_dump() for r in references]
     try:

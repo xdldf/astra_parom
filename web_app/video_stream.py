@@ -185,8 +185,8 @@ class Camera:
             self.stop.set()
             with self.condition:
                 self.condition.notify_all()
-            with registry_lock:
-                sessions.pop(self.id,None)
+            # Keep the final observations available to a slower browser poll.
+            # Explicit close or the next start reclaims completed sessions.
 
     def infer(self):
         last=-1
@@ -260,6 +260,13 @@ def get(key):
 def start(request: Start):
     camera=Camera(request)
     with registry_lock:
+        for key,c in list(sessions.items()):
+            if c.ended and time.monotonic()-c.touched>60:
+                sessions.pop(key,None)
+        if len(sessions)>=4:
+            ended=[c for c in sessions.values() if c.ended]
+            if ended:
+                sessions.pop(min(ended,key=lambda c:c.touched).id,None)
         if len(sessions)>=4:
             raise HTTPException(409,'Stop another video stream first')
         sessions[camera.id]=camera
@@ -309,7 +316,8 @@ def state(key: str, after_sequence: int = 0):
 
 @router.delete('/{key}')
 def close(key: str):
-    c=sessions.get(key)
+    with registry_lock:
+        c=sessions.pop(key,None)
     if c:
         c.stop.set()
     return {'stopped':True}

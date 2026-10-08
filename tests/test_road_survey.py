@@ -103,9 +103,11 @@ def test_survey_cannot_be_reused_after_lens_changes_or_with_legacy_refs():
 
 def test_vehicle_references_never_silently_reweight_a_survey(monkeypatch):
     from web_app import station
+    from web_app import evaluation_review
     from web_app.calibration_references import merge
     def forbidden():
         raise AssertionError('Survey fit must not import vehicle reference scale')
     monkeypatch.setattr(station,'connect',forbidden)
+    monkeypatch.setattr(evaluation_review,'samples_for',lambda profile:[])
     p=profile(.44)
-    assert merge(p) is p
+    assert merge(p) == p  # Evaluation metadata may be copied; the survey fit is unchanged.

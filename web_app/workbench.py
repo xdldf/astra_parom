@@ -68,6 +68,18 @@ class MetricRuler(BaseModel):
     step_m: float = Field(1, gt=0, le=20)
 
 
+class EvaluationSample(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+    vehicle_id: str
+    bbox: tuple[float,float,float,float]
+    frame: int = Field(ge=0)
+    measured_length_m: float | None = None
+    actual_length_m: float = Field(gt=0,le=40)
+    full_frame_photo: str
+    verified_by: str
+    verified_at: str
+
+
 class SurveyCalibration(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     projection: tuple[tuple[float,float,float],tuple[float,float,float],tuple[float,float,float]]
@@ -98,6 +110,7 @@ class Profile(BaseModel):
     lens: Lens = Field(default_factory=Lens)
     polygon: list[tuple[float, float]] = Field(default_factory=list, max_length=100)
     references: list[Reference] = Field(default_factory=list, max_length=100)
+    evaluation_samples: list[EvaluationSample] = Field(default_factory=list)
     metric_rulers: list[MetricRuler] = Field(default_factory=list, max_length=20)
     survey_calibration: SurveyCalibration | None = None
     measurement_line_x: float | None = Field(None, ge=0)
