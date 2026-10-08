@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 from vehicle_metrology.calibration import calibrate_intrinsic_views, calibrate_survey
 from vehicle_metrology.video import local_video, sha256_file, write_json
+from vehicle_metrology.image_coordinates import corrected_survey_to_raw
 
 
 def extract_boards(video, cols, rows, square_m, stride=15):
@@ -55,6 +56,8 @@ def main(argv=None):
     survey=sub.add_parser('survey',help='Fit surveyed camera pose with ground and optional measured-height targets; reject independent-check failures')
     survey.add_argument('--intrinsics',required=True)
     survey.add_argument('--survey',required=True)
+    survey.add_argument('--display-profile',type=Path,
+                        help='Station profile used to annotate corrected_full_resolution survey images')
     survey.add_argument('--calibration-id',required=True)
     survey.add_argument('--max-check-error-m',type=float,required=True)
     survey.add_argument('--output',required=True)
@@ -73,10 +76,21 @@ def main(argv=None):
             result['source_hashes']={'training':sha256_file(args.video),'heldout':sha256_file(args.heldout_video)}
             result['board']={'cols':args.cols,'rows':args.rows,'square_m':args.square_m,'stride':args.stride}
         else:
+            inputs={Path(args.intrinsics).resolve(),Path(args.survey).resolve()}
+            if args.display_profile: inputs.add(args.display_profile.resolve())
+            if Path(args.output).resolve() in inputs:
+                raise ValueError('Output would overwrite input evidence')
+            observations=json.loads(Path(args.survey).read_text(encoding='utf-8'))
+            if args.display_profile:
+                observations=corrected_survey_to_raw(observations,
+                    json.loads(args.display_profile.read_text(encoding='utf-8')))
             result=calibrate_survey(json.loads(Path(args.intrinsics).read_text(encoding='utf-8')),
-                json.loads(Path(args.survey).read_text(encoding='utf-8')),calibration_id=args.calibration_id,
+                observations,calibration_id=args.calibration_id,
                 max_check_error_m=args.max_check_error_m)
             result['source_hashes']={'intrinsics':sha256_file(args.intrinsics),'survey':sha256_file(args.survey)}
+            if args.display_profile:
+                result['source_hashes']['display_profile']=sha256_file(args.display_profile)
+                result['diagnostics']['input_coordinate_space']='corrected_full_resolution'
         Path(args.output).parent.mkdir(parents=True,exist_ok=True)
         write_json(args.output,result)
     except (ValueError,OSError,cv2.error) as exc:

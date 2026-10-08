@@ -151,6 +151,8 @@ def calibrate_survey(intrinsic, survey, *, calibration_id, max_check_error_m):
     size, K, D, model = _intrinsic(intrinsic)
     if not isinstance(survey, dict) or survey.get('schema_version') not in (1,2):
         raise ValueError('Survey schema_version must be 1 or 2')
+    if survey.get('coordinate_space','raw_distorted_pixels') != 'raw_distorted_pixels':
+        raise ValueError('Survey coordinate_space must be raw_distorted_pixels; convert corrected annotations first')
     if _image_size(survey.get('image_size')) != size:
         raise ValueError('Survey image_size must match intrinsic image_size exactly; no resizing')
     if survey.get('units') != 'm':

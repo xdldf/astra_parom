@@ -67,21 +67,31 @@ track_id,vehicle_id,length_m,uncertainty_m,reference_source,dataset_role
 Существующая команда `calibrate.py survey` принимает `schema_version: 2`:
 
 - `image_size`: действительное разрешение камеры;
-- `units: "m"`, `coordinate_space: "raw_distorted_pixels"`;
+- `units: "m"`, `coordinate_space: "corrected_full_resolution"` для разметки
+  исправленного полного кадра;
 - `world_frame_id`: общий ID метрической системы координат обеих камер;
 - `road_polygon`: граница измеренной зоны в метрах;
 - `control_points`, `check_points`, `raised_control_points`, `raised_check_points`;
 - каждая точка: `id`, `xyz_m`, `uv`, `uncertainty_m`.
 
-`uv` — внутренние координаты до коррекции объектива, соответствующие K/D. Нельзя
-подставлять координаты с исправленного изображения напрямую. Отображаемые и сохранённые
-снимки проверки остаются исправленными; исходное видео нужно для декодирования и калибровки.
+`uv` задавайте на исправленном полном кадре в его исходном разрешении, без обрезки
+и изменения размера. Передайте через `--display-profile` **тот профиль станции,
+которым был исправлен кадр**. Команда обращает поворот, масштабирование и коррекцию
+объектива и переводит только координаты в систему физических K/D. Точки на чёрных
+границах исправленного кадра не принимаются. Отображаемые и сохранённые снимки
+остаются исправленными; исходное видео нужно для декодирования и калибровки.
 
 ```bash
 .venv/bin/python calibrate.py survey --intrinsics runs/field/ST-intrinsics.json \
   --survey runs/field/ST-survey.json --calibration-id ST-field-2026 \
+  --display-profile runs/field/ST-display-profile.json \
   --max-check-error-m 0.03 --output runs/field/ST-camera.json
 ```
+
+Если точки уже заданы до коррекции, используйте `coordinate_space:
+"raw_distorted_pixels"` и не передавайте `--display-profile`. Параметры отображения
+не заменяют физическую калибровку объектива. Хеш профиля сохраняется вместе с хешами
+съёмки и калибровки; исходный JSON разметки не изменяется.
 
 Повторите для HiWatch. Эти файлы пока предназначены для диагностического решателя,
 а не для импорта вместо рабочего профиля станции.
@@ -95,14 +105,20 @@ track_id,vehicle_id,length_m,uncertainty_m,reference_source,dataset_role
 `synchronization_verified: true` только после проверки синхронизации.
 Общее время равно времени кадра плюс `time_offset_s`.
 
-JSON наблюдений содержит те же `schema_version`, `coordinate_space`, `rig_id`
-и `tracks`. Каждый трек содержит `track_id`, `complete_vehicle`, `pose_observations`
+JSON наблюдений содержит `schema_version: 1`, `rig_id`, `tracks` и
+`coordinate_space: "corrected_full_resolution"`, если разметка сделана на исправленных
+полных кадрах. Передайте отдельный `--display-profile CAMERA=PATH` для каждой камеры
+rig. Прямые внутренние координаты также поддерживаются через `raw_distorted_pixels`
+без этих параметров. Каждый трек содержит `track_id`, `complete_vehicle`, `pose_observations`
 и `endpoints`. Поза: `timestamp_s`, `visible`, `rear_contact_uv`, `front_contact_uv`
 на ST, необязательное `sigma_px` (по умолчанию 1 пиксель). Это стандартное отклонение
 ошибки каждой координаты контактов, а не погрешность длины. Крайняя точка:
 `camera_id`, `timestamp_s`, `landmark_id` (`front_extreme`
 или `rear_extreme`), `uv`, `sigma_px`, `visible`. Следите за одной и той же физической
 точкой: меняющийся край силуэта не является постоянной точкой кузова.
+`sigma_px` относится к тому изображению, на котором сделана разметка. При переводе
+исправленных координат масштаб ошибки пересчитывается по локальному якобиану;
+используется консервативный изотропный вес, а не оценка погрешности длины.
 
 Решатель совместно подбирает постоянную колёсную базу, крайние точки кузова и
 положение автомобиля в каждом кадре по ошибкам проекции в пикселях. Камеры остаются
@@ -121,6 +137,8 @@ JSON наблюдений содержит те же `schema_version`, `coordina
 ```bash
 .venv/bin/python scripts/reconstruct_camera_pair.py --rig runs/field/rig.json \
   --observations runs/field/landmarks.json --output-dir runs/field/reconstruction \
+  --display-profile ST=runs/field/ST-display-profile.json \
+  --display-profile HiWatch=runs/field/HiWatch-display-profile.json \
   --ground-truth runs/field/validation-lengths.csv
 ```
 
