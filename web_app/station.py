@@ -123,6 +123,8 @@ def verify_calibration_reference(ident: str, payload: CalibrationReferenceReques
             raise HTTPException(409,'Запись изменена. Обновите её перед проверкой эталона.')
         record=dict(old)
         if payload.enabled:
+            if old.get('evaluation',{}).get('dataset_role') == 'validation':
+                raise HTTPException(409,'Этот автомобиль зарезервирован для независимой проверки и не может быть эталоном калибровки.')
             if old['status'] not in APPROVED or not db.execute(
                 "SELECT 1 FROM audit WHERE vehicle_id=? AND action='confirm' LIMIT 1",(ident,)).fetchone():
                 raise HTTPException(409,'Сначала человек должен подтвердить автомобиль.')

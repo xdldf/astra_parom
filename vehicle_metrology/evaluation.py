@@ -19,7 +19,7 @@ def metrics(rows):
         tail_warning='Descriptive sample percentiles, not population guarantees; small samples cannot establish tails.')
 
 
-def evaluate(tracks, ground_truth, tolerance_m=.05):
+def evaluate(tracks, ground_truth, tolerance_m=.1, *, calibration_vehicle_ids=(), calibration_track_ids=()):
     if not math.isfinite(tolerance_m) or tolerance_m <= 0:
         raise ValueError('tolerance_m must be finite and positive')
     tracks = list(tracks)
@@ -33,6 +33,8 @@ def evaluate(tracks, ground_truth, tolerance_m=.05):
         if length is not None and (not math.isfinite(length) or length <= 0):
             raise ValueError('Prediction length_m must be finite and positive, or null for rejection')
     truth={}
+    calibration_vehicle_ids=set(calibration_vehicle_ids)
+    calibration_track_ids=set(calibration_track_ids)
     with open(ground_truth,newline='',encoding='utf-8-sig') as stream:
         for row in csv.DictReader(stream):
             key=row.get('track_id','')
@@ -41,7 +43,20 @@ def evaluate(tracks, ground_truth, tolerance_m=.05):
             value=float(row['length_m'])
             if not math.isfinite(value) or value <= 0:
                 raise ValueError('Ground truth length_m must be finite and positive')
-            truth[key]={'length_m':value,'vehicle_id':row.get('vehicle_id') or key}
+            uncertainty=row.get('uncertainty_m','').strip()
+            uncertainty=float(uncertainty) if uncertainty else None
+            if uncertainty is not None and (not math.isfinite(uncertainty) or uncertainty <= 0):
+                raise ValueError('Ground truth uncertainty_m must be positive and finite when provided')
+            vehicle_id=row.get('vehicle_id','').strip()
+            reference_reasons=[]
+            if not vehicle_id: reference_reasons.append('missing_physical_vehicle_id')
+            if uncertainty is None: reference_reasons.append('missing_reference_uncertainty')
+            if row.get('reference_source') != 'physical_measurement': reference_reasons.append('reference_not_physically_measured')
+            if row.get('dataset_role') != 'validation': reference_reasons.append('reference_not_reserved_for_validation')
+            if vehicle_id in calibration_vehicle_ids or key in calibration_track_ids:
+                reference_reasons.append('calibration_data_leakage')
+            truth[key]={'length_m':value,'vehicle_id':vehicle_id or key,
+                        'uncertainty_m':uncertainty,'reference_reasons':reference_reasons}
     rows=[]
     windows=[]
     spatial=defaultdict(list)
@@ -54,9 +69,17 @@ def evaluate(tracks, ground_truth, tolerance_m=.05):
             continue
         gt=truth[key]
         error=float(track['length_m'])-gt['length_m']
+        guarded_error=abs(error)+gt['uncertainty_m'] if gt['uncertainty_m'] is not None else None
+        reasons=list(gt['reference_reasons'])
+        if track.get('complete_vehicle') is not True: reasons.append('complete_vehicle_not_verified')
+        # Numerical equality at the boundary is a failure: the goal is *lower*
+        # than the tolerance, not <= rounded to a displayed centimetre value.
+        within=guarded_error is not None and guarded_error < tolerance_m-1e-12 and not reasons
         row=dict(track_id=key,vehicle_id=gt['vehicle_id'],truth_m=gt['length_m'],
             prediction_m=track['length_m'],error_m=error,absolute_error_m=abs(error),
-            relative_abs_error=abs(error)/gt['length_m'],within_tolerance=abs(error) <= tolerance_m+1e-12)
+            relative_abs_error=abs(error)/gt['length_m'],within_tolerance=within,
+            reference_uncertainty_m=gt['uncertainty_m'],guarded_absolute_error_m=guarded_error,
+            reference_reasons=reasons)
         rows.append(row)
         vehicles[gt['vehicle_id']].append(row)
         interval=track.get('diagnostics',{}).get('uncertainty',{}).get('conditional_p95_m')
@@ -82,17 +105,20 @@ def evaluate(tracks, ground_truth, tolerance_m=.05):
     present={t['track_id'] for t in tracks}
     rejected=[t for t in tracks if t.get('length_m') is None]
     passed = sum(row['within_tolerance'] for row in rows)
+    unmatched=sorted(present-set(truth))
     acceptance = dict(tolerance_m=tolerance_m, passed_tracks=passed,
         failed_track_ids=[row['track_id'] for row in rows if not row['within_tolerance']],
         fraction_of_measured_within_tolerance=passed/len(rows) if rows else None,
         fraction_of_ground_truth_within_tolerance=passed/len(truth) if truth else None,
-        all_ground_truth_tracks_within_tolerance=bool(truth) and passed == len(truth),
-        note='Observed sample only. Missed and rejected vehicles do not count as passes; this is not a population guarantee.')
+        all_ground_truth_tracks_within_tolerance=bool(truth) and passed == len(truth) and not unmatched,
+        criterion='abs(prediction-truth) + reference uncertainty < tolerance; independent physical references and complete vehicles required',
+        invalid_reference_track_ids=sorted(key for key,value in truth.items() if value['reference_reasons']),
+        note='Observed sample only. Missed, rejected, incomplete and unmatched vehicles do not count as passes; this is not a population guarantee.')
     return dict(metrics=metrics(rows),per_track=rows,per_vehicle={k:metrics(v) for k,v in sorted(vehicles.items())},
         acceptance=acceptance,
         coverage=dict(ground_truth_tracks=len(truth),detected_tracks=len(tracks),accepted_matched=len(rows),
             fraction_of_ground_truth_measured=len(rows)/len(truth) if truth else None,
-            missed_track_ids=sorted(set(truth)-present),unmatched_prediction_ids=sorted(present-set(truth)),
+            missed_track_ids=sorted(set(truth)-present),unmatched_prediction_ids=unmatched,
             rejected_tracks=len(rejected),rejection_reasons=dict(Counter(r for t in rejected for r in t.get('reasons',[])))),
         spatial_bins={k:metrics(v) for k,v in sorted(spatial.items())},
         orientation_bins={k:metrics(v) for k,v in sorted(orientation.items())},

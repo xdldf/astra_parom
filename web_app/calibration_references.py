@@ -10,7 +10,8 @@ revision = 0
 
 
 def verified_record(record, item):
-    return (record.get('calibration_reference') == item and
+    return (record.get('evaluation',{}).get('dataset_role') != 'validation' and
+            record.get('calibration_reference') == item and
             (record['status'] in APPROVED or
              (record.get('evaluation', {}).get('state') == 'labeled' and record['status'] != 'Отклонён')))
 

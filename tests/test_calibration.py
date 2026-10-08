@@ -160,3 +160,50 @@ def test_intrinsic_inputs_require_independent_diverse_view_sets():
         api.calibrate_intrinsic_views(views[:16],views[:4],image_size=[960,540],model='brown')
     with pytest.raises(ValueError,match='heldout'):
         api.calibrate_intrinsic_views(views[:16],[],image_size=[960,540],model='brown')
+
+
+def spatial_survey(model='brown'):
+    intrinsic,survey,R,t,C=synthetic_survey(model)
+    project=cv2.projectPoints if model=='brown' else cv2.fisheye.projectPoints
+    def raised(points,prefix):
+        xyz=np.asarray(points,float)
+        uv=project(xyz.reshape(-1,1,3),cv2.Rodrigues(R)[0],t,np.asarray(intrinsic['K']),
+                   np.asarray(intrinsic['D']))[0].reshape(-1,2)
+        return [dict(id=f'{prefix}{i}',xyz_m=p.tolist(),uv=q.tolist(),uncertainty_m=.002)
+                for i,(p,q) in enumerate(zip(xyz,uv))]
+    survey.update(schema_version=2,coordinate_space='raw_distorted_pixels',world_frame_id='site-fixed-2026',
+        raised_control_points=raised([[-3,0,.6],[3,0,.6],[-3,5,1.2],[3,5,1.2]],'raised-control-'),
+        raised_check_points=raised([[-1,1,.8],[2,4,1.],[1,6,.5]],'raised-check-'))
+    for point in survey['control_points']+survey['check_points']: point['uncertainty_m']=.002
+    return intrinsic,survey,R,t,C
+
+
+@pytest.mark.parametrize('model',['brown','fisheye'])
+def test_spatial_survey_uses_known_heights_and_independent_checks(model):
+    api=calibration_module()
+    intrinsic,survey,R,t,C=spatial_survey(model)
+    result=api.calibrate_survey(intrinsic,survey,calibration_id='spatial',max_check_error_m=.03)
+    np.testing.assert_allclose(result['Rcw'],R,atol=1e-6)
+    np.testing.assert_allclose(result['tcw'],t,atol=1e-6)
+    assert result['world_frame_id']=='site-fixed-2026'
+    assert result['diagnostics']['raised_check_count']==3
+    assert result['diagnostics']['guarded_check_max_error_m']==pytest.approx(.002,abs=1e-5)
+    survey['raised_check_points'][0]['uv'][0]+=15
+    changed=api.calibrate_survey(intrinsic,survey,calibration_id='spatial',max_check_error_m=1)
+    np.testing.assert_array_equal(result['tcw'],changed['tcw'])
+    with pytest.raises(ValueError,match='Independent check error'):
+        api.calibrate_survey(intrinsic,survey,calibration_id='spatial',max_check_error_m=.03)
+
+
+def test_spatial_survey_rejects_invented_heights_unknown_uncertainty_and_mixed_spaces():
+    import copy
+    api=calibration_module()
+    intrinsic,survey,*_=spatial_survey()
+    for field,value,message in [('world_frame_id','','world_frame'),('coordinate_space','corrected','coordinate_space')]:
+        invalid=copy.deepcopy(survey);invalid[field]=value
+        with pytest.raises(ValueError,match=message):
+            api.calibrate_survey(intrinsic,invalid,calibration_id='test',max_check_error_m=.03)
+    for field,value,message in [('xyz_m',[0,0,0],'positive heights'),('uncertainty_m',None,'finite'),('uncertainty_m',.04,'budget')]:
+        invalid=copy.deepcopy(survey);invalid['raised_control_points'][0][field]=value
+        with pytest.raises(ValueError,match=message):
+            api.calibrate_survey(intrinsic,invalid,calibration_id='test',max_check_error_m=.03)

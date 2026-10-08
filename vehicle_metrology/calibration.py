@@ -22,9 +22,11 @@ def _normalized(uv, K, D, model):
 
 
 def _pose(xyz, uv, K, D, model, above_road=False):
-    """Initialize planar PnP in normalized coordinates, refine raw pixels."""
+    """Initialize planar or spatial PnP, then refine original pixel residuals."""
     normalized = _normalized(uv, K, D, model)
-    solved = cv2.solvePnPGeneric(xyz, normalized, np.eye(3), None, flags=cv2.SOLVEPNP_IPPE)
+    spatial = np.linalg.matrix_rank(xyz-xyz.mean(axis=0)) == 3
+    solved = cv2.solvePnPGeneric(xyz, normalized, np.eye(3), None,
+                                flags=cv2.SOLVEPNP_SQPNP if spatial else cv2.SOLVEPNP_IPPE)
     candidates = []
     for rvec, tvec in zip(solved[1], solved[2]):
         initial = np.r_[rvec.ravel(), tvec.ravel()]
@@ -126,15 +128,17 @@ def _intrinsic(data):
     return size, K, D, model
 
 
-def _survey_points(value, name, minimum, size):
+def _survey_points(value, name, minimum, size, *, raised=False):
     if not isinstance(value, list) or len(value) < minimum:
         raise ValueError(f'{name} requires at least {minimum} points with id, xyz_m and uv')
     if any(not isinstance(p, dict) or not isinstance(p.get('id'), str) or not p['id'] for p in value):
         raise ValueError(f'{name}: each point requires a nonempty string id')
     xyz = _array([p.get('xyz_m') for p in value], name + '.xyz_m', (len(value), 3))
     uv = _array([p.get('uv') for p in value], name + '.uv', (len(value), 2))
-    if np.any(np.abs(xyz[:,2]) > 1e-9):
+    if not raised and np.any(np.abs(xyz[:,2]) > 1e-9):
         raise ValueError(f'{name}: only surveyed Z=0 road points supported; do not flatten a nonplanar site')
+    if raised and np.any(xyz[:,2] <= 0):
+        raise ValueError(f'{name}: raised controls require measured positive heights')
     if np.linalg.matrix_rank(xyz[:,:2] - xyz[:,:2].mean(axis=0)) < 2:
         raise ValueError(f'{name} must be noncollinear and spatially spread')
     if np.any(uv < 0) or np.any(uv >= size):
@@ -143,10 +147,10 @@ def _survey_points(value, name, minimum, size):
 
 
 def calibrate_survey(intrinsic, survey, *, calibration_id, max_check_error_m):
-    """Fit controls only, then evaluate independent surveyed Z=0 check points."""
+    """Fit controls only; v2 adds measured elevated targets and independent checks."""
     size, K, D, model = _intrinsic(intrinsic)
-    if not isinstance(survey, dict) or survey.get('schema_version') != 1:
-        raise ValueError('Survey schema_version must be 1')
+    if not isinstance(survey, dict) or survey.get('schema_version') not in (1,2):
+        raise ValueError('Survey schema_version must be 1 or 2')
     if _image_size(survey.get('image_size')) != size:
         raise ValueError('Survey image_size must match intrinsic image_size exactly; no resizing')
     if survey.get('units') != 'm':
@@ -157,7 +161,25 @@ def calibrate_survey(intrinsic, survey, *, calibration_id, max_check_error_m):
         raise ValueError('max_check_error_m must be finite and positive, chosen from your error budget')
     xyz, uv = _survey_points(survey.get('control_points'), 'control_points', 6, size)
     check_xyz, check_uv = _survey_points(survey.get('check_points'), 'check_points', 3, size)
-    points = survey['control_points'] + survey['check_points']
+    spatial = survey['schema_version'] == 2
+    controls = list(survey['control_points'])
+    checks = list(survey['check_points'])
+    ground_check_count = len(checks)
+    if spatial:
+        if survey.get('coordinate_space') != 'raw_distorted_pixels':
+            raise ValueError('v2 requires explicit raw_distorted_pixels coordinate_space')
+        if not isinstance(survey.get('world_frame_id'),str) or not survey['world_frame_id'].strip():
+            raise ValueError('v2 requires world_frame_id shared by the camera pair')
+        raised_xyz,raised_uv = _survey_points(survey.get('raised_control_points'),'raised_control_points',4,size,raised=True)
+        raised_check_xyz,raised_check_uv = _survey_points(survey.get('raised_check_points'),'raised_check_points',3,size,raised=True)
+        controls += survey['raised_control_points']
+        checks += survey['raised_check_points']
+        xyz,uv = np.vstack([xyz,raised_xyz]),np.vstack([uv,raised_uv])
+        check_xyz,check_uv = np.vstack([check_xyz,raised_check_xyz]),np.vstack([check_uv,raised_check_uv])
+        uncertainty = _array([p.get('uncertainty_m') for p in controls+checks],'survey uncertainty_m')
+        if np.any(uncertainty <= 0) or np.any(uncertainty >= max_check_error_m):
+            raise ValueError('Survey uncertainty_m must be positive and below the check error budget')
+    points = controls + checks
     ids = [p['id'] for p in points]
     all_xyz = np.vstack([xyz, check_xyz])
     if len(set(ids)) != len(ids) or len(np.unique(all_xyz, axis=0)) != len(all_xyz):
@@ -172,14 +194,24 @@ def calibrate_survey(intrinsic, survey, *, calibration_id, max_check_error_m):
     camera = Camera.from_dict(result)
     control_residual = camera.project(xyz) - uv
     check_residual = camera.project(check_xyz) - check_uv
-    errors = np.linalg.norm(camera.ground(check_uv) - check_xyz, axis=1)
-    if errors.max() > max_check_error_m:
-        raise ValueError(f'Independent check error {errors.max():.6g} m exceeds limit {max_check_error_m:.6g} m')
+    check_world = np.vstack([camera.horizontal_plane([pixel],point[2])[0]
+                             for pixel,point in zip(check_uv,check_xyz)])
+    errors = np.linalg.norm(check_world - check_xyz, axis=1)
+    uncertainty = np.asarray([p['uncertainty_m'] for p in checks]) if spatial else np.zeros(len(checks))
+    guarded_errors = errors + uncertainty
+    if guarded_errors.max() > max_check_error_m:
+        raise ValueError(f'Independent check error including survey uncertainty {guarded_errors.max():.6g} m exceeds limit {max_check_error_m:.6g} m')
+    if spatial:
+        result['world_frame_id']=survey['world_frame_id']
     result['diagnostics'] = dict(control_count=len(xyz), check_count=len(check_xyz),
         control_reprojection_rmse_px=float(np.sqrt(np.mean(np.sum(control_residual**2, axis=1)))),
         check_reprojection_rmse_px=float(np.sqrt(np.mean(np.sum(check_residual**2, axis=1)))),
         check_rmse_m=float(np.sqrt(np.mean(errors**2))), check_max_error_m=float(errors.max()),
         check_errors_m=errors.tolist(), check_residuals_px=check_residual.tolist(),
         control_residuals_px=control_residual.tolist(), camera_center_m=camera.center.tolist(),
-        max_check_error_m=float(max_check_error_m), check_points_used_for_fit=False)
+        max_check_error_m=float(max_check_error_m), check_points_used_for_fit=False,
+        survey_schema_version=survey['schema_version'],ground_check_count=ground_check_count,
+        raised_check_count=len(checks)-ground_check_count,check_point_ids=[p['id'] for p in checks],
+        check_uncertainty_m=uncertainty.tolist(),guarded_check_max_error_m=float(guarded_errors.max()),
+        vehicle_accuracy_validated=False)
     return result

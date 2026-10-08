@@ -93,7 +93,7 @@ def test_skip_is_persistent_reversible_and_revokes_stale_json_reference(setup):
     assert len(data['references'])==2
 
 
-@pytest.mark.parametrize('length',[None,0,-1,41,'not-a-length'])
+@pytest.mark.parametrize('length',[None,0,-1,101,'not-a-length'])
 def test_invalid_real_lengths_do_not_advance_queue(setup,length):
     client,_,record,_,_=setup
     assert review(client,record,length=length).status_code==422
@@ -122,3 +122,72 @@ def test_clipped_detection_is_saved_for_evaluation_but_never_used_as_scale(setup
     data=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()
     assert data['evaluation_samples'][0]['actual_length_m']==4.725
     assert len(data['references'])==1
+
+
+VALIDATION=dict(dataset_role='validation',physical_vehicle_id='field-car-01',
+                reference_source='physical_measurement',reference_uncertainty_m=.01)
+
+
+def test_validation_sample_exported_but_excluded_from_every_calibration_path(setup):
+    client,profile,record,path,_=setup
+    saved=review(client,record,**VALIDATION).json()
+    assert saved['evaluation']['dataset_assigned']
+    assert not saved['evaluation']['reference_added']
+    exported=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()
+    assert len(exported['references'])==1
+    sample=exported['evaluation_samples'][0]
+    for key,value in VALIDATION.items(): assert sample[key]==value
+    import csv,io
+    rows=list(csv.DictReader(io.StringIO(client.get('/api/station/evaluation/validation.csv').text)))
+    assert len(rows)==1 and rows[0]['track_id']==record['id']
+    assert float(rows[0]['length_m'])==4.725 and float(rows[0]['uncertainty_m'])==.01
+    assert rows[0]['vehicle_id']=='field-car-01'
+    response=client.post('/api/station/vehicles/'+record['id']+'/calibration-reference',json=dict(
+        version=saved['version'],actor='Reviewer',enabled=True,actual_length_m=4.725,verified=True))
+    assert response.status_code==409
+    skipped=review(client,saved,'skip',None).json()
+    assert len(client.get('/api/station/evaluation/validation.csv').text.splitlines())==1
+    assert skipped['evaluation']['dataset_role']=='validation'
+    assert review(client,skipped).status_code==409  # Cannot turn a held-out sample into fitting data.
+    restored=review(client,skipped,**VALIDATION).json()
+    assert not restored['evaluation']['reference_added']
+    assert len(client.post('/api/workbench/approved-references',json=exported).json()['references'])==1
+
+
+@pytest.mark.parametrize('change',[{'physical_vehicle_id':None},{'physical_vehicle_id':' '},
+    {'reference_source':'catalogue'},{'reference_uncertainty_m':None},{'reference_uncertainty_m':0}])
+def test_validation_requires_independent_reference_metadata(setup,change):
+    client,_,record,_,_=setup
+    assert review(client,record,**{**VALIDATION,**change}).status_code==422
+    assert client.get('/api/station/evaluation').json()['count']==1
+
+
+def test_physical_vehicle_cannot_cross_dataset_split_or_be_renamed(setup):
+    client,_,record,_,payload=setup
+    saved=review(client,record,**VALIDATION).json()
+    payload['frame']=30
+    second=client.post('/api/station/capture',json=payload).json()
+    assert review(client,second,physical_vehicle_id='field-car-01').status_code==409
+    assert review(client,second,**VALIDATION).status_code==200
+    assert review(client,saved,**{**VALIDATION,'physical_vehicle_id':'different'}).status_code==409
+
+
+def test_first_skip_does_not_lock_role_but_fitting_cannot_be_reclassified_as_validation(setup):
+    client,_,record,_,payload=setup
+    skipped=review(client,record,'skip',None).json()
+    assert not skipped['evaluation']['dataset_assigned']
+    assert review(client,skipped,**VALIDATION).status_code==200
+    payload['frame']=31
+    other=client.post('/api/station/capture',json=payload).json()
+    fitted=review(client,other).json()
+    skipped=review(client,fitted,'skip',None).json()
+    assert review(client,skipped,**{**VALIDATION,'physical_vehicle_id':'new-id'}).status_code==409
+
+
+def test_long_combination_truth_is_retained_without_entering_legacy_box_scale(setup):
+    client,_,record,_,_=setup
+    saved=review(client,record,length=45).json()
+    assert saved['evaluation']['actual_length_m']==45
+    assert not saved['evaluation']['reference_added']
+    data=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()
+    assert data['evaluation_samples'][0]['actual_length_m']==45

@@ -78,10 +78,19 @@ class Camera:
         return rays
 
     def ground(self, pixels):
+        return self.horizontal_plane(pixels, 0.)
+
+    def horizontal_plane(self, pixels, height_m):
+        """Intersect rays with a surveyed horizontal plane, never flatten raised points."""
+        if not np.isfinite(height_m):
+            raise ValueError('Plane height must be finite')
         rays = self.rays(pixels)
-        if np.any(rays[:,2] >= -1e-6):
+        if np.any(abs(rays[:,2]) < 1e-6):
             raise ValueError('Ray does not intersect usable road in front of camera')
-        return self.center + (-self.center[2]/rays[:,2,None])*rays
+        distance = (height_m-self.center[2])/rays[:,2]
+        if np.any(distance <= 0):
+            raise ValueError('Ray does not intersect usable plane in front of camera')
+        return self.center + distance[:,None]*rays
 
     def in_road(self, points):
         polygon = self.road_polygon.astype(np.float32)

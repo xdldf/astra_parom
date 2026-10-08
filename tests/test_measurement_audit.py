@@ -35,7 +35,7 @@ def test_audit_preserves_rejected_samples_and_leaves_truth_blank(tmp_path, monke
     assert json.loads((output/'summary.json').read_text())['videos'][0]['sampled_frames']==[0,1,2,3]
     with (output/'ground_truth_template.csv').open() as stream:
         truth=list(csv.DictReader(stream))
-    assert len(truth)==4
+    assert len(truth)==8  # Rejected detections also need independent adjudication.
     assert all(r['length_m']=='' and r['vehicle_id']=='' for r in truth)
     # Do not destroy independent annotations on rerun.
     (output/'ground_truth_template.csv').write_text('keep my annotations')

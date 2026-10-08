@@ -52,7 +52,7 @@ def main(argv=None):
     intrinsic.add_argument('--stride',type=int,default=15)
     intrinsic.add_argument('--model',choices=['brown','fisheye'],required=True)
     intrinsic.add_argument('--output',required=True)
-    survey=sub.add_parser('survey',help='Fit metric Z=0 road pose, reject independent-check failures')
+    survey=sub.add_parser('survey',help='Fit surveyed camera pose with ground and optional measured-height targets; reject independent-check failures')
     survey.add_argument('--intrinsics',required=True)
     survey.add_argument('--survey',required=True)
     survey.add_argument('--calibration-id',required=True)

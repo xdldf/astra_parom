@@ -175,7 +175,8 @@ def run_video(video, *, output_dir=None, headless=False, calibration=None, obser
             from .geometry import measure_track
             for track in annotation_data['tracks']:
                 measurement = measure_track(camera,track['observations'],seed=seed,mc_samples=mc_samples)
-                tracks[track['track_id']] = {'track_id':track['track_id'],**measurement}
+                tracks[track['track_id']] = {'track_id':track['track_id'],**measurement,
+                                             'complete_vehicle':track.get('complete_vehicle') is True}
         by_frame = {}
         for track in tracks.values():
             for measurement in track['frames']:

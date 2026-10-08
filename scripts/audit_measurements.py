@@ -127,8 +127,9 @@ def audit(videos, profile, detector, output, *, device, step_seconds=10.,
     template=output/'ground_truth_template.csv'
     if not template.exists():
         with template.open('w', newline='', encoding='utf-8') as stream:
-            writer=csv.writer(stream); writer.writerow(['track_id', 'vehicle_id', 'length_m'])
-            writer.writerows((s['track_id'], '', '') for s in samples if s['length_m'] is not None)
+            writer=csv.writer(stream)
+            writer.writerow(['track_id','vehicle_id','length_m','uncertainty_m','reference_source','dataset_role'])
+            writer.writerows((s['track_id'],'','','','','') for s in samples)
     return summary, samples
 
 
@@ -167,7 +168,13 @@ def main():
     summary['model_sha256']=sha256_file(args.model)
     summary['profile_sha256']=sha256_file(args.profile)
     if args.ground_truth:
-        report=evaluate(samples, args.ground_truth, tolerance_m=profile.accuracy_tolerance_m)
+        calibration_samples=[sample for sample in profile.evaluation_samples if sample.dataset_role=='calibration']
+        report=evaluate(samples, args.ground_truth, tolerance_m=profile.accuracy_tolerance_m,
+                        calibration_vehicle_ids=[s.physical_vehicle_id for s in calibration_samples if s.physical_vehicle_id],
+                        calibration_track_ids=[r.vehicle_id for r in profile.references if r.vehicle_id])
+        if any(not r.vehicle_id for r in profile.references):
+            report['acceptance']['all_ground_truth_tracks_within_tolerance']=False
+            report['warnings'].append('Legacy calibration references lack physical identities; independence cannot be verified.')
         report['warnings'].append('Audit IDs are frame observations. Associate physical vehicles and adjudicate missed passages separately.')
         write_json(args.output_dir/'evaluation.json', report)
         summary['accuracy_status']='evaluated_supplied_ground_truth_sample_only' if report['metrics']['count'] else 'unvalidated_no_matched_ground_truth'

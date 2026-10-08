@@ -74,10 +74,14 @@ class EvaluationSample(BaseModel):
     bbox: tuple[float,float,float,float]
     frame: int = Field(ge=0)
     measured_length_m: float | None = None
-    actual_length_m: float = Field(gt=0,le=40)
+    actual_length_m: float = Field(gt=0,le=100)
     full_frame_photo: str
     verified_by: str
     verified_at: str
+    physical_vehicle_id: str | None = None
+    dataset_role: Literal['calibration','validation'] = 'calibration'
+    reference_source: Literal['physical_measurement','catalogue','unknown'] = 'unknown'
+    reference_uncertainty_m: float | None = Field(None,gt=0,le=1)
 
 
 class SurveyCalibration(BaseModel):

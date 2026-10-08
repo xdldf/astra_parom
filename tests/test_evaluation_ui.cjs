@@ -31,3 +31,17 @@ test('skip saves a null label and advances to empty queue with export still avai
  assert.equal(page.elements.get('empty').hidden,false);assert.equal(page.elements.get('review').hidden,true);
  assert.equal(page.elements.get('export').hidden,false);
 });
+test('validation role submits physical identity and uncertainty, and blocks catalogue evidence',async()=>{
+ const page=await ui();page.elements.get('datasetRole').value='validation';
+ page.elements.get('referenceSource').value='catalogue';page.elements.get('actual').value='4.7';
+ const before=page.requests.length;await page.run("submit('label')");
+ assert.equal(page.requests.length,before);assert.match(page.elements.get('message').textContent,/физический замер/);
+ page.elements.get('referenceSource').value='physical_measurement';
+ page.elements.get('physicalId').value='car-one';page.elements.get('uncertainty').value='0.01';
+ page.respond((path,options)=>options?.method==='POST'?{data:{...page.record,evaluation:{state:'labeled',dataset_role:'validation'}}}:{data:{rows:[],count:0}});
+ await page.run("submit('label')");
+ const payload=JSON.parse(page.requests.find(r=>r.options?.method==='POST').options.body);
+ assert.equal(payload.dataset_role,'validation');assert.equal(payload.physical_vehicle_id,'car-one');
+ assert.equal(payload.reference_uncertainty_m,.01);assert.equal(payload.reference_source,'physical_measurement');
+ assert.match(page.elements.get('message').textContent,/не используется в калибровке/);
+});

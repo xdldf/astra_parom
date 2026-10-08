@@ -23,6 +23,17 @@ function render(record){
   $('measured').textContent=record.measured_length_m==null?'Не измерена':record.measured_length_m.toFixed(3)+' м';
   $('quality').textContent=record.measurement?.warnings?.join(' ')||'';
   $('actual').value=record.evaluation?.actual_length_m??'';
+  $('datasetRole').value=record.evaluation?.dataset_role||'calibration';
+  $('datasetRole').disabled=record.evaluation?.dataset_assigned??record.evaluation?.state==='labeled';
+  $('physicalId').value=record.evaluation?.physical_vehicle_id||'';
+  $('physicalId').disabled=!!$('physicalId').value&&$('datasetRole').disabled;
+  $('referenceSource').value=record.evaluation?.reference_source||'unknown';
+  $('uncertainty').value=record.evaluation?.reference_uncertainty_m??'';
+  referenceRequirements();
+}
+function referenceRequirements(){
+  const validation=$('datasetRole').value==='validation';
+  $('physicalId').required=validation;$('uncertainty').required=validation;
 }
 async function load(){
   lock(true);
@@ -36,12 +47,19 @@ async function submit(action){
   if(busy||!current)return;
   if(action==='label'&&!$('form').reportValidity())return;
   const actor=$('actor').value.trim();if(!actor){message('Введите имя оператора.',true);return;}
+  if(action==='label'&&$('datasetRole').value==='validation'&&$('referenceSource').value!=='physical_measurement'){
+    message('Для независимой проверки нужен физический замер.',true);return;
+  }
   lock(true);
   try{
     const record=await api('/'+encodeURIComponent(current.id),{version:current.version,actor,action,
-      actual_length_m:action==='label'?Number($('actual').value):null});
+      actual_length_m:action==='label'?Number($('actual').value):null,
+      physical_vehicle_id:$('physicalId').value.trim()||null,dataset_role:$('datasetRole').value,
+      reference_source:$('referenceSource').value,
+      reference_uncertainty_m:$('uncertainty').value===''?null:Number($('uncertainty').value)});
     localStorage.setItem('evaluationActor',actor);
     message(action==='skip'?'Кадр пропущен. Его можно открыть в очереди «Пропущенные».':
+      record.evaluation.dataset_role==='validation'?'Длина сохранена для независимой проверки. Она не используется в калибровке.':
       record.evaluation.reference_added?'Фактическая длина сохранена в данных оценки и эталонах JSON.':
       'Фактическая длина сохранена в данных оценки JSON. Эта рамка не добавлена в эталоны масштаба.');
     if($('state').value===record.evaluation.state)offset++;
@@ -55,5 +73,6 @@ $('state').onchange=()=>{offset=0;message('');load();};
 $('previous').onclick=()=>{offset=Math.max(0,offset-1);load();};
 $('next').onclick=()=>{offset++;load();};
 $('showBox').onchange=()=>{$('box').hidden=!$('showBox').checked;};
+$('datasetRole').onchange=referenceRequirements;
 $('actor').value=localStorage.getItem('evaluationActor')||localStorage.getItem('ferryActor')||'Оператор';
 load();
