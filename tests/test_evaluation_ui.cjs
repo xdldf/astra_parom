@@ -56,3 +56,18 @@ test('validation role submits physical identity and uncertainty, and blocks cata
  assert.equal(payload.reference_uncertainty_m,.01);assert.equal(payload.reference_source,'physical_measurement');
  assert.match(page.elements.get('message').textContent,/не используется в калибровке/);
 });
+test('wheel overlays use corrected full-frame coordinates, retain the outline baseline, and clear on the next car',async()=>{
+ const page=await ui();page.elements.get('showBox').checked=true;
+ page.record.measurement={warnings:[],outline:{status:'estimated',baseline_length_m:4.4,contour:[[100,50],[300,150]]},
+  wheels:{status:'estimated',baseline_length_m:4.25,pair:[{bbox:[120,110,20,18]},{bbox:[260,110,20,18]}]}};
+ page.respond(()=>({data:{rows:[page.record],count:1}}));await page.run('load()');
+ assert.equal(page.elements.get('wheel0').attributes.points,'120,110 140,110 140,128 120,128');
+ assert.equal(page.elements.get('wheel1').attributes.points,'260,110 280,110 280,128 260,128');
+ assert.match(page.elements.get('basis').textContent,/колёсам/);
+ assert.match(page.elements.get('basis').textContent,/4.250 м/);
+ assert.match(page.elements.get('basis').textContent,/4.400 м/);
+ page.record.measurement={warnings:[]};await page.run('load()');
+ assert.equal(page.elements.get('wheel0').attributes.points,'');
+ assert.equal(page.elements.get('wheel1').attributes.points,'');
+ assert.equal(page.elements.get('basis').textContent,'');
+});

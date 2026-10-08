@@ -1,0 +1,2 @@
+# Optional capture-time visible-wheel refinement. Core app dependencies first.
+transformers==5.17.0

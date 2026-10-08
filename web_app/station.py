@@ -336,6 +336,9 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
         if corrected_image is None and result.get('image'):
             corrected_image=cv2.imdecode(np.frombuffer(base64.b64decode(result['image']),np.uint8),cv2.IMREAD_COLOR)
         measured=apply_outline(payload.profile,measured,corrected_image,label=payload.label)
+        if payload.profile.wheel_calibration:
+            from web_app.wheel_measurement import apply_wheels
+            measured=apply_wheels(payload.profile,measured,corrected_image,label=payload.label)
         result['detections'][0]=measured
     if measured['status'] in {'outside_road','clipped','waiting_for_line','outside_calibration'}:
         raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге, в области калибровки и у линии измерения (если она включена).')

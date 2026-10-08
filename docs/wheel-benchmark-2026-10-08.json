@@ -1,0 +1,1098 @@
+{
+  "accuracy_validated": false,
+  "dataset_role": "development_catalogue_check",
+  "summary": {
+    "outline": {
+      "count": 78,
+      "family_count": 14,
+      "midpoint_mae_m": 0.05984642521124477,
+      "family_balanced_midpoint_mae_m": 0.060169343301562046,
+      "optimistic_interval_mae_m": 0.053485996278672086,
+      "optimistic_interval_max_m": 0.22601822971806484,
+      "outside_10cm_even_optimistically": 11,
+      "within_10cm_for_entire_interval": 61,
+      "variant_dependent": 6
+    },
+    "wheels_with_outline_fallback": {
+      "count": 78,
+      "family_count": 14,
+      "midpoint_mae_m": 0.038643539859884266,
+      "family_balanced_midpoint_mae_m": 0.03918508791542026,
+      "optimistic_interval_mae_m": 0.030705962672566835,
+      "optimistic_interval_max_m": 0.14958160450476843,
+      "outside_10cm_even_optimistically": 4,
+      "within_10cm_for_entire_interval": 70,
+      "variant_dependent": 4
+    },
+    "guarded_outline": {
+      "count": 70,
+      "family_count": 14,
+      "midpoint_mae_m": 0.05700086987043457,
+      "family_balanced_midpoint_mae_m": 0.057657505760867735,
+      "optimistic_interval_mae_m": 0.05098496334556784,
+      "optimistic_interval_max_m": 0.22601822971806484,
+      "outside_10cm_even_optimistically": 8,
+      "within_10cm_for_entire_interval": 57,
+      "variant_dependent": 5,
+      "total_passages": 78,
+      "review_without_length": 8,
+      "failures_or_variant_dependent": 21,
+      "note": "Numeric errors describe the reported subset. Reviews remain unsuccessful measurements in the denominator."
+    },
+    "guarded_runtime": {
+      "count": 70,
+      "family_count": 14,
+      "midpoint_mae_m": 0.0358733338015827,
+      "family_balanced_midpoint_mae_m": 0.03746068486486426,
+      "optimistic_interval_mae_m": 0.028100033507143272,
+      "optimistic_interval_max_m": 0.14958160450476932,
+      "outside_10cm_even_optimistically": 3,
+      "within_10cm_for_entire_interval": 65,
+      "variant_dependent": 2,
+      "total_passages": 78,
+      "review_without_length": 8,
+      "failures_or_variant_dependent": 13,
+      "note": "Numeric errors describe the reported subset. Reviews remain unsuccessful measurements in the denominator."
+    }
+  },
+  "training_ineligible_ids": [
+    "V2-020",
+    "V6-004"
+  ],
+  "limitations": [
+    "Catalogue identities and trims remain provisional; no physical accuracy guarantee.",
+    "Features were developed after examining errors in these same six videos; not a fresh independent final test.",
+    "Regularization and coefficients exclude the entire heldout family; identity is never an inference input.",
+    "Damaged body and unavailable wheel pairs do not train the wheel model but remain in all comparison counts.",
+    "Visible-wheel image proxies do not reconstruct ground contacts hidden by the barrier.",
+    "Unidentified, missed, custom and loaded vehicles are outside catalogue scoring; detector recall is not established."
+  ],
+  "inputs_sha256": {
+    "comparison": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+    "manifest": "f109b11c2b8e4010485763c47ab7c373c75de9bbc9417b283c04a3df73ed9f3d",
+    "masks": "4ccbfc67e74d205e4b7993dee3cbfdb35140df620523177c270ecf8f54b9ee3e",
+    "detections": "1990e72664880cec2e28e5670afae2c73d0aea490ae777f82fbc47fc8b7794f5",
+    "corrections": "84e50277b76a08af912ec6f4bb0277061b1d38049241c9a5c0e06a9432a75ed8",
+    "outline_profile": "f5854fe22d8002d3f6da02a38470a2590309b62813868b24021a00a3d8ec1e0d",
+    "script": "4ff1c1018dc2286e15f9c1a7db21d79ae3146c2304e123839a2320515fb87cc5",
+    "features": "32caae0341065e840b9c42b8f7e75754514dfdee8791974379e4753dc828c03f",
+    "runtime": "21ac2848d8b363bc4450f8bd8f25b605c76b841389aa2302667f66ffa540f37f"
+  },
+  "rows": [
+    {
+      "id": "V1-001",
+      "catalogue_interval_m": [
+        3.945,
+        3.945
+      ],
+      "heldout_outline_m": 3.917165723041447,
+      "heldout_wheel_m": 3.97060038029216,
+      "heldout_runtime_m": 3.97060038029216,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-002",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.459565872975187,
+      "heldout_wheel_m": 4.4932539085665555,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V1-004",
+      "catalogue_interval_m": [
+        4.36,
+        4.41
+      ],
+      "heldout_outline_m": 4.338708069771803,
+      "heldout_wheel_m": 4.415531004027273,
+      "heldout_runtime_m": 4.415531004027273,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-006",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "heldout_outline_m": 4.055544148684481,
+      "heldout_wheel_m": 4.017860554473908,
+      "heldout_runtime_m": 4.017860554473908,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-009",
+      "catalogue_interval_m": [
+        3.75,
+        3.785
+      ],
+      "heldout_outline_m": 3.830529026673252,
+      "heldout_wheel_m": 3.7861611890069238,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V1-011",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "heldout_outline_m": 4.533459309415188,
+      "heldout_wheel_m": 4.543703373149788,
+      "heldout_runtime_m": 4.543703373149788,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-012",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.6967224665721865,
+      "heldout_wheel_m": 4.710479863384254,
+      "heldout_runtime_m": 4.710479863384254,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-014",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "heldout_outline_m": 4.515960191648441,
+      "heldout_wheel_m": 4.49814841222273,
+      "heldout_runtime_m": 4.49814841222273,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-017",
+      "catalogue_interval_m": [
+        3.94,
+        3.94
+      ],
+      "heldout_outline_m": 3.9942211181860547,
+      "heldout_wheel_m": 3.9317327465083145,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V1-018",
+      "catalogue_interval_m": [
+        4.6,
+        4.61
+      ],
+      "heldout_outline_m": 4.654892251371706,
+      "heldout_wheel_m": 4.595237201416833,
+      "heldout_runtime_m": 4.595237201416833,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-020",
+      "catalogue_interval_m": [
+        4.76,
+        4.76
+      ],
+      "heldout_outline_m": 4.788908667012021,
+      "heldout_wheel_m": 4.8010816306349104,
+      "heldout_runtime_m": 4.8010816306349104,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-021",
+      "catalogue_interval_m": [
+        4.18,
+        4.18
+      ],
+      "heldout_outline_m": 4.1580701328780645,
+      "heldout_wheel_m": 4.1782513685939735,
+      "heldout_runtime_m": 4.1782513685939735,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-022",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "heldout_outline_m": 3.8705326272098164,
+      "heldout_wheel_m": 3.8777476650539584,
+      "heldout_runtime_m": 3.8777476650539584,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-026",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.524369853648359,
+      "heldout_wheel_m": 4.562099602443156,
+      "heldout_runtime_m": 4.562099602443156,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-027",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "heldout_outline_m": 4.005684196079255,
+      "heldout_wheel_m": 3.976007022820012,
+      "heldout_runtime_m": 3.976007022820012,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-033",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.395671917512607,
+      "heldout_wheel_m": 4.392286708135129,
+      "heldout_runtime_m": 4.392286708135129,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-036",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "heldout_outline_m": 4.2515753622136065,
+      "heldout_wheel_m": 4.206798145808963,
+      "heldout_runtime_m": 4.206798145808963,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-040",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.45744337337573,
+      "heldout_wheel_m": 4.554912515139493,
+      "heldout_runtime_m": 4.554912515139493,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-045",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.581686718337347,
+      "heldout_wheel_m": 4.626222122553666,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V1-050",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "heldout_outline_m": 4.4587035986571255,
+      "heldout_wheel_m": 4.523519599401735,
+      "heldout_runtime_m": 4.523519599401735,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V1-055",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "heldout_outline_m": 3.8879134804113025,
+      "heldout_wheel_m": 3.8880200113330226,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V1-056",
+      "catalogue_interval_m": [
+        4.265,
+        4.295
+      ],
+      "heldout_outline_m": 4.218412868168734,
+      "heldout_wheel_m": 4.29471025310236,
+      "heldout_runtime_m": 4.29471025310236,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-004",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "heldout_outline_m": 4.146158123850295,
+      "heldout_wheel_m": 4.076486001313578,
+      "heldout_runtime_m": 4.076486001313578,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-007",
+      "catalogue_interval_m": [
+        3.9,
+        3.92
+      ],
+      "heldout_outline_m": 3.879635784773712,
+      "heldout_wheel_m": 3.900958472939677,
+      "heldout_runtime_m": 3.900958472939677,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-011",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.5190915772636195,
+      "heldout_wheel_m": 4.610533695337261,
+      "heldout_runtime_m": 4.610533695337261,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-012",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "heldout_outline_m": 4.029442190789995,
+      "heldout_wheel_m": 3.951947060909576,
+      "heldout_runtime_m": 3.951947060909576,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-015",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "heldout_outline_m": 4.5121329467155755,
+      "heldout_wheel_m": 4.539980262395767,
+      "heldout_runtime_m": 4.539980262395767,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-017",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "heldout_outline_m": 4.524673356795789,
+      "heldout_wheel_m": 4.562948446891703,
+      "heldout_runtime_m": 4.562948446891703,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-020",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "heldout_outline_m": 4.381863247321346,
+      "heldout_wheel_m": 4.471615488516129,
+      "heldout_runtime_m": 4.471615488516129,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-024",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.681583752084842,
+      "heldout_wheel_m": 4.745553801328481,
+      "heldout_runtime_m": 4.745553801328481,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-034",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "heldout_outline_m": 4.46103138440421,
+      "heldout_wheel_m": 4.522276910100178,
+      "heldout_runtime_m": 4.522276910100178,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-037",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.362749534959754,
+      "heldout_wheel_m": 4.447602261311205,
+      "heldout_runtime_m": 4.447602261311205,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-044",
+      "catalogue_interval_m": [
+        4.36,
+        4.36
+      ],
+      "heldout_outline_m": 4.358125711414578,
+      "heldout_wheel_m": 4.437795924760555,
+      "heldout_runtime_m": 4.437795924760555,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-045",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "heldout_outline_m": 3.90352827697739,
+      "heldout_wheel_m": 3.9276605461547707,
+      "heldout_runtime_m": 3.927660546154771,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-046",
+      "catalogue_interval_m": [
+        4.55,
+        4.56
+      ],
+      "heldout_outline_m": 4.459649307324545,
+      "heldout_wheel_m": 4.43505065409891,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V2-048",
+      "catalogue_interval_m": [
+        4.18,
+        4.18
+      ],
+      "heldout_outline_m": 4.180887827265281,
+      "heldout_wheel_m": 4.14114166359317,
+      "heldout_runtime_m": 4.14114166359317,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-051",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.65774469218312,
+      "heldout_wheel_m": 4.728381641115021,
+      "heldout_runtime_m": 4.728381641115021,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V2-068",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.308502988550829,
+      "heldout_wheel_m": 4.376915475155745,
+      "heldout_runtime_m": 4.376915475155745,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-002",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.695097595566468,
+      "heldout_wheel_m": 4.676645569115989,
+      "heldout_runtime_m": 4.676645569115989,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-010",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.318414310983862,
+      "heldout_wheel_m": 4.387786785978693,
+      "heldout_runtime_m": 4.387786785978693,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-013",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.495165518850073,
+      "heldout_wheel_m": 4.579980148866508,
+      "heldout_runtime_m": 4.579980148866508,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-015",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "heldout_outline_m": 3.903790287506904,
+      "heldout_wheel_m": 3.8559549032428118,
+      "heldout_runtime_m": 3.8559549032428118,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-017",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "heldout_outline_m": 4.244255443359824,
+      "heldout_wheel_m": 4.185563883087581,
+      "heldout_runtime_m": 4.185563883087581,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-021",
+      "catalogue_interval_m": [
+        3.885,
+        3.885
+      ],
+      "heldout_outline_m": 3.871327688526512,
+      "heldout_wheel_m": 3.9110816751836537,
+      "heldout_runtime_m": 3.9110816751836537,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-022",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "heldout_outline_m": 4.224243765371725,
+      "heldout_wheel_m": 4.210368607861147,
+      "heldout_runtime_m": 4.210368607861147,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-026",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.490292301547408,
+      "heldout_wheel_m": 4.583734030026425,
+      "heldout_runtime_m": 4.583734030026425,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-030",
+      "catalogue_interval_m": [
+        3.9,
+        3.92
+      ],
+      "heldout_outline_m": 3.8720605369134824,
+      "heldout_wheel_m": 3.93057191529093,
+      "heldout_runtime_m": 3.93057191529093,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-035",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.647973499454695,
+      "heldout_wheel_m": 4.764908117233882,
+      "heldout_runtime_m": 4.764908117233882,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-038",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "heldout_outline_m": 4.289404230195152,
+      "heldout_wheel_m": 4.298337394457952,
+      "heldout_runtime_m": 4.298337394457952,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V3-047",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.548822715907361,
+      "heldout_wheel_m": 4.636947455732566,
+      "heldout_runtime_m": 4.636947455732566,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-001",
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "heldout_outline_m": 4.996987206874886,
+      "heldout_wheel_m": 4.933466302435656,
+      "heldout_runtime_m": 4.933466302435656,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-002",
+      "catalogue_interval_m": [
+        4.265,
+        4.295
+      ],
+      "heldout_outline_m": 4.282540662419621,
+      "heldout_wheel_m": 4.298509598686974,
+      "heldout_runtime_m": 4.298509598686974,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-005",
+      "catalogue_interval_m": [
+        4.36,
+        4.41
+      ],
+      "heldout_outline_m": 4.314490301096282,
+      "heldout_wheel_m": 4.345098309250461,
+      "heldout_runtime_m": 4.345098309250461,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-008",
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "heldout_outline_m": 5.006972102906738,
+      "heldout_wheel_m": 4.939437831939753,
+      "heldout_runtime_m": 4.939437831939753,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-010",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.674090918400974,
+      "heldout_wheel_m": 4.7073940797134775,
+      "heldout_runtime_m": 4.7073940797134775,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-013",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.615809837771682,
+      "heldout_wheel_m": 4.638329458757832,
+      "heldout_runtime_m": 4.638329458757832,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-016",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.742858371407825,
+      "heldout_wheel_m": 4.768149479207162,
+      "heldout_runtime_m": 4.768149479207162,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-018",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.330200149022844,
+      "heldout_wheel_m": 4.387726306613125,
+      "heldout_runtime_m": 4.387726306613125,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-021",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "heldout_outline_m": 4.633549218502315,
+      "heldout_wheel_m": 4.6104459512690035,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V4-023",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "heldout_outline_m": 4.513967562656913,
+      "heldout_wheel_m": 4.508439199140421,
+      "heldout_runtime_m": 4.508439199140421,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V4-024",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.3374252432861855,
+      "heldout_wheel_m": 4.380693848889762,
+      "heldout_runtime_m": 4.380693848889762,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-004",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.649215124757708,
+      "heldout_wheel_m": 4.722388642290982,
+      "heldout_runtime_m": 4.722388642290982,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-005",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "heldout_outline_m": 4.646090978299767,
+      "heldout_wheel_m": 4.652462516185874,
+      "heldout_runtime_m": 4.652462516185874,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-007",
+      "catalogue_interval_m": [
+        5.14,
+        5.14
+      ],
+      "heldout_outline_m": 5.050598936984474,
+      "heldout_wheel_m": 5.063452437727804,
+      "heldout_runtime_m": 5.063452437727804,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-011",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.323207212987899,
+      "heldout_wheel_m": 4.376391217883286,
+      "heldout_runtime_m": 4.376391217883286,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-033",
+      "catalogue_interval_m": [
+        4.41,
+        4.42
+      ],
+      "heldout_outline_m": 4.335211134954351,
+      "heldout_wheel_m": 4.389037190370911,
+      "heldout_runtime_m": 4.389037190370911,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-034",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.509356283978974,
+      "heldout_wheel_m": 4.638991432359474,
+      "heldout_runtime_m": 4.638991432359474,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-037",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.511642203032501,
+      "heldout_wheel_m": 4.537778857127133,
+      "heldout_runtime_m": 4.537778857127133,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V5-048",
+      "catalogue_interval_m": [
+        4.695,
+        4.71
+      ],
+      "heldout_outline_m": 4.738308048336658,
+      "heldout_wheel_m": 4.733503095313232,
+      "heldout_runtime_m": 4.733503095313232,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-004",
+      "catalogue_interval_m": [
+        3.945,
+        3.945
+      ],
+      "heldout_outline_m": 3.975796959459945,
+      "heldout_wheel_m": 3.975796959459945,
+      "heldout_runtime_m": 3.975796959459945,
+      "status": "outline_estimate",
+      "wheel_status": "fallback",
+      "reason": "An unambiguous pair of visible wheels was not found"
+    },
+    {
+      "id": "V6-006",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "heldout_outline_m": 4.6340927701323364,
+      "heldout_wheel_m": 4.647424878700717,
+      "heldout_runtime_m": 4.647424878700717,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-008",
+      "catalogue_interval_m": [
+        4.825,
+        4.825
+      ],
+      "heldout_outline_m": 5.051018229718065,
+      "heldout_wheel_m": 4.974581604504769,
+      "heldout_runtime_m": 4.9745816045047695,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-013",
+      "catalogue_interval_m": [
+        3.995,
+        3.995
+      ],
+      "heldout_outline_m": 4.135722032204994,
+      "heldout_wheel_m": 4.048972827054099,
+      "heldout_runtime_m": 4.048972827054099,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-014",
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "heldout_outline_m": 4.5002522325845415,
+      "heldout_wheel_m": 4.554413074383312,
+      "heldout_runtime_m": null,
+      "status": "capture_review",
+      "wheel_status": "not_applicable",
+      "reason": "Requires an accepted passenger-car outline estimate"
+    },
+    {
+      "id": "V6-023",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "heldout_outline_m": 4.232367199845826,
+      "heldout_wheel_m": 4.204246910037608,
+      "heldout_runtime_m": 4.204246910037608,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-041",
+      "catalogue_interval_m": [
+        4.195,
+        4.3
+      ],
+      "heldout_outline_m": 4.270279672628321,
+      "heldout_wheel_m": 4.246476053829755,
+      "heldout_runtime_m": 4.246476053829755,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-043",
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "heldout_outline_m": 4.487834867281854,
+      "heldout_wheel_m": 4.534203419968288,
+      "heldout_runtime_m": 4.534203419968288,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    },
+    {
+      "id": "V6-055",
+      "catalogue_interval_m": [
+        4.59,
+        4.6
+      ],
+      "heldout_outline_m": 4.496547366464239,
+      "heldout_wheel_m": 4.605436320549299,
+      "heldout_runtime_m": 4.605436320549299,
+      "status": "wheel_estimate",
+      "wheel_status": "estimated",
+      "reason": null
+    }
+  ],
+  "full_results_sha256": "7b5790dcfa41d6ab67d10d402bb07a719c3e85e32e101f1140d06410c1869a44"
+}

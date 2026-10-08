@@ -23,9 +23,17 @@ function render(record){
   const outline=record.measurement?.outline;
   $('outline').setAttribute('viewBox',`0 0 ${width} ${height}`);
   $('outlinePoints').setAttribute('points',(outline?.contour||[]).map(p=>p.join(',')).join(' '));
+  const wheels=record.measurement?.wheels;
+  for(let i=0;i<2;i++){
+    const wheel=wheels?.pair?.[i]?.bbox;
+    const points=wheel?[[wheel[0],wheel[1]],[wheel[0]+wheel[2],wheel[1]],[wheel[0]+wheel[2],wheel[1]+wheel[3]],[wheel[0],wheel[1]+wheel[3]]]:[];
+    $('wheel'+i).setAttribute('points',points.map(p=>p.join(',')).join(' '));
+  }
   $('outline').hidden=!$('showBox').checked||!outline?.contour?.length;
   $('basis').textContent=outline?(outline.status==='estimated'?'По контуру кузова. ':outline.status==='not_applicable'?'Оценка рамки; контурная модель предназначена для легковых автомобилей. ':'Контурная оценка не назначена. ')+
     (outline.baseline_length_m!=null?`Исходная оценка рамки: ${outline.baseline_length_m.toFixed(3)} м.`:''):'';
+  if(wheels?.status==='estimated')$('basis').textContent=`По контуру кузова и видимым колёсам. До уточнения по колёсам: ${wheels.baseline_length_m.toFixed(3)} м. `+$('basis').textContent;
+  else if(wheels?.status==='fallback')$('basis').textContent+=' Уточнение по колёсам недоступно.';
   $('measured').textContent=record.measured_length_m==null?'Не измерена':record.measured_length_m.toFixed(3)+' м';
   $('quality').textContent=record.measurement?.warnings?.join(' ')||'';
   $('actual').value=record.evaluation?.actual_length_m??'';

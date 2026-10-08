@@ -129,6 +129,13 @@ class OutlineCalibration(BaseModel):
         return self
 
 
+class WheelCalibration(OutlineCalibration):
+    mean: tuple[float, ...] = Field(min_length=9, max_length=9)
+    scale: tuple[float, ...] = Field(min_length=9, max_length=9)
+    coefficient: tuple[float, ...] = Field(min_length=9, max_length=9)
+    feature_bounds: tuple[tuple[float, float], ...] = Field(min_length=9, max_length=9)
+
+
 class Profile(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     version: Literal[1] = 1
@@ -140,6 +147,7 @@ class Profile(BaseModel):
     metric_rulers: list[MetricRuler] = Field(default_factory=list, max_length=20)
     survey_calibration: SurveyCalibration | None = None
     outline_calibration: OutlineCalibration | None = None
+    wheel_calibration: WheelCalibration | None = None
     measurement_line_x: float | None = Field(None, ge=0)
     line_tolerance_px: float = Field(10, ge=1, le=100)
     accuracy_tolerance_m: float = Field(.1, gt=0, le=1)
@@ -194,6 +202,10 @@ class Profile(BaseModel):
                 raise ValueError('Catalogue outline calibration requires estimate mode and empirical fallback references')
             if not self.references or self.outline_calibration.geometry_signature != geometry_signature(self.model_dump(mode='json')):
                 raise ValueError('Outline calibration belongs to different image/lens/road geometry, or lacks fallback references')
+        if self.wheel_calibration:
+            from vehicle_metrology.outline import geometry_signature
+            if not self.outline_calibration or self.wheel_calibration.geometry_signature != geometry_signature(self.model_dump(mode='json')):
+                raise ValueError('Wheel calibration requires its matching geometry and outline fallback calibration')
         profile_scale(self)
         return self
 

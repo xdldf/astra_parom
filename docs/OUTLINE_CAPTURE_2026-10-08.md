@@ -4,6 +4,8 @@ The station now supports a vehicle-outline estimator in the actual saved-capture
 
 **The requirement of less than 10 cm error for every car remains unmet.** This is an approximate measurement mode with explicit review outcomes. Software tests and successful captures do not establish that accuracy.
 
+A newer optional [outline-and-wheel refinement](WHEEL_CAPTURE_2026-10-08.md) is now available. The results below retain the history of the outline-only method.
+
 ## Behaviour
 
 - The ordinary detector/tracker continues to find passages. The additional outline inference runs once when saving a car, rather than on every preview frame.
@@ -33,7 +35,7 @@ Applying the same feature-range and ambiguous-track rejection used at runtime ch
 
 The largest remaining reported mismatch is the provisional Spacio V2-017, about 25.8 cm from the interval. The previous worst case V2-046 falls outside support when the entire Spacio family is held out, so that fold saves a review rather than restoring its old 4.797 m estimate. Some other cars still get worse. Exact filmed variants remain visually inferred, and catalogue dimensions do not cover modifications, loads or attached trailers.
 
-All 78 segmentation masks reproduced exactly through the runtime inference adapter. The actual capture estimator also reproduced every heldout-fold numeric result and all eight review outcomes from those masks. One additional review (V4-021) preserves an ambiguous temporal-identity rejection rather than letting a clean-looking single-frame outline override it. A separate integration replay called the real `station.capture` from one original-video passage in each of the six recordings, using the supplied profile, real neighbouring-frame inference for the five at-line passages, and the existing review capture for the off-line passage. All six retained 2592×1944 corrected photos and outline evidence. This used an isolated database and an explicit offline CPU override. It tests integration, not heldout accuracy; those cars are in the exported model's training set. GPU throughput was not measured.
+All 78 segmentation masks reproduced exactly through the runtime inference adapter. The actual capture estimator also reproduced every heldout-fold numeric result and all eight review outcomes from those masks. One additional review (V4-021) preserves an ambiguous temporal-identity rejection rather than letting a clean-looking single-frame outline override it. A separate integration replay called the real `station.capture` from one original-video passage in each of the six recordings, using the supplied profile, real neighbouring-frame inference for the five at-line passages, and the existing review capture for the off-line passage. All six retained 2592×1944 corrected photos and outline evidence. This used an isolated database and an explicit offline CPU override. It tests integration, not heldout accuracy; five of those cars are in the exported model's training set; V3-005 has no catalogue identity and is not part of the 78-car comparison. GPU throughput was not measured.
 
 The full regression suite passed: **329 Python tests and 69 frontend tests**. Tests include IP/video persistence, missing models, out-of-range silhouettes, unsupported vehicle classes, stale geometry, full-frame preservation, distinct catalogue/evaluation labels, and exclusion of heldout labels from model selection. Browser rendering was not visually tested.
 

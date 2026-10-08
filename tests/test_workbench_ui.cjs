@@ -383,3 +383,22 @@ test('zoom selected before the image arrives is applied when the corrected frame
   assert.equal(ui.elements.get('canvas').style.width,'1200px');
   assert.equal(ui.run('profile.image_size[0]'),600);
 });
+test('geometry edits invalidate both the wheel model and its outline fallback',async()=>{
+ const ui=studio();await ui.run('finishPendingRoad()');
+ await ui.run(`loadProfile(${JSON.stringify(continuedProfile)},'saved.json')`);
+ ui.run(`refresh=async()=>{};profile.metric_rulers=[];
+   profile.outline_calibration={calibration_id:'outline'};profile.wheel_calibration={calibration_id:'wheel'};`);
+ ui.elements.get('k1').value=-.3;ui.elements.get('k1').oninput();
+ assert.equal(ui.run('profile.outline_calibration'),null);
+ assert.equal(ui.run('profile.wheel_calibration'),null);
+ await ui.elements.get('undoChange').onclick();
+ assert.equal(ui.run('profile.wheel_calibration.calibration_id'),'wheel');
+ await ui.run(`editProfile(p=>{p.polygon[0][0]+=1;});`);
+ assert.equal(ui.run('profile.outline_calibration'),null);
+ assert.equal(ui.run('profile.wheel_calibration'),null);
+ ui.run(`profile.outline_calibration={calibration_id:'outline'};profile.wheel_calibration={calibration_id:'wheel'};
+   mode='ruler';draft=[[100,300],[200,300],[300,300]];$('rulerStep').value='1';`);
+ assert.equal(await ui.run('finishRuler()'),true);
+ assert.equal(ui.run('profile.outline_calibration'),null);
+ assert.equal(ui.run('profile.wheel_calibration'),null);
+});
