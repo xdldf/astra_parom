@@ -1,0 +1,10 @@
+{
+  "hypothesis": "Aggregate independently associated contour/wheel observations before fitting and prediction to reduce frame noise; train and infer at the same passage level.",
+  "reducers": ["mean", "coordinate_median", "wheel_visibility_weighted", "clearest_wheels"],
+  "visibility": "Minimum of the two observed wheel height/width ratios, clipped to [0.05,1]; squared for weighting. No missing wheel imputation.",
+  "model": "Existing nine contour and visible-wheel features; family-balanced ridge with existing alpha grid.",
+  "selection": "Nested whole-family exclusion for coefficients and alpha, comparing family midpoint MAE and worst catalogue endpoint error. All 78 original comparison rows retained through current heldout fallback.",
+  "association": "Recompute prior dense bidirectional association decisions; do not transfer lengths to rejected views.",
+  "additional_cohort": "Freeze seven newly researched identities/ranges. Do not fit their references. Check all-fitted model on those existing anchor features, explicitly single-view stress test only.",
+  "adoption": "Do not install a method merely because mean error improves. Inspect worst error, all cases and evidence support. Catalogue agreement is not verified physical accuracy."
+}
