@@ -1,0 +1,3739 @@
+{
+  "selection_rule": "Every on-road scout track, including edge fragments and non-car detector classes. Best frame minimizes distance from measurement line; no length or catalogue filtering. Track fragments may represent the same physical passage.",
+  "profile_sha256": "ea43b6348de9468824541bf3ce2bb469478887bbfa48a1efaef7ea163409abf9",
+  "scout_manifest_sha256": "fc49491750bb3aabb992c17bad5b90a0f3a01b4dce799133a36fd4edf5f051fc",
+  "selection_script_sha256": "dc277f56347ee4d281d310660b213d1c61ab5da3b9e9b7a645ac40478e35a1b4",
+  "scope": "All on-road track candidates; not unique vehicle count.",
+  "rows": [
+    {
+      "id": "N1-001",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 700,
+      "bbox": [
+        871.2676391601562,
+        1002.0978393554688,
+        589.3085327148438,
+        306.49041748046875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-001-frame.jpg",
+      "image_sha256": "dc7cc4b185ed890574d3fb02beabd98ab30a4cda071489533639c502d5231304",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 575,
+      "scout_end_frame": 875,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-002",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 800,
+      "bbox": [
+        980.337890625,
+        1066.070556640625,
+        633.261474609375,
+        254.8157958984375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-002-frame.jpg",
+      "image_sha256": "acfee5880bb31eabe129fdae043bbcd9b18cb2322493397e21ee73f9332872ae",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 675,
+      "scout_end_frame": 825,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-003",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 4950,
+      "bbox": [
+        2432.82958984375,
+        1119.1744384765625,
+        153.994384765625,
+        197.8116455078125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-003-frame.jpg",
+      "image_sha256": "ab24598cf7fea9df6487ef2513d5c32d6bc3eaa782c9d64c18eea25b39b2ca73",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4950,
+      "scout_end_frame": 4950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-004",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 5025,
+      "bbox": [
+        946.3974609375,
+        1103.09375,
+        559.931884765625,
+        227.160888671875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-004-frame.jpg",
+      "image_sha256": "ce34e41ea923874674a1b229e20a4c1a9f03133503088cbf00a35670e5443ca6",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4975,
+      "scout_end_frame": 5075,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-005",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 7000,
+      "bbox": [
+        926.9254760742188,
+        1117.4176025390625,
+        622.0089721679688,
+        215.0751953125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-005-frame.jpg",
+      "image_sha256": "65bf91ab1ff6eae7a6a7ac594abb894feafd0e133139dccca6690ff8c5876b88",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 6925,
+      "scout_end_frame": 7050,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-006",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 9800,
+      "bbox": [
+        729.42333984375,
+        826.65625,
+        1115.3388671875,
+        509.4931640625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-006-frame.jpg",
+      "image_sha256": "ecbc0a2020f3a188992feda17e5c530dc23a0162450a9a378a9fbfe933bb8b6d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 9675,
+      "scout_end_frame": 9875,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-007",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 10000,
+      "bbox": [
+        87.3461685180664,
+        715.5209350585938,
+        2111.1050033569336,
+        623.6189575195312
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-007-frame.jpg",
+      "image_sha256": "3b3d9955590e318f77702ce7bcacb3c3a9eb5ac07503f31fddc5170b68286fda",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 9825,
+      "scout_end_frame": 10125,
+      "observed_labels": [
+        "bus",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-008",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 10400,
+      "bbox": [
+        983.766845703125,
+        1058.625732421875,
+        582.3992919921875,
+        266.4664306640625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-008-frame.jpg",
+      "image_sha256": "4fd3ca6a3f5e30599dc968a1e339104b2eb18309f16900c421ff7045285cce68",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 10250,
+      "scout_end_frame": 10575,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-009",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 11975,
+      "bbox": [
+        206.06846618652344,
+        720.5477294921875,
+        2163.2896881103516,
+        618.3431396484375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-009-frame.jpg",
+      "image_sha256": "c15e9632e3895d0148a6c987b6cc81dfd60d8f0de829cfa8fd36db057213b18f",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 11750,
+      "scout_end_frame": 12150,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-010",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 13025,
+      "bbox": [
+        1140.2943115234375,
+        1076.535888671875,
+        522.9903564453125,
+        245.810546875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-010-frame.jpg",
+      "image_sha256": "c253b3fa2f18dd947fdbde93bcece77444a0f13eba33ae7e025ca2da6e17adb9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 12975,
+      "scout_end_frame": 13100,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-011",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 13200,
+      "bbox": [
+        954.0960693359375,
+        1118.931396484375,
+        589.0601806640625,
+        213.021484375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-011-frame.jpg",
+      "image_sha256": "e0e9c6e8953ef54c93fcd163af4addba70fa07ff847567de17f75cdcfbdf0e81",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 13125,
+      "scout_end_frame": 13275,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-012",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 18175,
+      "bbox": [
+        2285.0546875,
+        1115.5810546875,
+        299.302490234375,
+        211.1304931640625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-012-frame.jpg",
+      "image_sha256": "7dd5ae1e0a5a8de9dd7f961ef041531e5deaca46f19b5401d82f812f0c4de79e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 18175,
+      "scout_end_frame": 18175,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-013",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 18225,
+      "bbox": [
+        988.0543212890625,
+        1100.0582275390625,
+        526.89111328125,
+        231.3592529296875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-013-frame.jpg",
+      "image_sha256": "9b093aa670e4c93e96e4e14f15ce9b896ad10517621ebfb2862b4997a3a5307f",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 18200,
+      "scout_end_frame": 18250,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-014",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 18875,
+      "bbox": [
+        854.578369140625,
+        1025.0455322265625,
+        600.2127685546875,
+        304.5902099609375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-014-frame.jpg",
+      "image_sha256": "f3e79b48dea129d18f8b1a02e050fe20fc2ed8694ee7e7edccaf64038ef4ac7a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 18800,
+      "scout_end_frame": 18925,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-015",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 19150,
+      "bbox": [
+        774.9618530273438,
+        887.3731689453125,
+        945.2739868164062,
+        449.4671630859375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-015-frame.jpg",
+      "image_sha256": "9acc5db780a418a7f60b725f8d1e248b396d482e05818bc182645f7f333a8972",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 19025,
+      "scout_end_frame": 19250,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-016",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 21825,
+      "bbox": [
+        1098.50390625,
+        1101.1654052734375,
+        590.5472412109375,
+        235.459716796875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-016-frame.jpg",
+      "image_sha256": "f95bc3540f0e3a85e2abd007ffadfa921cd16f6831709ecf29b445579daf0723",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 21775,
+      "scout_end_frame": 21875,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-017",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 23675,
+      "bbox": [
+        2453.73779296875,
+        1085.567138671875,
+        135.916259765625,
+        209.875244140625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-017-frame.jpg",
+      "image_sha256": "8efc9d26e3bdc107b7ebe5c966e0eead08c5cd743f950692a040d1f3feb83e8a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 23675,
+      "scout_end_frame": 23675,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-018",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 23750,
+      "bbox": [
+        1089.7720947265625,
+        1041.8165283203125,
+        635.462158203125,
+        283.8507080078125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-018-frame.jpg",
+      "image_sha256": "ce8679bac5cd76daf0f51fcba9005cb34678198fda3ae6703136fa4057a76057",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 23700,
+      "scout_end_frame": 23825,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-019",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 29050,
+      "bbox": [
+        532.87353515625,
+        932.4002685546875,
+        1111.6236572265625,
+        401.77490234375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-019-frame.jpg",
+      "image_sha256": "2a7c073684f51a8a53b10113bfc4f100f32a4ec31b97057a71dee1f7019aed41",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 28950,
+      "scout_end_frame": 29125,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-020",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 29750,
+      "bbox": [
+        243.84341430664062,
+        806.3544311523438,
+        2335.5220642089844,
+        529.2005004882812
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-020-frame.jpg",
+      "image_sha256": "4e9683e42ec67808dc2fe5249439ab9b9631e4fa0a312bec46a9e92fb1681fed",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 29600,
+      "scout_end_frame": 29875,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-021",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 30250,
+      "bbox": [
+        865.5730590820312,
+        1053.2486572265625,
+        572.5237426757812,
+        279.7342529296875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-021-frame.jpg",
+      "image_sha256": "529d5fbf6042317e3f23020eda0fd3d6f2236b627fbcb1cab4d71f33f2ce8b44",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 30175,
+      "scout_end_frame": 30300,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-022",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 30675,
+      "bbox": [
+        769.7384033203125,
+        1053.550048828125,
+        592.766845703125,
+        280.674072265625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-022-frame.jpg",
+      "image_sha256": "6902a43249fbe11f11f94c9dc88caad474ae21695891b67b49c96a811300e708",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 30575,
+      "scout_end_frame": 30725,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-023",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 31150,
+      "bbox": [
+        1155.2822265625,
+        1076.037109375,
+        514.332275390625,
+        255.6485595703125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-023-frame.jpg",
+      "image_sha256": "6ea913c1a5e960d99290fe774cbbc46051b643058888a87938aebc7b30808697",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 31050,
+      "scout_end_frame": 31225,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-024",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 34250,
+      "bbox": [
+        915.0849609375,
+        1055.549072265625,
+        565.833251953125,
+        274.08740234375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-024-frame.jpg",
+      "image_sha256": "77d8eb137c55a7357d9ba965615d2796474fa1ae92d53bbcbd6af74ae8881ed0",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 34150,
+      "scout_end_frame": 34300,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-025",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 35250,
+      "bbox": [
+        2358.786376953125,
+        1131.8193359375,
+        224.21240234375,
+        190.4984130859375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-025-frame.jpg",
+      "image_sha256": "793baef1d5ad2aa1b0ea11e4f04768abf755637989fe083462b0dffceccb5151",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35250,
+      "scout_end_frame": 35250,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-026",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 35325,
+      "bbox": [
+        966.0917358398438,
+        1092.552001953125,
+        452.59539794921875,
+        239.9793701171875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-026-frame.jpg",
+      "image_sha256": "61da0cba92a79e45cd66854bba056a20f604d8d01e3703853c9d65a8e3d944f9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35275,
+      "scout_end_frame": 35375,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-027",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 36525,
+      "bbox": [
+        1165.4522705078125,
+        984.1018676757812,
+        666.98388671875,
+        337.98211669921875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-027-frame.jpg",
+      "image_sha256": "f73213b1b2ef12a31086a84e6abfc8a4777ea026939206daa0a2993d0e919aad",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 36475,
+      "scout_end_frame": 36575,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-028",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 39850,
+      "bbox": [
+        2427.4736328125,
+        1114.8084716796875,
+        157.1796875,
+        207.858642578125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-028-frame.jpg",
+      "image_sha256": "3809af6c37d6b68d01d1cc449cda99ce640713b0fe4d60e9fa55e3b8748d6ecf",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 39850,
+      "scout_end_frame": 39850,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-029",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 39925,
+      "bbox": [
+        1004.826904296875,
+        1061.65673828125,
+        623.8839111328125,
+        275.06982421875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-029-frame.jpg",
+      "image_sha256": "091e83506bb46f6cbbdbec758ccaa5013bbf20e3e94e1db4a3584b212d30a99e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 39875,
+      "scout_end_frame": 39925,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-030",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 39950,
+      "bbox": [
+        574.0337524414062,
+        1067.2664794921875,
+        620.4602661132812,
+        259.239990234375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-030-frame.jpg",
+      "image_sha256": "e9593115d513c9645a01923b2323c4e60bd3533ba8848f9c855442166d7a5a21",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 39950,
+      "scout_end_frame": 40000,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-031",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 40025,
+      "bbox": [
+        1256.3662109375,
+        1027.4482421875,
+        553.573974609375,
+        300.0489501953125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-031-frame.jpg",
+      "image_sha256": "2014caec51343ba43325348e90fa9417d16fd434c56d67191a0f73ee411945fd",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 39950,
+      "scout_end_frame": 40025,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-033",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 40050,
+      "bbox": [
+        910.2871704101562,
+        1044.7222900390625,
+        516.8441772460938,
+        283.7298583984375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-033-frame.jpg",
+      "image_sha256": "8bbea81eb6e590e174288bc465cfeaa88d5e18f5bc31e2340767d786f3e0770a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 40050,
+      "scout_end_frame": 40125,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-032",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 40150,
+      "bbox": [
+        989.328857421875,
+        1020.3473510742188,
+        596.8040771484375,
+        285.93853759765625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-032-frame.jpg",
+      "image_sha256": "ee4d6eaca18f2a2ce675281d7881431ec8ff529d33295b3a6b58b86f1ad7ae19",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 40025,
+      "scout_end_frame": 40275,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-034",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 40725,
+      "bbox": [
+        1158.498291015625,
+        1083.4508056640625,
+        605.99853515625,
+        251.2589111328125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-034-frame.jpg",
+      "image_sha256": "4b0f8f5203bd636be6e5291b25ee602d756ad51ee001f64adab100d0eb98f275",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 40675,
+      "scout_end_frame": 40800,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-035",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 42900,
+      "bbox": [
+        1087.609375,
+        1086.8448486328125,
+        573.5985107421875,
+        251.6343994140625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-035-frame.jpg",
+      "image_sha256": "bf57dbf824c54a7cbd9d77086f27957865ef8ef383d357236d6c1ef56a290bae",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 42825,
+      "scout_end_frame": 42975,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N1-036",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 44675,
+      "bbox": [
+        914.8051147460938,
+        1094.4556884765625,
+        594.4450073242188,
+        237.2027587890625
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-036-frame.jpg",
+      "image_sha256": "4fc9baf5b583b33e6c4fa6e48b72fd737ddcd312e2c5c31bff19c79e33752a5f",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 44525,
+      "scout_end_frame": 44775,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-001",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 675,
+      "bbox": [
+        1039.180908203125,
+        1089.6976318359375,
+        580.740234375,
+        247.051025390625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-001-frame.jpg",
+      "image_sha256": "2ac496a5d1e3264d4501d0adf0c6ae376c290c477836b5ab15189f7295c6ad72",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 600,
+      "scout_end_frame": 675,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-002",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 700,
+      "bbox": [
+        613.7679443359375,
+        1096.7491455078125,
+        562.461181640625,
+        229.2115478515625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-002-frame.jpg",
+      "image_sha256": "20404588b2ffe9b899d6df2d0d1faa0ef9166612f54d702d791027e6ec6b8016",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 700,
+      "scout_end_frame": 700,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-004",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 725,
+      "bbox": [
+        253.49801635742188,
+        1076.3160400390625,
+        528.8246154785156,
+        240.0640869140625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-004-frame.jpg",
+      "image_sha256": "0f9daaf4e616d80f5302d664c7d78a4fe986aadff0e55d500e89d91bfd765eeb",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 725,
+      "scout_end_frame": 725,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-003",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 750,
+      "bbox": [
+        1436.0201416015625,
+        1058.854248046875,
+        523.21533203125,
+        263.44970703125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-003-frame.jpg",
+      "image_sha256": "b08ec51f06d99c1cbb48fa5c2ab0440ff9b3d72ec7cd3ec55ccfc5ac8ed81e15",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 700,
+      "scout_end_frame": 750,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-005",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 775,
+      "bbox": [
+        1088.341552734375,
+        1073.0908203125,
+        507.2860107421875,
+        251.34228515625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-005-frame.jpg",
+      "image_sha256": "81c267edaed860363661f9e9cd85abdcb4b65f71e09caa0e06674939d506ae95",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 775,
+      "scout_end_frame": 875,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-006",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 875,
+      "bbox": [
+        1146.12744140625,
+        1076.7529296875,
+        579.1796875,
+        246.4134521484375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-006-frame.jpg",
+      "image_sha256": "63586e60890dc8e350bd24a5966b64f78b5d2c5db6d07c49704f45a4ece53718",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 800,
+      "scout_end_frame": 975,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-007",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 1000,
+      "bbox": [
+        1139.541015625,
+        1096.821044921875,
+        575.5244140625,
+        231.7427978515625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-007-frame.jpg",
+      "image_sha256": "6b2603575ce1c800222b1182c058a9255cb7bd7a74f0b5b62ebca6e6ebf2b2fe",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 900,
+      "scout_end_frame": 1125,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-008",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 4050,
+      "bbox": [
+        2289.939697265625,
+        1088.4324951171875,
+        295.340087890625,
+        235.3885498046875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-008-frame.jpg",
+      "image_sha256": "b1d1fec21409f06b757e5013f6ff5505ab6c442a93485005a023466566d80e4c",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4050,
+      "scout_end_frame": 4050,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-009",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 4125,
+      "bbox": [
+        813.0244140625,
+        1103.4940185546875,
+        560.2115478515625,
+        233.190185546875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-009-frame.jpg",
+      "image_sha256": "719a34d1dd1d3cfb3fa9fdca8b9226d35b4e6aa19d8b578ed682a197899942c4",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4075,
+      "scout_end_frame": 4150,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-010",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 4300,
+      "bbox": [
+        968.8453369140625,
+        1110.8070068359375,
+        559.152587890625,
+        220.4464111328125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-010-frame.jpg",
+      "image_sha256": "260bb05f6e801bb60b12be48eacd318ce00bb647f3575fa084ae06355fbe83a9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4175,
+      "scout_end_frame": 4425,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-011",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 4950,
+      "bbox": [
+        2266.4619140625,
+        1057.0633544921875,
+        319.700927734375,
+        268.7255859375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-011-frame.jpg",
+      "image_sha256": "92d6bb1026353faafe1b51072ecb3140dc591776e5b61dd377ed58d7873f3d10",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4950,
+      "scout_end_frame": 4950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-012",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 5000,
+      "bbox": [
+        860.8197021484375,
+        1046.5416259765625,
+        574.6378173828125,
+        266.914306640625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-012-frame.jpg",
+      "image_sha256": "b60fa4e8e67dc9ce5745130312bd4177325d15133f0a13f35e60fe7ef10a7535",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4975,
+      "scout_end_frame": 5025,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-013",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 8625,
+      "bbox": [
+        815.458251953125,
+        1000.8380737304688,
+        668.5220947265625,
+        330.38470458984375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-013-frame.jpg",
+      "image_sha256": "a755214b5e2f34e8eb5231bff5788859f9fc250da069fc75b8574d83c6e0a29e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 8525,
+      "scout_end_frame": 8700,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-014",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 12575,
+      "bbox": [
+        2396.6533203125,
+        1143.449951171875,
+        188.095458984375,
+        178.29931640625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-014-frame.jpg",
+      "image_sha256": "fb985a450585d65d37ac1e38cc0d573fdb47f596374a279fd6fbdd4b1779f6f9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 12575,
+      "scout_end_frame": 12575,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-015",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 12650,
+      "bbox": [
+        1001.8670043945312,
+        1013.6672973632812,
+        636.1807250976562,
+        323.57916259765625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-015-frame.jpg",
+      "image_sha256": "cef73b47b92b303ed7a5d37a2c59b7c5885e8c31b18a7e1a2753388b171e7302",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 12600,
+      "scout_end_frame": 12700,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-016",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 15625,
+      "bbox": [
+        1111.363037109375,
+        1040.228759765625,
+        597.19873046875,
+        289.703857421875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-016-frame.jpg",
+      "image_sha256": "847f71db349e25c2be88fedcd1267ce48f644c6643c2994f8a31cf8bcea3eb61",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 15525,
+      "scout_end_frame": 15700,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-017",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 17000,
+      "bbox": [
+        2456.64599609375,
+        1124.8846435546875,
+        128.21826171875,
+        163.4404296875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-017-frame.jpg",
+      "image_sha256": "95778bb3180d25f1ee3e48e4abfaa47025694540f4da982eeecee2f578f84e50",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 17000,
+      "scout_end_frame": 17000,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-018",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 17075,
+      "bbox": [
+        964.7449951171875,
+        1077.66015625,
+        514.39599609375,
+        239.44384765625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-018-frame.jpg",
+      "image_sha256": "41407853e9bff2e079465e98948f250c5ccd8d647bbddc0eb3926f9d018915b6",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 17025,
+      "scout_end_frame": 17125,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-019",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 18950,
+      "bbox": [
+        1161.4544677734375,
+        1076.2425537109375,
+        646.2962646484375,
+        258.4801025390625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-019-frame.jpg",
+      "image_sha256": "8e57111cad4908f708e6ee5996deb81c9744c793609dc69ad5157b9dc0be3b99",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 18875,
+      "scout_end_frame": 19000,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-020",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 22175,
+      "bbox": [
+        861.7850952148438,
+        1115.8984375,
+        569.4699096679688,
+        215.2642822265625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-020-frame.jpg",
+      "image_sha256": "9dc5b5996e80cef2c231b18055f98509126c2c4411762e856c921435b7eadc2f",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 22125,
+      "scout_end_frame": 22225,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-021",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 22875,
+      "bbox": [
+        1060.67578125,
+        1015.467529296875,
+        570.1536865234375,
+        273.2249755859375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-021-frame.jpg",
+      "image_sha256": "053a0a2d757cb70d75a5dc5744d7634100f8bdbc05aa68f6c3592e419d4dd93c",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 22775,
+      "scout_end_frame": 22950,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-022",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 23150,
+      "bbox": [
+        1119.473388671875,
+        1080.427734375,
+        576.5576171875,
+        243.0289306640625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-022-frame.jpg",
+      "image_sha256": "ea2ee135c6a2d68a9c83bcc960b1553a6df4e08c6cd576076281de298c410ebd",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 23075,
+      "scout_end_frame": 23200,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-023",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 23825,
+      "bbox": [
+        2411.001708984375,
+        1125.613037109375,
+        170.844482421875,
+        197.812255859375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-023-frame.jpg",
+      "image_sha256": "d55fff5bf9d579f056e8158e0a778ea0b0b770ba60a2ab9ba61d039c7ceb5b34",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 23825,
+      "scout_end_frame": 23825,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-024",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 23875,
+      "bbox": [
+        1364.8868408203125,
+        1071.97216796875,
+        529.195068359375,
+        264.201904296875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-024-frame.jpg",
+      "image_sha256": "cc462e557d5d1ed14fd08ed45f1c63c4f52fa1c8105309a7da0a3613c28692e8",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 23850,
+      "scout_end_frame": 23925,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-025",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 28075,
+      "bbox": [
+        1011.2481079101562,
+        1019.9381713867188,
+        598.6820678710938,
+        307.38177490234375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-025-frame.jpg",
+      "image_sha256": "390a7eefae31fe2240475db412a8e92a2dfeecd1c98a2b9c74f7209c23d7119e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 28000,
+      "scout_end_frame": 28125,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-026",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 28250,
+      "bbox": [
+        844.95263671875,
+        1027.70703125,
+        544.8455810546875,
+        300.887451171875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-026-frame.jpg",
+      "image_sha256": "49878ade253380d4701d27b03946b1aa551986c1ff163b8fe112c4ee72562e6a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "bus",
+      "scout_start_frame": 28200,
+      "scout_end_frame": 28300,
+      "observed_labels": [
+        "bus",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-027",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 28825,
+      "bbox": [
+        831.8836669921875,
+        1090.3814697265625,
+        577.0029296875,
+        240.337646484375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-027-frame.jpg",
+      "image_sha256": "44f9d0896da151911c77772ef71b949dcdeff707b8bd281f803795d0f101afcf",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 28775,
+      "scout_end_frame": 28875,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-028",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 28900,
+      "bbox": [
+        1406.0362548828125,
+        1034.969970703125,
+        593.61865234375,
+        277.1331787109375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-028-frame.jpg",
+      "image_sha256": "55b90c95e5391fc4085fa6086963a69add2a6102535be33f81f7bc4729a86a5d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 28850,
+      "scout_end_frame": 28900,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-029",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 28925,
+      "bbox": [
+        974.393310546875,
+        1060.36669921875,
+        559.6343994140625,
+        255.638671875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-029-frame.jpg",
+      "image_sha256": "4e90f0cfc8df95ac0981326729a20ffb30da9ffa4ac6c5702c3800fd05c643e3",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 28925,
+      "scout_end_frame": 28925,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-030",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 28950,
+      "bbox": [
+        567.2996215820312,
+        1053.7303466796875,
+        551.6090698242188,
+        261.2529296875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-030-frame.jpg",
+      "image_sha256": "b3397774baf7bd126dfc84b8263d041607ad1c135c0a656da6c620100f64bda7",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 28950,
+      "scout_end_frame": 28975,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-033",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 29025,
+      "bbox": [
+        1205.3841552734375,
+        1098.3994140625,
+        458.805908203125,
+        229.702392578125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-033-frame.jpg",
+      "image_sha256": "51980d303a35db7b2ad01336b7c784f82eeab0a7a8630507c6f4851dcf6c3b7b",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 29025,
+      "scout_end_frame": 29025,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-032",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 29050,
+      "bbox": [
+        1850.1199951171875,
+        969.4758911132812,
+        740.0474853515625,
+        362.96795654296875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-032-frame.jpg",
+      "image_sha256": "57a4d4339b37e9009b7120f23a26bf98db6cbb7034e040a3f9573d694320bade",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 29025,
+      "scout_end_frame": 29050,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-034",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 29050,
+      "bbox": [
+        915.0921020507812,
+        1067.0750732421875,
+        448.35955810546875,
+        259.2066650390625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-034-frame.jpg",
+      "image_sha256": "57a4d4339b37e9009b7120f23a26bf98db6cbb7034e040a3f9573d694320bade",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 29050,
+      "scout_end_frame": 29150,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-031",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 29125,
+      "bbox": [
+        958.395751953125,
+        977.7692260742188,
+        622.4130859375,
+        356.52215576171875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-031-frame.jpg",
+      "image_sha256": "31ca207fc9de77ae1e31c77d31a7f34f1c28da5251e128b102d703fbd86389a7",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 28950,
+      "scout_end_frame": 29225,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-035",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 31275,
+      "bbox": [
+        1019.5953369140625,
+        1129.25390625,
+        543.18359375,
+        204.11962890625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-035-frame.jpg",
+      "image_sha256": "7b5b757fe7caa13208c3e0d624d724c435cab8d77a205ea9d1a6e9d77b9242cf",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 31225,
+      "scout_end_frame": 31325,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-036",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 31900,
+      "bbox": [
+        1058.7459716796875,
+        1060.954833984375,
+        533.6051025390625,
+        229.256103515625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-036-frame.jpg",
+      "image_sha256": "9c527d6078446fd074ff5c523a31aec6b80904c6d30792b1110902a366d86bd7",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 31850,
+      "scout_end_frame": 31950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-037",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 32750,
+      "bbox": [
+        1019.0441284179688,
+        1006.306640625,
+        607.8910522460938,
+        317.424072265625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-037-frame.jpg",
+      "image_sha256": "8b376837cef231a0b1c947daaa0689385fd0ac31594042c96870149e45ef865e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 32675,
+      "scout_end_frame": 32850,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-038",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 33725,
+      "bbox": [
+        985.780029296875,
+        820.3032836914062,
+        1036.9141845703125,
+        519.5355834960938
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-038-frame.jpg",
+      "image_sha256": "2c2f58970ab8051c8c8fc6a2997af8b57b909cb8ba4a5d4b8cd4885e560019b0",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 33650,
+      "scout_end_frame": 33875,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-039",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 35150,
+      "bbox": [
+        130.98304748535156,
+        761.7451782226562,
+        2321.6304779052734,
+        575.1126098632812
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-039-frame.jpg",
+      "image_sha256": "26db7bc5dc382088e50fdd59eb76303fe746fd2cf39c6e19d93fde3628fe5a46",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 34875,
+      "scout_end_frame": 35450,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-040",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 35425,
+      "bbox": [
+        1044.37109375,
+        1105.3082275390625,
+        576.290771484375,
+        229.15087890625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-040-frame.jpg",
+      "image_sha256": "cdbb6730136109b5d0077da8bfdf8377975d4f137b80c1e97a52721d192af3b4",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35200,
+      "scout_end_frame": 35550,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-041",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 35625,
+      "bbox": [
+        1175.2158203125,
+        1076.254638671875,
+        534.9925537109375,
+        242.7159423828125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-041-frame.jpg",
+      "image_sha256": "ee42b7091ca3bd429b645828c9bec90eb948aae2c7c432d6a6dcf262c1d3b526",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35400,
+      "scout_end_frame": 35700,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-042",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 35700,
+      "bbox": [
+        2464.626220703125,
+        1115.607666015625,
+        116.24365234375,
+        177.174072265625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-042-frame.jpg",
+      "image_sha256": "6394f9053a80c7cc63df877a5cf40daa297d966829371d8643cc8777b1786aa8",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35700,
+      "scout_end_frame": 35700,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-043",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 35825,
+      "bbox": [
+        1010.8040161132812,
+        1044.5977783203125,
+        589.8897094726562,
+        278.5076904296875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-043-frame.jpg",
+      "image_sha256": "3ed2764c6f5b614b56aa4ce166172e5e6ca09e1fae6ec8c2f4e5e9bf3439d012",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35725,
+      "scout_end_frame": 36500,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-044",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 36500,
+      "bbox": [
+        923.3403930664062,
+        1062.994384765625,
+        608.9992065429688,
+        270.4561767578125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-044-frame.jpg",
+      "image_sha256": "7ddaf7d49367bd8ceebdb7e7344155a6e6606ffabfc795874ff2cae3991d1608",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35825,
+      "scout_end_frame": 36625,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-045",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 36650,
+      "bbox": [
+        961.105224609375,
+        1094.3446044921875,
+        526.2740478515625,
+        221.4696044921875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-045-frame.jpg",
+      "image_sha256": "b497b3a7fda86362cc29829164a26a2e6ceb8cd1e4e6a2b1e45a60792ac41eef",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 36325,
+      "scout_end_frame": 36800,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-046",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 36825,
+      "bbox": [
+        898.2631225585938,
+        1030.426025390625,
+        613.3112182617188,
+        298.667236328125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-046-frame.jpg",
+      "image_sha256": "ead1bcf3aeeba6af1915ed3de2299f23afa2d6a01166c88998c801aaac867d22",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 36625,
+      "scout_end_frame": 36950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-047",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 37200,
+      "bbox": [
+        1027.6402587890625,
+        1113.6258544921875,
+        590.8531494140625,
+        224.901611328125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-047-frame.jpg",
+      "image_sha256": "4465d64f5ed5195821844983310b2729dc1539b274d8fbd0b269b3ce0e4ecd06",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 37075,
+      "scout_end_frame": 37325,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-048",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 37900,
+      "bbox": [
+        963.9031982421875,
+        1059.3848876953125,
+        572.3507080078125,
+        269.4942626953125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-048-frame.jpg",
+      "image_sha256": "813afaa805b45d15d20fd2effa2884967773f692196eadee2cf4ba272fceb6d8",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 37825,
+      "scout_end_frame": 38275,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-049",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 38900,
+      "bbox": [
+        1062.691650390625,
+        1059.015625,
+        586.4254150390625,
+        270.2193603515625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-049-frame.jpg",
+      "image_sha256": "7ee9ae501cffc79f3a63cb4559eb4b7777bb0b2a5696b2b5cfe134f23fbf3c0a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 37975,
+      "scout_end_frame": 38950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-050",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 39425,
+      "bbox": [
+        977.7608032226562,
+        1037.12353515625,
+        543.6044311523438,
+        268.094970703125
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-050-frame.jpg",
+      "image_sha256": "8c752d11f5cc8bfb481cdc0f1ae82f185e4437b9ecb787a9c5c852b3cde7a9f9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 39350,
+      "scout_end_frame": 39475,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N2-051",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 43275,
+      "bbox": [
+        787.8228149414062,
+        1063.761962890625,
+        581.4227905273438,
+        256.6326904296875
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-051-frame.jpg",
+      "image_sha256": "dc0d285801f1bf26c0e06cb630a00a51c4e5250f77066ffbfb1c53d6d4a38768",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 43200,
+      "scout_end_frame": 43325,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-001",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 150,
+      "bbox": [
+        152.528076171875,
+        705.1970825195312,
+        2410.965576171875,
+        631.1991577148438
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-001-frame.jpg",
+      "image_sha256": "c8030d349d90cb5cb79d378c627652c9cefcfbb373d300044b61f4f7c755bf36",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 0,
+      "scout_end_frame": 300,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-002",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 375,
+      "bbox": [
+        817.769287109375,
+        1001.2006225585938,
+        766.8397216796875,
+        329.11236572265625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-002-frame.jpg",
+      "image_sha256": "5dcbe13a3faf71dc63b19e920b035073d6b316f7b75d4d0906dec4b14da4e4da",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 250,
+      "scout_end_frame": 450,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-003",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 675,
+      "bbox": [
+        998.2874755859375,
+        996.154296875,
+        601.3048095703125,
+        340.8848876953125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-003-frame.jpg",
+      "image_sha256": "6e20f8067e6bd1cca93ca4283d296ad7dcaf7e26af566aa77968aa7f8828b324",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 600,
+      "scout_end_frame": 750,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-004",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 1600,
+      "bbox": [
+        900.7051391601562,
+        1083.831298828125,
+        559.6919555664062,
+        246.282470703125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-004-frame.jpg",
+      "image_sha256": "62ae61333a742a234cada73fe7a3fe2611ce8bfec35cc6c57cbf6a91a64d2d3d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 1525,
+      "scout_end_frame": 1950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-005",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 2625,
+      "bbox": [
+        993.2338256835938,
+        1082.007568359375,
+        517.0574340820312,
+        218.2738037109375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-005-frame.jpg",
+      "image_sha256": "4fdb07be9930dabca8aa5feede3ba6eddddb30f4012a1411b908a067df615b40",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 2525,
+      "scout_end_frame": 3300,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-006",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3325,
+      "bbox": [
+        1020.0297241210938,
+        1074.87060546875,
+        507.36260986328125,
+        246.3756103515625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-006-frame.jpg",
+      "image_sha256": "917a8ce0591ba83ea5a357817a2d63b1867ea9d0af2c4d860e31e4f60dada578",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 2600,
+      "scout_end_frame": 3475,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-007",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3375,
+      "bbox": [
+        1682.7427978515625,
+        1064.3634033203125,
+        483.0936279296875,
+        232.912109375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-007-frame.jpg",
+      "image_sha256": "e9a0c0c331607bc02f0137b87778eaf50478784834f3f94ce9c2573b1be488e3",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 2875,
+      "scout_end_frame": 3375,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-008",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3400,
+      "bbox": [
+        1351.355224609375,
+        1073.4161376953125,
+        449.9549560546875,
+        222.400146484375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-008-frame.jpg",
+      "image_sha256": "fa1472ba55229e677d9b29cd7530eacb8a855bd3070b4de4c72216d7e91f0380",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 3400,
+      "scout_end_frame": 3400,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-009",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3425,
+      "bbox": [
+        1013.1932373046875,
+        1078.615478515625,
+        429.5625,
+        215.633056640625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-009-frame.jpg",
+      "image_sha256": "41a42c9ee10679238e563d9bb4725b4c636db7d06a3ba63acbb9ee52e25682a7",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 3425,
+      "scout_end_frame": 3425,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-011",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3450,
+      "bbox": [
+        715.3689575195312,
+        1074.308837890625,
+        422.46453857421875,
+        216.7523193359375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-011-frame.jpg",
+      "image_sha256": "a8dc1868fe8072a924669f3a2b9fccc668fa0713960902972ae926184fee0661",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 3450,
+      "scout_end_frame": 3450,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-010",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3475,
+      "bbox": [
+        1661.151611328125,
+        1077.9822998046875,
+        497.33837890625,
+        232.183349609375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-010-frame.jpg",
+      "image_sha256": "560438c72d5e7a2a1f0bd6be342f676aae00daea0d9174a1a7ca663cba30327d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 3425,
+      "scout_end_frame": 3475,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-012",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3500,
+      "bbox": [
+        140.03875732421875,
+        1056.680419921875,
+        420.32989501953125,
+        197.162109375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-012-frame.jpg",
+      "image_sha256": "7dce9ce595d834b6c55952fd97ba244a5269f28358bcf5b7ee3a25812578804a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 3500,
+      "scout_end_frame": 3500,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-013",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 3525,
+      "bbox": [
+        1045.9293212890625,
+        1090.1883544921875,
+        455.2818603515625,
+        224.57080078125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-013-frame.jpg",
+      "image_sha256": "4d7ec8452827ae0d666231fe706bfd2c1c0230a98145aa6a6c3c3974e67bd293",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 3500,
+      "scout_end_frame": 3625,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-014",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 4350,
+      "bbox": [
+        1002.8206787109375,
+        1074.7928466796875,
+        587.1669921875,
+        259.8800048828125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-014-frame.jpg",
+      "image_sha256": "45e4e45501c812e4ceb64f20a892c35eb2d0ab4f18235eb4e48da3c33717ddce",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4300,
+      "scout_end_frame": 4400,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-015",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 5075,
+      "bbox": [
+        2413.135498046875,
+        1114.663330078125,
+        172.56591796875,
+        171.544677734375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-015-frame.jpg",
+      "image_sha256": "cfdd8b5eb73aa984427071da1b1e16ac748f36c50dfd5529f83926665527cb70",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 5075,
+      "scout_end_frame": 5075,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-016",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 5150,
+      "bbox": [
+        944.4610595703125,
+        1106.3955078125,
+        578.197021484375,
+        221.5684814453125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-016-frame.jpg",
+      "image_sha256": "2c3732b4e2fa1f2b33d26a0c6bf5ed9cf216744a763eec73716fc0dacf938e95",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 5100,
+      "scout_end_frame": 5200,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-017",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 7275,
+      "bbox": [
+        953.2271118164062,
+        1014.912841796875,
+        573.9321899414062,
+        312.5408935546875
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-017-frame.jpg",
+      "image_sha256": "6cb29392ac16ca2256a8e8392aa4d403881ef050d5927aa1e1471e3ab04b3295",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 7200,
+      "scout_end_frame": 7325,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-018",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 8750,
+      "bbox": [
+        1108.80322265625,
+        1099.88916015625,
+        481.4212646484375,
+        228.58642578125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-018-frame.jpg",
+      "image_sha256": "022f7f37c84b42a125b4785bc17fad50bb418b810630eb6dbd2df34d368adedb",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 8650,
+      "scout_end_frame": 8825,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-019",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 9000,
+      "bbox": [
+        916.2823486328125,
+        1042.6229248046875,
+        557.507080078125,
+        287.807373046875
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-019-frame.jpg",
+      "image_sha256": "aa20a1483ded117f8bdbd7f32edf67bc16144206320dd10a35fdae503f6c6d09",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 8850,
+      "scout_end_frame": 9125,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-020",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 10400,
+      "bbox": [
+        1040.0211181640625,
+        1063.22802734375,
+        570.0528564453125,
+        258.8687744140625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-020-frame.jpg",
+      "image_sha256": "b2a5bb0cb160e93959de6b57c5de60213dcce136f1b2331bc973c4e9a1501348",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 10300,
+      "scout_end_frame": 10500,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-021",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 11200,
+      "bbox": [
+        2475.144775390625,
+        1050.823486328125,
+        113.855712890625,
+        210.983642578125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-021-frame.jpg",
+      "image_sha256": "be111044258b533650b8057f9d428a931168ca5516c99c5fdbb6475581352ebc",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 11200,
+      "scout_end_frame": 11200,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-022",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 11275,
+      "bbox": [
+        1139.8670654296875,
+        967.6614990234375,
+        642.5467529296875,
+        364.9456787109375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-022-frame.jpg",
+      "image_sha256": "f2a922616def010b383ec8ef90857941b435221ddabc38fccbceacd8a4cab0a3",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 11225,
+      "scout_end_frame": 11350,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-023",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 11425,
+      "bbox": [
+        853.5819702148438,
+        1080.841796875,
+        577.4391479492188,
+        251.54150390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-023-frame.jpg",
+      "image_sha256": "dba3fd25ea67ac9ffd6c79900f7cac7d88a85f4c023d2bf194c6c9fe8f34d628",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 11325,
+      "scout_end_frame": 11500,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-024",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 14625,
+      "bbox": [
+        1.8134032487869263,
+        774.9841918945312,
+        2430.212719798088,
+        561.6292114257812
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-024-frame.jpg",
+      "image_sha256": "0619ace8cb609e00f942c7c424fe2745b9758ad7e1db3f5f9bd0aaf91e8fa806",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 14300,
+      "scout_end_frame": 14825,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-025",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 15100,
+      "bbox": [
+        857.240234375,
+        1055.88525390625,
+        657.61962890625,
+        276.2974853515625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-025-frame.jpg",
+      "image_sha256": "457e05259163fecf1b1f9de8960f310a37b78773da9773069e475458c13ad61f",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 15050,
+      "scout_end_frame": 15125,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-026",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 15225,
+      "bbox": [
+        1049.778076171875,
+        1107.85205078125,
+        562.4261474609375,
+        230.164306640625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-026-frame.jpg",
+      "image_sha256": "9102cf832cf1b9ccf65c7a32fbf72c39328a9e68140e07357cc5d2214ae5973d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 15150,
+      "scout_end_frame": 15275,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-027",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 16400,
+      "bbox": [
+        164.689453125,
+        792.6641845703125,
+        2088.265869140625,
+        543.5987548828125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-027-frame.jpg",
+      "image_sha256": "bda2a324cb93339d0149c92baec3c7dd2abf4d4762e5818c6c8af0e4e6063c1a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 16150,
+      "scout_end_frame": 18525,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-028",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 18625,
+      "bbox": [
+        429.8269958496094,
+        844.9407348632812,
+        1677.4034729003906,
+        494.91998291015625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-028-frame.jpg",
+      "image_sha256": "d255f69e8dd72b3b5129ac175d11f84b5bfd1dc11005b0228623b518bc22f162",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 16600,
+      "scout_end_frame": 18775,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-029",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 18800,
+      "bbox": [
+        1079.403564453125,
+        1084.5673828125,
+        528.1304931640625,
+        220.4351806640625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-029-frame.jpg",
+      "image_sha256": "8105e1d348b5241a795139080cca01a496e92fa8cc16abd2883530185f643535",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 18625,
+      "scout_end_frame": 19000,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-030",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 18925,
+      "bbox": [
+        995.420166015625,
+        1042.04150390625,
+        550.0614013671875,
+        265.1468505859375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-030-frame.jpg",
+      "image_sha256": "4eb464dcae4300b5f08a0ce3add864ed517bda16f79c60840abe5d6675f17f01",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 18750,
+      "scout_end_frame": 18975,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-031",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 21425,
+      "bbox": [
+        2259.233154296875,
+        1055.9141845703125,
+        329.566650390625,
+        268.849853515625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-031-frame.jpg",
+      "image_sha256": "4cdd3039e841e0667131729fe90554ac5cd15a80cbb579643958a5ab5b694f61",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 21425,
+      "scout_end_frame": 21425,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-032",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 21475,
+      "bbox": [
+        1006.7488403320312,
+        1031.8555908203125,
+        632.5297241210938,
+        305.89892578125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-032-frame.jpg",
+      "image_sha256": "ba28c8133addba766a8cf64b157b703a4ff55f7ab17e12dc84b4c14f54cdd439",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 21450,
+      "scout_end_frame": 21550,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-033",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 25350,
+      "bbox": [
+        187.6689453125,
+        817.6358032226562,
+        2395.30615234375,
+        517.9248657226562
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-033-frame.jpg",
+      "image_sha256": "a59f6a874b45efa776fc9a9ef88a9058479b4edf3d441bdbdbf96aafe3ed00a7",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 25150,
+      "scout_end_frame": 25450,
+      "observed_labels": [
+        "bus",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-034",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 25475,
+      "bbox": [
+        2432.33837890625,
+        1139.4454345703125,
+        151.99560546875,
+        135.2275390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-034-frame.jpg",
+      "image_sha256": "75c47af4047fcb2bb72b9b161ad1c109fccb268e1d09149cd78e89c8c52b377d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 25475,
+      "scout_end_frame": 25475,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-036",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 25550,
+      "bbox": [
+        0.6460372805595398,
+        941.2946166992188,
+        654.333088696003,
+        337.62872314453125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-036-frame.jpg",
+      "image_sha256": "f7bde4e60dbc749ac9a564799b81d96c974c4cb884f4f0a013afd9ceeb9630bc",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 25550,
+      "scout_end_frame": 25550,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-035",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 25575,
+      "bbox": [
+        1304.8922119140625,
+        1100.9189453125,
+        591.42236328125,
+        232.7252197265625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-035-frame.jpg",
+      "image_sha256": "b33dc9ea1e302fbdba725561eae1d4e1e25630cdb12d233a24ee4444ff711bdf",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 25500,
+      "scout_end_frame": 25575,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-037",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 25600,
+      "bbox": [
+        833.9010009765625,
+        1115.747802734375,
+        583.015869140625,
+        216.8643798828125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-037-frame.jpg",
+      "image_sha256": "e23bb9ed4c7730f63799bfa046e27b910635bd5fcf8d7f05792e88a732c12666",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 25600,
+      "scout_end_frame": 25675,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-038",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 26025,
+      "bbox": [
+        546.2266845703125,
+        780.0596313476562,
+        1459.3321533203125,
+        556.4635620117188
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-038-frame.jpg",
+      "image_sha256": "e21e8c0b6e4e2e9590a92b689ff3ce4a3c3abda35bc150720cba4bb0dc492136",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 25850,
+      "scout_end_frame": 26125,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-039",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 27200,
+      "bbox": [
+        2445.8662109375,
+        954.399658203125,
+        144.822265625,
+        281.82275390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-039-frame.jpg",
+      "image_sha256": "576236c7353361c4b3097738e14212d384a30f53c686f4572685fd05a472a13d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 27200,
+      "scout_end_frame": 27200,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-040",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 27350,
+      "bbox": [
+        966.9917602539062,
+        865.134521484375,
+        776.2838745117188,
+        468.4488525390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-040-frame.jpg",
+      "image_sha256": "ecace3c087b1f2fb9d1d2a670a0c7940eb77adcaec18663218a2540a3c029587",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 27225,
+      "scout_end_frame": 27525,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-041",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 30275,
+      "bbox": [
+        811.7936401367188,
+        955.9619140625,
+        700.2305297851562,
+        377.21484375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-041-frame.jpg",
+      "image_sha256": "2c29d95822e9f7701671b81273836762b0a17d178bfbc4b587f9a63f924ba1d4",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 30200,
+      "scout_end_frame": 30325,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-042",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 32400,
+      "bbox": [
+        1005.1546020507812,
+        1040.6727294921875,
+        609.3980102539062,
+        294.3984375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-042-frame.jpg",
+      "image_sha256": "74f8bf9b6ac33061fd6fe9b29b3af054242881ae27a4c6c182dea151c1c25b16",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 32350,
+      "scout_end_frame": 32450,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-043",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 32550,
+      "bbox": [
+        1128.5543212890625,
+        1055.6614990234375,
+        617.6771240234375,
+        281.185791015625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-043-frame.jpg",
+      "image_sha256": "843cf6fd932dc5cd52e469d365d37cbd8bc1c59f0a7d334ff5752bef44d7cf4f",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 32475,
+      "scout_end_frame": 32625,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-044",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 33475,
+      "bbox": [
+        831.6268310546875,
+        967.088623046875,
+        541.0235595703125,
+        355.556884765625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-044-frame.jpg",
+      "image_sha256": "1d2db491f5a82a3e74c0ab62a388a3794721209f3e061b73e474c9f9ced604bb",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 33400,
+      "scout_end_frame": 33500,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-045",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 35650,
+      "bbox": [
+        787.1334838867188,
+        1031.90234375,
+        538.2589721679688,
+        255.5816650390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-045-frame.jpg",
+      "image_sha256": "473de4984c06bc9a78bfd24a4bec13823829a011022ce5fa64efffdb638ede94",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35575,
+      "scout_end_frame": 35675,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-046",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 37575,
+      "bbox": [
+        856.549560546875,
+        1097.3629150390625,
+        541.8345947265625,
+        233.566650390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-046-frame.jpg",
+      "image_sha256": "c4b77cb4254df9f8bfcaab6931363c3e91dd043fac08ff7a60d0c85bb81da1fd",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 37500,
+      "scout_end_frame": 37625,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-047",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 37750,
+      "bbox": [
+        2270.504150390625,
+        1046.8983154296875,
+        317.030029296875,
+        268.1651611328125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-047-frame.jpg",
+      "image_sha256": "b52c40209eb723c59b224b85c28c975eb42ba96964d24c8140d93814a1a21afd",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 37750,
+      "scout_end_frame": 37750,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-048",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 37800,
+      "bbox": [
+        834.3314208984375,
+        1070.8475341796875,
+        541.9622802734375,
+        263.610107421875
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-048-frame.jpg",
+      "image_sha256": "e076e01283d4ef63fb7d06fc1062ebfcf9f62e0c6079d2d4289e3b74530eb9c0",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 37775,
+      "scout_end_frame": 37825,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-049",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 39575,
+      "bbox": [
+        815.2577514648438,
+        897.2191162109375,
+        915.1497192382812,
+        436.5494384765625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-049-frame.jpg",
+      "image_sha256": "29dc34dbc46a046c9b5ac156022416e35a32f91d732c00c119dfaf3579c40f24",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 39350,
+      "scout_end_frame": 39775,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-050",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 40100,
+      "bbox": [
+        943.662109375,
+        1048.8414306640625,
+        621.795166015625,
+        281.614501953125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-050-frame.jpg",
+      "image_sha256": "8b4be6dc87b090c065b085c874aca6f38add10b661a18ce1e992475b7e3c53ba",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 40025,
+      "scout_end_frame": 40225,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-051",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 40225,
+      "bbox": [
+        976.5673217773438,
+        1099.11865234375,
+        514.0806274414062,
+        225.9779052734375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-051-frame.jpg",
+      "image_sha256": "8aecddcc62f612a9178710f4920a274a4c6c0266508c093d7dd7b798df323282",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 40150,
+      "scout_end_frame": 40350,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-052",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 40525,
+      "bbox": [
+        1053.326904296875,
+        1050.38671875,
+        603.38720703125,
+        260.819580078125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-052-frame.jpg",
+      "image_sha256": "c976a997851215e8162d7789daf719f709ad440fdfcdda7f40d84afe7cf2cc57",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 40450,
+      "scout_end_frame": 40575,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-053",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 42000,
+      "bbox": [
+        857.8580932617188,
+        1065.5894775390625,
+        551.3726196289062,
+        264.0706787109375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-053-frame.jpg",
+      "image_sha256": "8563faf0e4c33bc1c001942ea9329fbcfc7b78cac25dbc93f2f3854c7d6747d1",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 41925,
+      "scout_end_frame": 42075,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-054",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 42675,
+      "bbox": [
+        1089.09228515625,
+        1025.5728759765625,
+        605.85302734375,
+        309.8265380859375
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-054-frame.jpg",
+      "image_sha256": "44ac272a71f1e86b8511acab15de42a5ca066408fe76be2cc20b7b2f551cd327",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 42625,
+      "scout_end_frame": 42775,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N3-055",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 44250,
+      "bbox": [
+        1187.6580810546875,
+        1124.0712890625,
+        578.4384765625,
+        211.5318603515625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-055-frame.jpg",
+      "image_sha256": "ad00024348a5238142d8002c4481c08eacb7a4e69175defe9b9937e38608c727",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 44200,
+      "scout_end_frame": 44300,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-001",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 1300,
+      "bbox": [
+        1188.317626953125,
+        1039.930908203125,
+        586.7608642578125,
+        293.30517578125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-001-frame.jpg",
+      "image_sha256": "c6672c00d7b8f0749c39ef3a70884764aa30725de9ce11c49ee4f021bbea5abb",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 1250,
+      "scout_end_frame": 1350,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-002",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 2225,
+      "bbox": [
+        1078.447998046875,
+        1033.584716796875,
+        560.3697509765625,
+        274.7445068359375
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-002-frame.jpg",
+      "image_sha256": "0176ed89743685669462b6271cdf8d3a739ecb10cca06c2209486ba9f03bb62b",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 2175,
+      "scout_end_frame": 2275,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-003",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 4875,
+      "bbox": [
+        2433.95849609375,
+        1022.9898681640625,
+        156.920654296875,
+        249.8956298828125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-003-frame.jpg",
+      "image_sha256": "c9448a73395f5c521c5d01ef319b9eb056d413e6f8eac89270a1f1d2febeb639",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 4875,
+      "scout_end_frame": 4875,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-004",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 4925,
+      "bbox": [
+        1014.2567749023438,
+        986.4176025390625,
+        569.1693725585938,
+        343.5865478515625
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-004-frame.jpg",
+      "image_sha256": "06ce3bb98bd13e604bdae3c5ded2d70fe1089ba6d729b1c3e968da16c491a2b0",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 4900,
+      "scout_end_frame": 4950,
+      "observed_labels": [
+        "bus",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-005",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 9575,
+      "bbox": [
+        782.4014892578125,
+        1048.884033203125,
+        646.0634765625,
+        285.71435546875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-005-frame.jpg",
+      "image_sha256": "3f623953325174227b536497ec83f63eff675e35293f6a6ffc6d7c315fa796f8",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 9500,
+      "scout_end_frame": 9625,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-006",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 9900,
+      "bbox": [
+        1087.2784423828125,
+        1070.173095703125,
+        549.262939453125,
+        229.098876953125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-006-frame.jpg",
+      "image_sha256": "ea7def0bf6b08e107c09276100536f05485551415c7a82e67111b00d901cc3ae",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 9825,
+      "scout_end_frame": 9950,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-007",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 10225,
+      "bbox": [
+        851.7037353515625,
+        1111.2733154296875,
+        497.6275634765625,
+        217.92041015625
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-007-frame.jpg",
+      "image_sha256": "f508d66b7cc4e7bdd03566c8133af73349d3962c808dac9115546541993dcfa5",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 10150,
+      "scout_end_frame": 10250,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-008",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 14400,
+      "bbox": [
+        153.99319458007812,
+        759.8770141601562,
+        2360.449188232422,
+        578.5933227539062
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-008-frame.jpg",
+      "image_sha256": "c337be4b0108aa3454eb24f34958252dee91969b9ec249b7da28690903bc983c",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 14100,
+      "scout_end_frame": 14575,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-009",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 14725,
+      "bbox": [
+        1063.6729736328125,
+        1094.8968505859375,
+        547.33837890625,
+        228.50390625
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-009-frame.jpg",
+      "image_sha256": "7b250e0a1d49624802f50358eadbb14c066b38233b2e9e7873a41343d612f837",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 14625,
+      "scout_end_frame": 14775,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-010",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 20025,
+      "bbox": [
+        766.8919067382812,
+        967.5909423828125,
+        863.8666381835938,
+        365.529052734375
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-010-frame.jpg",
+      "image_sha256": "2ba524e3ddec498ddb7d4005612eeee84a459d892b58669e1b9ddbf18b2c98fc",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 19925,
+      "scout_end_frame": 20125,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-011",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 20350,
+      "bbox": [
+        1129.5146484375,
+        1039.92724609375,
+        592.5006103515625,
+        288.4583740234375
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-011-frame.jpg",
+      "image_sha256": "150f95839c30424e2a9aa5d9ad65ff06fba0b9eb88a1ba513a45c65be34e16e3",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 20275,
+      "scout_end_frame": 20425,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-012",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 21525,
+      "bbox": [
+        1064.7750244140625,
+        1082.64013671875,
+        452.4490966796875,
+        218.4971923828125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-012-frame.jpg",
+      "image_sha256": "9ab8283707c5cb706e797b897849088dea277a1aaad661f2c5725f04cf3a1ba5",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 21475,
+      "scout_end_frame": 21575,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-013",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 22025,
+      "bbox": [
+        1160.6119384765625,
+        1087.071533203125,
+        470.160400390625,
+        218.2149658203125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-013-frame.jpg",
+      "image_sha256": "606e0315f2ca0487978ee2e011fb4a67cdded5a2a20b25f386ba8bd88e87b6c9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 21925,
+      "scout_end_frame": 22100,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-014",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 23125,
+      "bbox": [
+        1068.1339111328125,
+        1063.3936767578125,
+        578.927001953125,
+        263.998046875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-014-frame.jpg",
+      "image_sha256": "417dba4f50d4019743219da8e4b4049c0b1f2390a32facf012bacfb5a1a41a1e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 23075,
+      "scout_end_frame": 23200,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-015",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 29300,
+      "bbox": [
+        931.3070678710938,
+        1033.1478271484375,
+        591.9983520507812,
+        299.52001953125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-015-frame.jpg",
+      "image_sha256": "97c89206ac265ff2d0f32dc39976f13522b6aef9c7643cf8d604df729b59545a",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 29200,
+      "scout_end_frame": 29375,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-016",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 30300,
+      "bbox": [
+        789.0697021484375,
+        1045.68701171875,
+        638.2601318359375,
+        288.219482421875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-016-frame.jpg",
+      "image_sha256": "4c2943ae659186dbd31668db5073b60b5ed7183fb733363bb0955c591fe90586",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "bus",
+      "scout_start_frame": 30225,
+      "scout_end_frame": 30350,
+      "observed_labels": [
+        "bus",
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-017",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 31300,
+      "bbox": [
+        2334.83349609375,
+        1087.0606689453125,
+        251.061279296875,
+        225.4730224609375
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-017-frame.jpg",
+      "image_sha256": "679c83cf99af043b0d9d9ee5cf89f7140e42aaf60f3098f9e343ab85ab72ec29",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 31300,
+      "scout_end_frame": 31300,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-018",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 31350,
+      "bbox": [
+        1129.84619140625,
+        1042.8536376953125,
+        574.181884765625,
+        280.5084228515625
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-018-frame.jpg",
+      "image_sha256": "d2eba6e9aa765d3b1b36efc39199585ce45b3b1a689b0ec1e64c69540aa9bed4",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 31325,
+      "scout_end_frame": 31400,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-019",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 32775,
+      "bbox": [
+        885.69970703125,
+        868.5139770507812,
+        1692.73779296875,
+        460.73541259765625
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-019-frame.jpg",
+      "image_sha256": "b73a0b07ee2cd9f98dbef2d08b596cb0b41d2ab02425a5f5674977daaceb7805",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 32675,
+      "scout_end_frame": 32775,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-020",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 33000,
+      "bbox": [
+        356.35748291015625,
+        901.7540893554688,
+        2086.8515014648438,
+        435.29022216796875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-020-frame.jpg",
+      "image_sha256": "31c274408a4e19fe2c9faf896475719a99867ebd1fa1490a96faf58fdf2f8fba",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 32775,
+      "scout_end_frame": 33200,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-021",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 35850,
+      "bbox": [
+        823.721435546875,
+        1089.82177734375,
+        544.0946044921875,
+        240.7215576171875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-021-frame.jpg",
+      "image_sha256": "234dff245b748e315bbb12850a3fdd9b8f6ab5c812351dc2b49e0a0f31318e83",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 35750,
+      "scout_end_frame": 35900,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-022",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 40475,
+      "bbox": [
+        1044.893798828125,
+        946.0099487304688,
+        694.254150390625,
+        388.80438232421875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-022-frame.jpg",
+      "image_sha256": "7c58f5ea4ac1bb19a0c398c0169812a85f83c085da16c65bdadcc922282cf4b4",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 40350,
+      "scout_end_frame": 40575,
+      "observed_labels": [
+        "car",
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-023",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 41425,
+      "bbox": [
+        554.6688842773438,
+        816.9573974609375,
+        1460.9093627929688,
+        520.3731689453125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-023-frame.jpg",
+      "image_sha256": "8d6ff644e225621f7b474530d3bf970957600affc81fc307797de56bd53e7470",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 41100,
+      "scout_end_frame": 41725,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-024",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 42875,
+      "bbox": [
+        993.484619140625,
+        1059.186767578125,
+        570.955322265625,
+        268.8399658203125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-024-frame.jpg",
+      "image_sha256": "6768a70003a43d85f90f884f82e42dd02e45d52cc63fb4a1e00105047fd9aba2",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 42775,
+      "scout_end_frame": 43000,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-025",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 43575,
+      "bbox": [
+        1180.0469970703125,
+        1094.90234375,
+        565.9736328125,
+        241.1583251953125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-025-frame.jpg",
+      "image_sha256": "82fd3ec0c4d226bb62c4398b044be7c359b53be2bdaa1374d331667551f3506c",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "scout_start_frame": 43500,
+      "scout_end_frame": 43700,
+      "observed_labels": [
+        "car"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    },
+    {
+      "id": "N4-026",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 44375,
+      "bbox": [
+        453.4212646484375,
+        842.0586547851562,
+        1458.0648193359375,
+        497.11419677734375
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-026-frame.jpg",
+      "image_sha256": "3c85767c25e32e437309d00049d7c546394df8a853df25988499963316ba17aa",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "truck",
+      "scout_start_frame": 44250,
+      "scout_end_frame": 44475,
+      "observed_labels": [
+        "truck"
+      ],
+      "prior_model_candidate": null,
+      "prior_note": "All-track coverage audit; fragments retained."
+    }
+  ]
+}

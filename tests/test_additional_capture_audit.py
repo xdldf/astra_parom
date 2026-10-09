@@ -8,19 +8,21 @@ import pytest
 from scripts import audit_additional_captures as audit
 
 
-def test_capture_failure_keeps_full_corrected_frame(tmp_path):
+@pytest.mark.parametrize('label', ['car', 'bus', 'truck'])
+def test_capture_failure_keeps_full_corrected_frame(tmp_path, label):
     """A failed measurement must remain reviewable, using corrected pixels."""
     raw = np.zeros((24, 32, 3), dtype=np.uint8)
     corrected = np.full_like(raw, (10, 80, 160))
     video = SimpleNamespace(isOpened=lambda: True, get=lambda _: 25, release=lambda: None)
-    row = dict(id='sample', video='source.mp4', frame=3, bbox=[2, 4, 16, 8])
+    row = dict(id='sample', video='source.mp4', frame=3, bbox=[2, 4, 16, 8], detector_label=label)
     profile = SimpleNamespace(image_size=(32, 24), lens=None)
     with patch.object(audit.cv2, 'VideoCapture', return_value=video), \
          patch.object(audit.wb, 'read_frame', return_value=raw), \
          patch.object(audit.wb, 'corrected', return_value=corrected), \
          patch.object(audit.st, 'Capture', side_effect=lambda **kwargs: kwargs), \
-         patch.object(audit.st, 'capture', side_effect=RuntimeError('No unambiguous car')):
+         patch.object(audit.st, 'capture', side_effect=RuntimeError('No unambiguous car')) as capture:
         result = audit.capture_one(row, profile, tmp_path)
+    assert capture.call_args.args[0]['label'] == label
     assert result['capture_status'] == 'failed'
     assert result['length_m'] is None
     assert result['reason'] == 'No unambiguous car'

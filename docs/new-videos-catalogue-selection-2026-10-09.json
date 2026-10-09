@@ -1,0 +1,329 @@
+{
+  "selection_rule": "First car track with a bounding box away from image edges by best-frame time in each equal-duration bin. Require a margin of 1 percent of each image dimension, minimum 3 px. Best frame minimizes distance from measurement line; no model identity, length or error in selection.",
+  "profile_sha256": "ea43b6348de9468824541bf3ce2bb469478887bbfa48a1efaef7ea163409abf9",
+  "scout_manifest_sha256": "fc49491750bb3aabb992c17bad5b90a0f3a01b4dce799133a36fd4edf5f051fc",
+  "selection_script_sha256": "dc277f56347ee4d281d310660b213d1c61ab5da3b9e9b7a645ac40478e35a1b4",
+  "scope": "Temporally stratified new-video observations; provisional complete car detections.",
+  "rows": [
+    {
+      "id": "N1-004",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 5025,
+      "bbox": [
+        946.3974609375,
+        1103.09375,
+        559.931884765625,
+        227.160888671875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-004-frame.jpg",
+      "image_sha256": "ce34e41ea923874674a1b229e20a4c1a9f03133503088cbf00a35670e5443ca6",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 0,
+      "scout_start_frame": 4975,
+      "scout_end_frame": 5075,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N1-011",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 13200,
+      "bbox": [
+        954.0960693359375,
+        1118.931396484375,
+        589.0601806640625,
+        213.021484375
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-011-frame.jpg",
+      "image_sha256": "e0e9c6e8953ef54c93fcd163af4addba70fa07ff847567de17f75cdcfbdf0e81",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 1,
+      "scout_start_frame": 13125,
+      "scout_end_frame": 13275,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N1-018",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 23750,
+      "bbox": [
+        1089.7720947265625,
+        1041.8165283203125,
+        635.462158203125,
+        283.8507080078125
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-018-frame.jpg",
+      "image_sha256": "ce8679bac5cd76daf0f51fcba9005cb34678198fda3ae6703136fa4057a76057",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 2,
+      "scout_start_frame": 23700,
+      "scout_end_frame": 23825,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N1-026",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-00-01.mp4",
+      "frame": 35325,
+      "bbox": [
+        966.0917358398438,
+        1092.552001953125,
+        452.59539794921875,
+        239.9793701171875
+      ],
+      "image": "ST_2026-09-02_10-00-01/N1-026-frame.jpg",
+      "image_sha256": "61da0cba92a79e45cd66854bba056a20f604d8d01e3703853c9d65a8e3d944f9",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 3,
+      "scout_start_frame": 35275,
+      "scout_end_frame": 35375,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N2-001",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 675,
+      "bbox": [
+        1039.180908203125,
+        1089.6976318359375,
+        580.740234375,
+        247.051025390625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-001-frame.jpg",
+      "image_sha256": "2ac496a5d1e3264d4501d0adf0c6ae376c290c477836b5ab15189f7295c6ad72",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 0,
+      "scout_start_frame": 600,
+      "scout_end_frame": 675,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N2-015",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 12650,
+      "bbox": [
+        1001.8670043945312,
+        1013.6672973632812,
+        636.1807250976562,
+        323.57916259765625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-015-frame.jpg",
+      "image_sha256": "cef73b47b92b303ed7a5d37a2c59b7c5885e8c31b18a7e1a2753388b171e7302",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 1,
+      "scout_start_frame": 12600,
+      "scout_end_frame": 12700,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N2-021",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 22875,
+      "bbox": [
+        1060.67578125,
+        1015.467529296875,
+        570.1536865234375,
+        273.2249755859375
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-021-frame.jpg",
+      "image_sha256": "053a0a2d757cb70d75a5dc5744d7634100f8bdbc05aa68f6c3592e419d4dd93c",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 2,
+      "scout_start_frame": 22775,
+      "scout_end_frame": 22950,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N2-040",
+      "video": "/home/user/Downloads/ST_2026-09-02_10-30-01.mp4",
+      "frame": 35425,
+      "bbox": [
+        1044.37109375,
+        1105.3082275390625,
+        576.290771484375,
+        229.15087890625
+      ],
+      "image": "ST_2026-09-02_10-30-01/N2-040-frame.jpg",
+      "image_sha256": "cdbb6730136109b5d0077da8bfdf8377975d4f137b80c1e97a52721d192af3b4",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 3,
+      "scout_start_frame": 35200,
+      "scout_end_frame": 35550,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N3-004",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 1600,
+      "bbox": [
+        900.7051391601562,
+        1083.831298828125,
+        559.6919555664062,
+        246.282470703125
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-004-frame.jpg",
+      "image_sha256": "62ae61333a742a234cada73fe7a3fe2611ce8bfec35cc6c57cbf6a91a64d2d3d",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 0,
+      "scout_start_frame": 1525,
+      "scout_end_frame": 1950,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N3-023",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 11425,
+      "bbox": [
+        853.5819702148438,
+        1080.841796875,
+        577.4391479492188,
+        251.54150390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-023-frame.jpg",
+      "image_sha256": "dba3fd25ea67ac9ffd6c79900f7cac7d88a85f4c023d2bf194c6c9fe8f34d628",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 1,
+      "scout_start_frame": 11325,
+      "scout_end_frame": 11500,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N3-035",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 25575,
+      "bbox": [
+        1304.8922119140625,
+        1100.9189453125,
+        591.42236328125,
+        232.7252197265625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-035-frame.jpg",
+      "image_sha256": "b33dc9ea1e302fbdba725561eae1d4e1e25630cdb12d233a24ee4444ff711bdf",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 2,
+      "scout_start_frame": 25500,
+      "scout_end_frame": 25575,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N3-045",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-00-01.mp4",
+      "frame": 35650,
+      "bbox": [
+        787.1334838867188,
+        1031.90234375,
+        538.2589721679688,
+        255.5816650390625
+      ],
+      "image": "ST_2026-09-02_13-00-01/N3-045-frame.jpg",
+      "image_sha256": "473de4984c06bc9a78bfd24a4bec13823829a011022ce5fa64efffdb638ede94",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 3,
+      "scout_start_frame": 35575,
+      "scout_end_frame": 35675,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N4-001",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 1300,
+      "bbox": [
+        1188.317626953125,
+        1039.930908203125,
+        586.7608642578125,
+        293.30517578125
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-001-frame.jpg",
+      "image_sha256": "c6672c00d7b8f0749c39ef3a70884764aa30725de9ce11c49ee4f021bbea5abb",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 0,
+      "scout_start_frame": 1250,
+      "scout_end_frame": 1350,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N4-009",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 14725,
+      "bbox": [
+        1063.6729736328125,
+        1094.8968505859375,
+        547.33837890625,
+        228.50390625
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-009-frame.jpg",
+      "image_sha256": "7b250e0a1d49624802f50358eadbb14c066b38233b2e9e7873a41343d612f837",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 1,
+      "scout_start_frame": 14625,
+      "scout_end_frame": 14775,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N4-014",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 23125,
+      "bbox": [
+        1068.1339111328125,
+        1063.3936767578125,
+        578.927001953125,
+        263.998046875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-014-frame.jpg",
+      "image_sha256": "417dba4f50d4019743219da8e4b4049c0b1f2390a32facf012bacfb5a1a41a1e",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 2,
+      "scout_start_frame": 23075,
+      "scout_end_frame": 23200,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    },
+    {
+      "id": "N4-021",
+      "video": "/home/user/Downloads/ST_2026-09-02_13-30-01.mp4",
+      "frame": 35850,
+      "bbox": [
+        823.721435546875,
+        1089.82177734375,
+        544.0946044921875,
+        240.7215576171875
+      ],
+      "image": "ST_2026-09-02_13-30-01/N4-021-frame.jpg",
+      "image_sha256": "234dff245b748e315bbb12850a3fdd9b8f6ab5c812351dc2b49e0a0f31318e83",
+      "image_space": "corrected_full_resolution",
+      "detector_label": "car",
+      "slot": 3,
+      "scout_start_frame": 35750,
+      "scout_end_frame": 35900,
+      "prior_model_candidate": null,
+      "prior_note": "New-video selection; no catalogue label at selection time."
+    }
+  ]
+}

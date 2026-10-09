@@ -53,7 +53,8 @@ def capture_one(row, profile, output):
     ident = row['id']
     started = time.monotonic()
     entry = dict(id=ident, frame=row['frame'], video=Path(row['video']).name,
-                 bbox=row['bbox'], prior_model_candidate=row.get('prior_model_candidate'),
+                 bbox=row['bbox'], detector_label=row.get('detector_label', 'car'),
+                 prior_model_candidate=row.get('prior_model_candidate'),
                  prior_note=row.get('prior_note'), capture_status='failed')
     evidence = {}
     original_outline, original_wheels = om.infer_outline, wm.infer_wheels
@@ -110,7 +111,7 @@ def capture_one(row, profile, output):
 
         with patch.object(om, 'infer_outline', outline), patch.object(wm, 'infer_wheels', wheels):
             record = st.capture(st.Capture(media_id=ident, profile=profile, frame=row['frame'],
-                bbox=row['bbox'], label='car', source='yolo26m', temporal=True,
+                bbox=row['bbox'], label=entry['detector_label'], source='yolo26m', temporal=True,
                 review_fallback=True, actor='Offline additional-car audit'))
         if (output/'captures'/record['full_frame_photo']).read_bytes() != jpeg:
             raise ValueError('Station photo does not match the full corrected frame')

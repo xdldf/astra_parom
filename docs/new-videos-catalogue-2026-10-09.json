@@ -1,0 +1,480 @@
+{
+  "frozen_at_utc": "2026-10-09T01:50:10.606648+00:00",
+  "protocol": "Catalogue labels frozen before viewing new numerical predictions; inference was running concurrently. No labels used for fitting.",
+  "selection_sha256": "6981b464fbbf5c5884e664e6506186bd40b2eeb720635c339164a3c0b9a0fd54",
+  "caveat": "Catalogue lengths are conditional on correct visual identification and stock longitudinal dimensions; not physical ground truth.",
+  "sources": {
+    "allion2007": {
+      "title": "Toyota Allion 2007",
+      "lengths_m": [
+        4.565
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-ALLION/200706/10041231/",
+      "accessed": "2026-10-09"
+    },
+    "allion2016": {
+      "title": "Toyota Allion 2016",
+      "lengths_m": [
+        4.59
+      ],
+      "url": "https://toyota.jp/pages/contents/allion/002_p_020/pdf/spec/allion_spec_201606.pdf",
+      "accessed": "2026-10-09"
+    },
+    "ipsum1996": {
+      "title": "Toyota Ipsum XM10",
+      "lengths_m": [
+        4.53
+      ],
+      "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000241/",
+      "accessed": "2026-10-09"
+    },
+    "lc100": {
+      "title": "Toyota Land Cruiser 100, JDM stock body",
+      "lengths_m": [
+        4.89
+      ],
+      "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60012613/index.html",
+      "accessed": "2026-10-09"
+    },
+    "hiace2004": {
+      "title": "Toyota HiAce H200 standard/wide/super long",
+      "lengths_m": [
+        4.695,
+        4.84,
+        5.38
+      ],
+      "url": "https://global.toyota/jp/newsroom/toyota/33223241.html",
+      "accessed": "2026-10-09"
+    },
+    "axio2006": {
+      "title": "Toyota Corolla Axio E140",
+      "lengths_m": [
+        4.41
+      ],
+      "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60004229/index.html",
+      "accessed": "2026-10-09"
+    },
+    "rav4us": {
+      "title": "Toyota RAV4 XA50, 2018 US debut",
+      "lengths_m": [
+        4.595
+      ],
+      "url": "https://global.toyota/jp/newsroom/toyota/21775010.html",
+      "accessed": "2026-10-09"
+    },
+    "rav4jp": {
+      "title": "Toyota RAV4 XA50 standard",
+      "lengths_m": [
+        4.6
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-RAV4/201904/10120927/",
+      "accessed": "2026-10-09"
+    },
+    "rav4adv": {
+      "title": "Toyota RAV4 XA50 Adventure",
+      "lengths_m": [
+        4.61
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-RAV4/201904/10120921/",
+      "accessed": "2026-10-09"
+    },
+    "ipsum2001": {
+      "title": "Toyota Ipsum ACM20 early",
+      "lengths_m": [
+        4.65
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200105/1009936/",
+      "accessed": "2026-10-09"
+    },
+    "ipsum2007": {
+      "title": "Toyota Ipsum ACM20 later",
+      "lengths_m": [
+        4.69
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-IPSUM/200706/10041622/",
+      "accessed": "2026-10-09"
+    },
+    "serena": {
+      "title": "Nissan Serena C26 standard/Highway Star",
+      "lengths_m": [
+        4.685,
+        4.77
+      ],
+      "url": "https://history.nissan.co.jp/SERENA/C26/1312/PDF/serena_specification.pdf",
+      "accessed": "2026-10-09"
+    },
+    "gaia": {
+      "title": "Toyota Gaia",
+      "lengths_m": [
+        4.62
+      ],
+      "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-GAIA/200208/1011342/",
+      "accessed": "2026-10-09"
+    },
+    "lancer": {
+      "title": "Mitsubishi Galant Fortis 2007",
+      "lengths_m": [
+        4.57
+      ],
+      "url": "https://www.mitsubishi-motors.com/en/company/history/car/?MID=21",
+      "accessed": "2026-10-09"
+    },
+    "noah70": {
+      "title": "Toyota Noah R70 standard/Si",
+      "lengths_m": [
+        4.595,
+        4.63
+      ],
+      "url": "https://www.toyota.co.jp/jpn/company/history/75years/vehicle_lineage/car/id60009041/index.html",
+      "accessed": "2026-10-09"
+    },
+    "probox160": {
+      "title": "Toyota Probox XP160, 2017 specifications",
+      "lengths_m": [
+        4.245
+      ],
+      "url": "https://toyota.jp/pages/contents/probox/001_b_002/pdf/spec/probox_spec_201704.pdf",
+      "accessed": "2026-10-09"
+    },
+    "jimny23": {
+      "title": "Suzuki Jimny JB23",
+      "lengths_m": [
+        3.395
+      ],
+      "url": "https://www.suzuki.co.jp/car/jimny/special/history/jb23.html",
+      "accessed": "2026-10-09"
+    },
+    "jimny43": {
+      "title": "Suzuki Jimny Sierra JB43",
+      "lengths_m": [
+        3.55
+      ],
+      "url": "https://www.suzuki.co.jp/car/jimny/special/history/catalog/JB43.pdf",
+      "accessed": "2026-10-09"
+    }
+  },
+  "rows": [
+    {
+      "id": "N1-004",
+      "model_candidate": "Toyota Allion T260 candidate",
+      "source_keys": [
+        "allion2007",
+        "allion2016"
+      ],
+      "catalogue_lengths_m": [
+        4.565,
+        4.59
+      ],
+      "catalogue_interval_m": [
+        4.565,
+        4.59
+      ],
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Седан похож на Allion T260; Premio не исключён. Марка/поколение не подтверждены, только справочное сравнение.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "ce34e41ea923874674a1b229e20a4c1a9f03133503088cbf00a35670e5443ca6"
+    },
+    {
+      "id": "N1-011",
+      "model_candidate": "Toyota Allion T260 candidate",
+      "source_keys": [
+        "allion2007",
+        "allion2016"
+      ],
+      "catalogue_lengths_m": [
+        4.565,
+        4.59
+      ],
+      "catalogue_interval_m": [
+        4.565,
+        4.59
+      ],
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Похож на Allion T260; значок и точная версия не подтверждены. Нельзя гарантировать отличие физического экземпляра от другого проезда.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "e0e9c6e8953ef54c93fcd163af4addba70fa07ff847567de17f75cdcfbdf0e81"
+    },
+    {
+      "id": "N1-018",
+      "model_candidate": "Неустановленный минивэн; Hyundai Starex candidate",
+      "source_keys": [],
+      "catalogue_lengths_m": [],
+      "catalogue_interval_m": null,
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Поколение и модель не установлены: не подставляем длину Grand Starex по внешнему сходству.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "ce8679bac5cd76daf0f51fcba9005cb34678198fda3ae6703136fa4057a76057"
+    },
+    {
+      "id": "N1-026",
+      "model_candidate": "Suzuki Jimny JB23 / Sierra JB43 candidate",
+      "source_keys": [
+        "jimny23",
+        "jimny43"
+      ],
+      "catalogue_lengths_m": [
+        3.395,
+        3.55
+      ],
+      "catalogue_interval_m": [
+        3.395,
+        3.55
+      ],
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Арки, бамперы и версия не установлены; возможны переделки. Интервал только для перечисленных заводских вариантов.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "61da0cba92a79e45cd66854bba056a20f604d8d01e3703853c9d65a8e3d944f9"
+    },
+    {
+      "id": "N2-001",
+      "model_candidate": "Toyota Ipsum XM10 candidate",
+      "source_keys": [
+        "ipsum1996"
+      ],
+      "catalogue_lengths_m": [
+        4.53
+      ],
+      "catalogue_interval_m": [
+        4.53,
+        4.53
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Первое поколение: овальные фары и характерное заднее боковое стекло. Сравнение условно для штатного кузова.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "2ac496a5d1e3264d4501d0adf0c6ae376c290c477836b5ab15189f7295c6ad72"
+    },
+    {
+      "id": "N2-015",
+      "model_candidate": "Toyota Land Cruiser 100 candidate",
+      "source_keys": [
+        "lc100"
+      ],
+      "catalogue_lengths_m": [
+        4.89
+      ],
+      "catalogue_interval_m": [
+        4.89,
+        4.89
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Кандидат LC100 с багажником на крыше. Использован заводской японский кузов 4890 мм; рынок и внешнее оборудование не подтверждены.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "cef73b47b92b303ed7a5d37a2c59b7c5885e8c31b18a7e1a2753388b171e7302"
+    },
+    {
+      "id": "N2-021",
+      "model_candidate": "Toyota HiAce H200 candidate",
+      "source_keys": [
+        "hiace2004"
+      ],
+      "catalogue_lengths_m": [
+        4.695,
+        4.84,
+        5.38
+      ],
+      "catalogue_interval_m": [
+        4.695,
+        5.38
+      ],
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Версия кузова и ширина не подтверждены; оставлены все три заводских длины. В оценку точности не входит.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "053a0a2d757cb70d75a5dc5744d7634100f8bdbc05aa68f6c3592e419d4dd93c"
+    },
+    {
+      "id": "N2-040",
+      "model_candidate": "Toyota Corolla Axio E140 candidate",
+      "source_keys": [
+        "axio2006"
+      ],
+      "catalogue_lengths_m": [
+        4.41
+      ],
+      "catalogue_interval_m": [
+        4.41,
+        4.41
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Форма фар, остекление и кормовая часть похожи на Axio E140; условно штатный японский кузов.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "cdbb6730136109b5d0077da8bfdf8377975d4f137b80c1e97a52721d192af3b4"
+    },
+    {
+      "id": "N3-004",
+      "model_candidate": "Toyota RAV4 XA50 candidate",
+      "source_keys": [
+        "rav4us",
+        "rav4jp",
+        "rav4adv"
+      ],
+      "catalogue_lengths_m": [
+        4.595,
+        4.6,
+        4.61
+      ],
+      "catalogue_interval_m": [
+        4.595,
+        4.61
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Пятое поколение по форме кузова/арок. Год и рынок не подтверждены; сохранены размеры стандартной и Adventure версий.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "62ae61333a742a234cada73fe7a3fe2611ce8bfec35cc6c57cbf6a91a64d2d3d"
+    },
+    {
+      "id": "N3-023",
+      "model_candidate": "Toyota Ipsum ACM20 candidate",
+      "source_keys": [
+        "ipsum2001",
+        "ipsum2007"
+      ],
+      "catalogue_lengths_m": [
+        4.65,
+        4.69
+      ],
+      "catalogue_interval_m": [
+        4.65,
+        4.69
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Надпись IPSUM на двери, кузов второго поколения. Точный год не известен, на крыше груз; сравнение с длиной штатного кузова.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "dba3fd25ea67ac9ffd6c79900f7cac7d88a85f4c023d2bf194c6c9fe8f34d628"
+    },
+    {
+      "id": "N3-035",
+      "model_candidate": "Неустановленный универсал; Toyota Caldina candidate",
+      "source_keys": [],
+      "catalogue_lengths_m": [],
+      "catalogue_interval_m": null,
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "По одному боковому кадру нельзя надёжно различить модель/поколение; каталожная длина не назначена.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "b33dc9ea1e302fbdba725561eae1d4e1e25630cdb12d233a24ee4444ff711bdf"
+    },
+    {
+      "id": "N3-045",
+      "model_candidate": "Nissan Serena C26 candidate",
+      "source_keys": [
+        "serena"
+      ],
+      "catalogue_lengths_m": [
+        4.685,
+        4.77
+      ],
+      "catalogue_interval_m": [
+        4.685,
+        4.77
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Профиль остекления и передней части похож на C26. Стандарт/Highway Star не подтверждены, обе длины сохранены.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "473de4984c06bc9a78bfd24a4bec13823829a011022ce5fa64efffdb638ede94"
+    },
+    {
+      "id": "N4-001",
+      "model_candidate": "Toyota Gaia XM10 candidate",
+      "source_keys": [
+        "gaia"
+      ],
+      "catalogue_lengths_m": [
+        4.62
+      ],
+      "catalogue_interval_m": [
+        4.62,
+        4.62
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Характерные фары и кузов Gaia. Багажник и груз на крыше; сравнение относится к штатному кузову.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "c6672c00d7b8f0749c39ef3a70884764aa30725de9ce11c49ee4f021bbea5abb"
+    },
+    {
+      "id": "N4-009",
+      "model_candidate": "Mitsubishi Lancer X / Galant Fortis candidate",
+      "source_keys": [
+        "lancer"
+      ],
+      "catalogue_lengths_m": [
+        4.57
+      ],
+      "catalogue_interval_m": [
+        4.57,
+        4.57
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Седан по форме кузова и фонарей; диски заменены. Условное сравнение со штатными бамперами Galant Fortis 2007.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "7b250e0a1d49624802f50358eadbb14c066b38233b2e9e7873a41343d612f837"
+    },
+    {
+      "id": "N4-014",
+      "model_candidate": "Toyota Noah R70 candidate",
+      "source_keys": [
+        "noah70"
+      ],
+      "catalogue_lengths_m": [
+        4.595,
+        4.63
+      ],
+      "catalogue_interval_m": [
+        4.595,
+        4.63
+      ],
+      "comparison_eligible": false,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Noah R70 предположительно; близкое поколение R60 не исключено, крупный груз на крыше. Только справочно.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "417dba4f50d4019743219da8e4b4049c0b1f2390a32facf012bacfb5a1a41a1e"
+    },
+    {
+      "id": "N4-021",
+      "model_candidate": "Toyota Probox / Succeed XP160 candidate",
+      "source_keys": [
+        "probox160"
+      ],
+      "catalogue_lengths_m": [
+        4.245
+      ],
+      "catalogue_interval_m": [
+        4.245,
+        4.245
+      ],
+      "comparison_eligible": true,
+      "identification_status": "provisional_visual_candidate",
+      "note": "Обновлённая передняя часть и компактный кузов XP160; шильдик не читается. Использован размер Probox того же кузова, багажник на крыше.",
+      "fit_allowed": false,
+      "physical_ground_truth": false,
+      "scout_image_sha256": "234dff245b748e315bbb12850a3fdd9b8f6ab5c812351dc2b49e0a0f31318e83"
+    }
+  ]
+}
