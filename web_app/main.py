@@ -14,7 +14,6 @@ from fastapi import FastAPI, File, Form, UploadFile, HTTPException, Request
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-import uvicorn
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -514,4 +513,5 @@ app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), na
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    from web_app.server import run_server
+    run_server(app, access_log=True)

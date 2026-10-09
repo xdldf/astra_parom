@@ -24,8 +24,10 @@
 
 ```powershell
 cd C:\job\astra_paroms
-.\.venv\Scripts\python.exe -m uvicorn web_app.main:app --host 0.0.0.0 --port 8000 --no-access-log
+.\START.cmd
 ```
+
+На Windows запускайте сервер через `START.cmd`: он использует `SelectorEventLoop` для HTTP-видеопотоков. Это обходит сбой `_ProactorBasePipeTransport._call_connection_lost` / `WinError 10054` при резком закрытии клиентского соединения. После обновления остановите прежний процесс (`Ctrl+C`) и снова запустите `START.cmd`; переустанавливать зависимости для этого исправления не требуется.
 
 3. Дождитесь сообщения `Uvicorn running on http://0.0.0.0:8000`.
 4. Откройте браузер по адресу <http://127.0.0.1:8000/>.

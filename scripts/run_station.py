@@ -35,10 +35,10 @@ if __name__=='__main__':
         webbrowser.open(URL)
     else:
         try:
-            import uvicorn
+            from web_app.server import run_server
             threading.Thread(target=open_when_ready,daemon=True).start()
             print('Keep this window open. Press Ctrl+C to stop.')
-            uvicorn.run('web_app.main:app',host='0.0.0.0',port=8000,access_log=False)
+            run_server()
         except KeyboardInterrupt:pass
         except Exception as exc:
             print('Startup failed:',exc,'Run INSTALL.cmd if dependencies are missing.',file=sys.stderr)
