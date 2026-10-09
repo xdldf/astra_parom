@@ -78,7 +78,7 @@ def apply_wheels(profile, measured, image, *, label):
     accepted_outline = outline.get('status') == 'estimated' and measured['status'] == 'outline_estimate'
     if (label not in {'car', 'manual car', 'selected car'} or not (accepted_outline or recovery)
             or measured.get('depth') is None
-            or 'clipped' in measured.get('quality_reasons', [])
+            or {'clipped', 'missed_measurement_line'} & set(measured.get('quality_reasons', []))
             or 'ambiguous_vehicle_association' in measured.get('temporal', {}).get('reasons', [])):
         evidence.update(status='not_applicable', reason='Requires an accepted outline or a feature-range-only outline rejection')
         return result

@@ -1,7 +1,9 @@
 """Recompute short passage evidence from original media, never browser estimates."""
 import math
+from functools import lru_cache
 
 import cv2
+import numpy as np
 
 from vehicle_metrology.detection import box_iou
 from vehicle_metrology.temporal import measure_passage, apply_passage
@@ -13,6 +15,93 @@ MAX_FRAMES = 31
 # Keep the original evidence and add a bounded, sparse set of real neighbours.
 EXTENDED_WINDOW_SECONDS = 2.
 MAX_EXTENDED_FRAMES = 61
+REVIEW_IDLE_SECONDS = 2.
+CENTER_WINDOW_SECONDS = 4.
+
+
+@lru_cache(maxsize=4)
+def _valid_image_area(image_size, lens_items):
+    width, height = image_size
+    original = np.full((height, width), 255, np.uint8)
+    return wb.corrected(original, wb.Lens(**dict(lens_items))) == 255
+
+
+def capture_geometry_reasons(profile, box):
+    """Check the actual image support and centre, independent of estimate mode."""
+    x, y, w, h = box
+    width, height = profile.image_size
+    reasons = []
+    if min(x, y) <= 1 or x+w >= width-1 or y+h >= height-1:
+        reasons.append('clipped')
+    else:
+        # Rectification/rotation leaves invalid borders *inside* the canvas.
+        # A detector box a few pixels from that border is still a partial car.
+        valid = _valid_image_area(profile.image_size, tuple(sorted(profile.lens.model_dump().items())))
+        region = valid[max(0,math.floor(y)-2):min(height,math.ceil(y+h)+2),
+                       max(0,math.floor(x)-2):min(width,math.ceil(x+w)+2)]
+        if not region.size or not region.all():
+            reasons.append('clipped')
+    if (profile.measurement_line_x is not None
+            and abs(x+w/2-profile.measurement_line_x) > profile.line_tolerance_px):
+        reasons.append('missed_measurement_line')
+    return reasons
+
+
+def centered_observation(profile, anchor_frame, anchor_box, observations):
+    """Follow one observed car from an anchor to a complete, centred frame.
+
+    Walk both time directions through every supplied observation. Stop at a
+    lost/ambiguous association; never jump across a gap to another car.
+    """
+    if profile.measurement_line_x is None:
+        return None
+    rows = sorted(observations, key=lambda row: row['frame'])
+    position = next((i for i, row in enumerate(rows) if row['frame'] == anchor_frame), None)
+    if position is None:
+        return None
+    candidates = {}
+    for sequence in (rows[position:], list(reversed(rows[:position+1]))):
+        previous = anchor_box
+        previous_frame = anchor_frame
+        for row in sequence:
+            if abs(row['frame']-previous_frame)>1:
+                break
+            ranked = sorted(((box_iou(previous, d['bbox']), d) for d in row['detections']),
+                            key=lambda pair: pair[0], reverse=True)
+            if not ranked or ranked[0][0] < .5 or (len(ranked)>1 and ranked[1][0]>.4):
+                break
+            detection = ranked[0][1]
+            previous = detection['bbox']
+            previous_frame = row['frame']
+            if review_candidate(detection) and not capture_geometry_reasons(profile, previous):
+                candidates[row['frame']] = detection
+    if not candidates:
+        return None
+    index = min(candidates, key=lambda i:(abs(candidates[i]['bbox'][0]+candidates[i]['bbox'][2]/2
+                                             -profile.measurement_line_x), abs(i-anchor_frame)))
+    return dict(frame=index, detection=candidates[index], examined_frames=len(rows), anchor_frame=anchor_frame)
+
+
+def find_video_center(profile, item, anchor_frame, anchor_box):
+    """Recover a missed centre even when sparse tracking has only one endpoint."""
+    fps = item.get('fps', 0)
+    if item.get('kind') != 'video' or not math.isfinite(fps) or fps <= 0 or profile.measurement_line_x is None:
+        return None
+    radius = min(120, max(1, round(fps*CENTER_WINDOW_SECONDS)))
+    first, last = max(0, anchor_frame-radius), min(item['frames']-1, anchor_frame+radius)
+    capture = cv2.VideoCapture(str(item['path']))
+    observations = []
+    try:
+        capture.set(cv2.CAP_PROP_POS_FRAMES, first)
+        for index in range(first, last+1):
+            ok, raw = capture.read()
+            if not ok:
+                break
+            result = wb.render_raw(raw, wb.FrameRequest(profile=profile, frame=index, detect=True), include_image=False)
+            observations.append(dict(frame=index, detections=result['detections']))
+    finally:
+        capture.release()
+    return centered_observation(profile, anchor_frame, anchor_box, observations)
 
 
 def needs_more_evidence(passage):
@@ -71,7 +160,7 @@ def find_video_crossing(profile, item, before_frame, before_box, after_frame, af
             t = (index-before_frame)/(after_frame-before_frame)
             expected = [a+t*(b-a) for a,b in zip(before_box,after_box)]
             candidate = crossing_match(result['detections'],expected)
-            if candidate is not None:
+            if candidate is not None and not capture_geometry_reasons(profile,candidate['bbox']):
                 return dict(frame=index,detection=candidate,examined_frames=examined,predicted_frame=predicted)
     finally:
         capture.release()
@@ -90,7 +179,6 @@ def review_candidate(detection):
 
 
 def prepare_review_measurement(profile, result):
-    from vehicle_metrology.bbox_scale import measure_box
     measured = result['detections'][0]
     if not review_candidate(measured):
         return
@@ -98,17 +186,10 @@ def prepare_review_measurement(profile, result):
         measured = dict(measured, quality_reasons=[*measured.get('quality_reasons',[]),'clipped'],
                         warnings=[*measured.get('warnings',[]),'Автомобиль обрезан границей кадра. Длина не назначена.'])
     if measured['status'] == 'waiting_for_line':
-        original = measured
-        measured = {**measured, **measure_box(measured['bbox'], profile.polygon,
-            wb.profile_scale(profile), profile.image_size, estimate=profile.measurement_mode == 'estimate')}
-        measured.update(at_measurement_line=False, line_offset_px=original['line_offset_px'],
-                        single_frame_status='waiting_for_line')
+        measured = dict(measured, single_frame_status='waiting_for_line')
         measured['quality_reasons'] = [*measured.get('quality_reasons', []), 'missed_measurement_line']
-        measured['warnings'].append('Центр автомобиля не попал на линию. Сохранён реальный кадр для проверки.')
-        # Off-line values are useful for evaluation, but are never strict measurements.
-        if profile.measurement_mode == 'strict':
-            measured['length_m'] = None
-        measured['approximate'] = measured['length_m'] is not None
+        measured['warnings'].append('Центр автомобиля не попал на линию. Длина не назначена; сохранён кадр для проверки.')
+        measured.update(length_m=None, approximate=False, cm_per_px=None, coefficient=None)
     if measured['length_m'] is None:
         measured.setdefault('single_frame_status',measured['status'])
         measured['quality_reasons']=list(dict.fromkeys([*measured.get('quality_reasons',[]),measured['status']]))

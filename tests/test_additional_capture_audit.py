@@ -48,3 +48,28 @@ def test_resume_checks_station_photo_not_only_audit_copy(tmp_path):
                  record_file='captures/record.json', record_sha256=audit.file_digest(record))
     with pytest.raises(ValueError, match='Station full-frame photo changed'):
         audit.verify_saved(entry, tmp_path)
+
+
+def test_audit_verifies_recovered_source_instead_of_off_center_anchor(tmp_path):
+    import json
+    (tmp_path/'captures').mkdir()
+    anchor=np.zeros((24,32,3),np.uint8)
+    center=np.full_like(anchor,120)
+    video=SimpleNamespace(isOpened=lambda:True,get=lambda _:25,release=lambda:None)
+    row=dict(id='sample',video='source.mp4',frame=3,bbox=[2,4,16,8])
+    profile=SimpleNamespace(image_size=(32,24),lens=None)
+    record=dict(id='recovered',full_frame_photo='center.jpg',length_m=4.5,
+        source=dict(frame=7,bbox=[8,4,16,8],measurement=dict(length_m=4.5)))
+    jpeg=cv2.imencode('.jpg',center,[cv2.IMWRITE_JPEG_QUALITY,92])[1].tobytes()
+    (tmp_path/'captures/center.jpg').write_bytes(jpeg)
+    with patch.object(audit.cv2,'VideoCapture',return_value=video), \
+         patch.object(audit.wb,'read_frame',side_effect=lambda key,index:anchor if index==3 else center), \
+         patch.object(audit.wb,'corrected',side_effect=lambda raw,lens:raw), \
+         patch.object(audit.st,'Capture',side_effect=lambda **kwargs:kwargs), \
+         patch.object(audit.st,'capture',return_value=record):
+        result=audit.capture_one(row,profile,tmp_path)
+    assert result['capture_status']=='saved',result
+    assert result['requested_frame']==3 and result['frame']==7
+    assert result['bbox']==record['source']['bbox']
+    assert (tmp_path/result['corrected_image']).read_bytes()==jpeg
+    audit.verify_saved(result,tmp_path)

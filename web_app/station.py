@@ -269,7 +269,8 @@ def capture_crossing(payload: CrossingCapture):
         values = payload.model_dump(exclude={'before_frame','before_bbox'})
         values.update(frame=frame,bbox=box,temporal=False,review_fallback=True)
         record = capture(Capture.model_validate(values))
-        return dict(captured=True,record=record,**{**found,'frame':frame,'review_fallback':True})
+        return dict(captured=True,record=record,**{**found,'frame':record['source']['frame'],
+            'review_fallback':not record['source']['measurement'].get('at_measurement_line',False)})
     detection = found.pop('detection')
     values = payload.model_dump(exclude={'before_frame','before_bbox'})
     values.update(frame=found['frame'],bbox=detection['bbox'],label=detection['label'],
@@ -281,15 +282,32 @@ def capture_crossing(payload: CrossingCapture):
 @router.post('/capture')
 def capture(payload: Capture):
     # Recalculate from the original uploaded frame and submitted calibration.
-    result=workbench.render_raw(workbench.read_frame(payload.media_id,payload.frame),
+    raw=workbench.read_frame(payload.media_id,payload.frame)
+    result=workbench.render_raw(raw,
             workbench.FrameRequest(profile=payload.profile,frame=payload.frame,boxes=[payload.bbox]),
             include_image=False,include_frame=True)
+    recovery=None
+    if payload.review_fallback:
+        from web_app.temporal_capture import capture_geometry_reasons, find_video_center
+        item=workbench.media.get(payload.media_id, {})
+        if capture_geometry_reasons(payload.profile,payload.bbox):
+            recovery=find_video_center(payload.profile,item,payload.frame,payload.bbox)
+        if recovery:
+            detection=recovery['detection']
+            payload=payload.model_copy(update=dict(frame=recovery['frame'],bbox=detection['bbox'],
+                label=detection['label'],temporal=True,review_fallback=False))
+            raw=workbench.read_frame(payload.media_id,payload.frame)
+            result=workbench.render_raw(raw,
+                workbench.FrameRequest(profile=payload.profile,frame=payload.frame,boxes=[payload.bbox]),
+                include_image=False,include_frame=True)
     if payload.temporal:
         from web_app.temporal_capture import refine_video
         refine_video(payload, result)
     if payload.review_fallback:
         from web_app.temporal_capture import prepare_review_measurement
         prepare_review_measurement(payload.profile, result)
+    if recovery:
+        result['detections'][0]['center_recovery']={k:v for k,v in recovery.items() if k!='detection'}
     front_image=None
     paired=None
     evidence=[]
@@ -323,6 +341,13 @@ def capture(payload: Capture):
 
 def persist_capture(payload,result,front_image=None,paired=None,front_samples=None,camera_note=None,front_evidence=None):
     measured=result['detections'][0]
+    from web_app.temporal_capture import capture_geometry_reasons
+    geometry_reasons=capture_geometry_reasons(payload.profile,payload.bbox)
+    if geometry_reasons and (payload.review_fallback or measured['status'] not in {'clipped','waiting_for_line','outside_road'}):
+        measured=dict(measured,length_m=None,approximate=False,status='capture_review',cm_per_px=None,coefficient=None,
+            quality_reasons=list(dict.fromkeys([*measured.get('quality_reasons',[]),*geometry_reasons])),
+            warnings=[*measured.get('warnings',[]),'Нет полного автомобиля у линии измерения. Длина не назначена.'])
+        result['detections'][0]=measured
     if payload.temporal and measured['status']=='outside_calibration' and measured['at_measurement_line']:
         from vehicle_metrology.temporal import apply_passage
         measured=apply_passage(measured,dict(status='temporal_review',length_m=None,

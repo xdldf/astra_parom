@@ -16,3 +16,10 @@ test('closest real frame survives disappearance and can be flushed at video end'
  t.update([],4);assert.equal(t.reviewsDue(4)[0].id,a.id);
  a.sent=true;assert.equal(t.reviewsDue(5).length,0);
 });
+test('a visible stopped car waits for its centre instead of expiring the best photo',()=>{
+ const t=new Tracks(),d={bbox:[50,100,100,60],depth:.4,status:'waiting_for_line',line_offset_px:-200};
+ const track=t.update([d],0)[0];t.remember(track,{frame:1},d);
+ for(let time=.5;time<=5;time+=.5){t.update([d],time);assert.equal(t.reviewsDue(time).length,0);}
+ assert.equal(t.reviewsDue(6).length,0);
+ assert.equal(t.reviewsDue(7)[0].id,track.id);
+});

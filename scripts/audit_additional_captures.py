@@ -53,6 +53,7 @@ def capture_one(row, profile, output):
     ident = row['id']
     started = time.monotonic()
     entry = dict(id=ident, frame=row['frame'], video=Path(row['video']).name,
+                 requested_frame=row['frame'], requested_bbox=row['bbox'],
                  bbox=row['bbox'], detector_label=row.get('detector_label', 'car'),
                  prior_model_candidate=row.get('prior_model_candidate'),
                  prior_note=row.get('prior_note'), capture_status='failed')
@@ -68,23 +69,25 @@ def capture_one(row, profile, output):
                                   frames=int(video.get(cv2.CAP_PROP_FRAME_COUNT)))
         finally:
             video.release()
-        raw = wb.read_frame(ident, row['frame'])
-        image = wb.corrected(raw, profile.lens)
+        # Keep the requested original even if detection or recovery fails.
+        image = wb.corrected(wb.read_frame(ident, row['frame']), profile.lens)
         if image.shape[1::-1] != profile.image_size:
             raise ValueError('Corrected image size differs from profile')
         ok, encoded = cv2.imencode('.jpg', image, [cv2.IMWRITE_JPEG_QUALITY, 92])
         if not ok:
             raise ValueError('Corrected frame JPEG encoding failed')
-        jpeg = encoded.tobytes()
         photo = output/(ident+'-frame.jpg')
-        photo.write_bytes(jpeg)
-        pixel_digest = hashlib.sha256(image.tobytes()).hexdigest()
+        photo.write_bytes(encoded.tobytes())
         entry.update(corrected_image=photo.name, corrected_image_sha256=file_digest(photo),
-                     inference_pixels_sha256=pixel_digest, image_space='corrected_full_resolution')
+                     image_space='corrected_full_resolution')
+        pixel_digest = None
 
         def check_pixels(frame):
-            if hashlib.sha256(frame.tobytes()).hexdigest() != pixel_digest:
+            nonlocal pixel_digest
+            digest = hashlib.sha256(frame.tobytes()).hexdigest()
+            if pixel_digest is not None and digest != pixel_digest:
                 raise ValueError('Inference used a different corrected frame')
+            pixel_digest = digest
 
         def outline(frame, box, *args, **kwargs):
             check_pixels(frame)
@@ -113,6 +116,24 @@ def capture_one(row, profile, output):
             record = st.capture(st.Capture(media_id=ident, profile=profile, frame=row['frame'],
                 bbox=row['bbox'], label=entry['detector_label'], source='yolo26m', temporal=True,
                 review_fallback=True, actor='Offline additional-car audit'))
+        # Recovery may legitimately replace an edge anchor with the car at the
+        # centre. Verify models and saved pixels against that actual source.
+        source = record['source']
+        image = wb.corrected(wb.read_frame(ident, source['frame']), profile.lens)
+        if image.shape[1::-1] != profile.image_size:
+            raise ValueError('Corrected image size differs from profile')
+        expected_digest = hashlib.sha256(image.tobytes()).hexdigest()
+        if pixel_digest is not None and pixel_digest != expected_digest:
+            raise ValueError('Inference differs from the saved source frame')
+        ok, encoded = cv2.imencode('.jpg', image, [cv2.IMWRITE_JPEG_QUALITY, 92])
+        if not ok:
+            raise ValueError('Corrected frame JPEG encoding failed')
+        jpeg = encoded.tobytes()
+        photo = output/(ident+'-frame.jpg')
+        photo.write_bytes(jpeg)
+        entry.update(frame=source['frame'], bbox=source['bbox'], corrected_image=photo.name,
+                     corrected_image_sha256=file_digest(photo), inference_pixels_sha256=pixel_digest,
+                     image_space='corrected_full_resolution')
         if (output/'captures'/record['full_frame_photo']).read_bytes() != jpeg:
             raise ValueError('Station photo does not match the full corrected frame')
         record_path = output/'captures'/(ident+'.json')

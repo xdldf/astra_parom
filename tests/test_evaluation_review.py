@@ -32,10 +32,10 @@ def review(client,record,action='label',length=4.725,**overrides):
     return client.post('/api/station/evaluation/'+record['id'],json=payload)
 
 
-def test_off_line_capture_preserves_entire_images_and_original_estimate(setup):
+def test_off_line_capture_preserves_entire_images_without_assigning_length(setup):
     client,profile,record,path,payload=setup
-    assert record['length_m']==pytest.approx(5)
-    assert record['source']['measurement']['approximate']
+    assert record['length_m'] is None
+    assert not record['source']['measurement']['approximate']
     assert 'missed_measurement_line' in record['source']['measurement']['quality_reasons']
     response=client.get('/api/station/photos/'+record['full_frame_photo'])
     assert response.status_code==200
@@ -65,7 +65,7 @@ def test_label_exports_real_length_without_rewriting_measurement_or_cashier_stat
     data=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()
     assert data['references'][-1]['length_m']==4.725
     sample=data['evaluation_samples'][0]
-    assert sample['measured_length_m']==5 and sample['actual_length_m']==4.725
+    assert sample['measured_length_m'] is None and sample['actual_length_m']==4.725
     assert sample['full_frame_photo']==record['full_frame_photo']
     assert sample['bbox']==record['source']['bbox']
     assert sample['verified_by']=='Reviewer'
@@ -116,7 +116,7 @@ def test_clipped_detection_is_saved_for_evaluation_but_never_used_as_scale(setup
     assert response.status_code==200,response.text
     record=response.json()
     assert record['measured_length_m'] is None
-    assert record['source']['measurement']['quality_reasons']==['clipped']
+    assert 'clipped' in record['source']['measurement']['quality_reasons']
     saved=review(client,record).json()
     assert not saved['evaluation']['reference_added']
     data=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()

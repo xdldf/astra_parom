@@ -76,7 +76,7 @@ def apply_outline(profile, measured, image, *, label):
     # Preserve capture/visibility rules. An outline must never make a clipped
     # vehicle complete or turn a missing-line trigger into a successful one.
     if (measured.get('depth') is None or measured['status'] in {'clipped', 'outside_road', 'waiting_for_line'}
-            or 'clipped' in measured.get('quality_reasons', [])):
+            or {'clipped', 'missed_measurement_line'} & set(measured.get('quality_reasons', []))):
         return measured
     result = dict(measured, warnings=list(measured.get('warnings', [])),
                   quality_reasons=list(measured.get('quality_reasons', [])))

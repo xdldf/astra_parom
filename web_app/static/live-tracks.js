@@ -32,7 +32,7 @@ class LiveTracks {
     if(!track.review||distance<track.review.distance)track.review={snapshot,detection,distance,time:track.time};
   }
   reviewsDue(time,force=false){
-    return this.rows.filter(t=>!t.sent&&t.review&&(force||time-t.time>=.8||time-t.review.time>=2));
+    return this.rows.filter(t=>!t.sent&&t.review&&(force||time-t.time>=2));
   }
 }
 if(typeof module!=='undefined')module.exports=LiveTracks;

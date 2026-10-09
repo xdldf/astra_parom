@@ -139,6 +139,30 @@ class PassageFrames:
         return passage
 
 
+class CenterFrames(PassageFrames):
+    """Keep consecutive originals for a missed-centre search, within 48 MiB."""
+    def __init__(self, anchor, epoch):
+        super().__init__(anchor, epoch)
+        from web_app.temporal_capture import CENTER_WINDOW_SECONDS
+        self.end=anchor.stamp+CENTER_WINDOW_SECONDS
+
+    def extend(self, packets):
+        from web_app.temporal_capture import CENTER_WINDOW_SECONDS
+        with self.lock:
+            available={p.seq:p for p in [*self.packets.values(),*packets]
+                       if abs(p.stamp-self.anchor.stamp)<=CENTER_WINDOW_SECONDS}
+            selected={self.anchor.seq:self.anchor};size=len(self.anchor.jpeg)
+            for packet in sorted(available.values(),key=lambda p:abs(p.seq-self.anchor.seq)):
+                if packet.seq==self.anchor.seq:continue
+                if len(selected)>=241 or size+len(packet.jpeg)>48*1024*1024:break
+                selected[packet.seq]=packet;size+=len(packet.jpeg)
+            self.packets=selected
+
+    def snapshot(self, *, extended=False):
+        with self.lock:
+            return sorted(self.packets.values(),key=lambda p:p.seq)
+
+
 class Receiver:
     def __init__(self,url,stop,opener=None,save_fps=15):
         self.url=url
@@ -162,11 +186,11 @@ class Receiver:
         with self.lock:
             return list(self.packets)
 
-    def retain_passage(self, anchor, epoch, earlier=()):
+    def retain_passage(self, anchor, epoch, earlier=(), *, review=False):
         with self.lock:
             if epoch!=self.epoch:
                 raise HTTPException(409,'Камера переподключилась во время измерения')
-            window=PassageFrames(anchor,epoch)
+            window=CenterFrames(anchor,epoch) if review else PassageFrames(anchor,epoch)
             window.extend([*earlier,*self.packets,anchor])
             latest=self.packets[-1].stamp if self.packets else anchor.stamp
             self.windows=[w for w in self.windows if w.epoch==epoch and w.end>latest]
@@ -373,6 +397,8 @@ class Station:
                     if review_candidate(d):
                         distance=abs(d.get('line_offset_px') or 0)+(self.profile.image_size[0] if d['status']=='clipped' else 0)
                         if not track.get('review') or distance<track['review'][3]:
+                            self.side.release_passage(track.pop('review_frames',None))
+                            track['review_frames']=self.side.retain_passage(pair[0],current_epoch,earlier,review=True)
                             track['review']=(pair,d,current_epoch,distance)
                     candidate=d;capture_pair=pair
                     line=self.profile.measurement_line_x
@@ -393,6 +419,7 @@ class Station:
                                     candidate=match;capture_pair=pp;break
                     if capture_candidate(candidate):
                         track.pop('review',None)
+                        self.side.release_passage(track.pop('review_frames',None))
                         track['passage_frames']=self.side.retain_passage(capture_pair[0],current_epoch,earlier)
                         track['pending']=(capture_pair,candidate,current_epoch)
                 self.flush_reviews(a.stamp)
@@ -401,6 +428,7 @@ class Station:
 
     def flush_reviews(self, stamp):
         """Give centred detection priority, then persist the closest real frame."""
+        from web_app.temporal_capture import REVIEW_IDLE_SECONDS, CENTER_WINDOW_SECONDS, centered_observation
         for track in self.tracks:
             review=track.get('review')
             if not review or track['sent'] or track.get('pending'):
@@ -408,12 +436,33 @@ class Station:
             pair,candidate,epoch,_=review
             if epoch!=self.side.epoch or not self.cfg.auto_measure:
                 track.pop('review',None)
+                self.side.release_passage(track.pop('review_frames',None))
                 continue
-            if stamp-track['stamp']<.8 and stamp-pair[0].stamp<2:
+            if stamp-track['stamp']<REVIEW_IDLE_SECONDS:
                 continue
+            # Recheck real buffered frames before accepting a missed centre.
+            # A sparse detector may have seen only the entrance/exit fragment.
+            retained=track.get('review_frames')
+            originals=retained.snapshot() if retained else self.side.snapshot()
+            packets={p.seq:p for p in originals if abs(p.stamp-pair[0].stamp)<=CENTER_WINDOW_SECONDS}
+            packets[pair[0].seq]=pair[0]
+            observations=[]
+            if self.profile.measurement_line_x is not None and len(packets)>1:
+                for packet in sorted(packets.values(),key=lambda p:p.seq):
+                    result=wb.render_raw(packet.image(),wb.FrameRequest(profile=self.profile,frame=packet.seq,detect=True),include_image=False)
+                    observations.append(dict(frame=packet.seq,detections=result['detections']))
+                found=centered_observation(self.profile,pair[0].seq,candidate['bbox'],observations)
+                if found:
+                    packet=packets[found['frame']]
+                    front=self.front.snapshot()
+                    b=min(front,key=lambda p:abs(p.stamp-packet.stamp-self.cfg.offset_seconds)) if front else None
+                    delta=b.stamp-packet.stamp-self.cfg.offset_seconds if b else None
+                    if delta is not None and abs(delta)>self.cfg.tolerance_ms/1000:b=None;delta=None
+                    pair=(packet,b,delta);candidate=found['detection']
             self.capture(pair,candidate,track['id'],epoch=epoch,review_fallback=True)
             track.update(sent=True)
             track.pop('review',None)
+            self.side.release_passage(track.pop('review_frames',None))
 
     def flush_pending(self, stamp):
         from web_app.temporal_capture import WINDOW_SECONDS, EXTENDED_WINDOW_SECONDS, needs_more_evidence

@@ -123,3 +123,12 @@ def test_an_outline_cannot_override_ambiguous_temporal_identity(setup,monkeypatc
     assert reviewed['length_m'] is None
     assert reviewed['outline']['baseline_length_m']==4.5
     assert 'Ambiguous' in reviewed['outline']['reason']
+
+
+def test_review_fallback_cannot_gain_off_center_outline_or_wheel_length(setup,monkeypatch):
+    _,_,_,payload=setup
+    monkeypatch.setattr(om,'infer_outline',lambda *a:pytest.fail('Off-center car must remain unmeasured'))
+    record=TestClient(app).post('/api/station/capture',json={**payload,
+        'bbox':[150,150,100,75],'review_fallback':True}).json()
+    assert record['length_m'] is None
+    assert 'missed_measurement_line' in record['source']['measurement']['quality_reasons']

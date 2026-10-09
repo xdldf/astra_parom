@@ -525,7 +525,7 @@ def test_ip_keeps_off_line_observation_even_after_live_buffer_expires(setup,monk
     assert not camera.saved
     camera.flush_reviews(30)
     record=camera.saved['missed']
-    assert record['length_m']==(5 if mode=='estimate' else None)
+    assert record['length_m'] is None
     assert record['source']['frame']==3 and record['source']['bbox']==detection['bbox']
     assert cv2.imread(str(path/record['full_frame_photo'])).shape==image.shape
     assert track['sent'] and not track.get('review')
@@ -547,7 +547,114 @@ def test_video_crossing_without_any_centred_box_saves_real_endpoint(setup,monkey
         before_frame=0,before_bbox=[180,150,100,75],frame=9,bbox=[310,150,100,75]))
     assert result['captured'] and result['review_fallback'] and result['frame']==9
     record=result['record']
-    assert record['length_m']==pytest.approx(5)
+    assert record['length_m'] is None
     assert record['full_frame_photo']
     assert record['source']['measurement']['line_offset_px']==60
     assert not record['source']['measurement']['at_measurement_line']
+
+
+def test_rectified_border_is_clipped_even_inside_canvas(setup):
+    from web_app.temporal_capture import capture_geometry_reasons
+    _,profile=setup
+    profile=profile.model_copy(update={'lens':wb.Lens(tilt_deg=10), 'measurement_line_x':50})
+    assert capture_geometry_reasons(profile,[10,10,80,75])==['clipped']
+    assert not capture_geometry_reasons(profile.model_copy(update={'measurement_line_x':300}),[250,150,100,75])
+
+
+def test_center_recovery_stops_at_lost_or_ambiguous_identity(setup):
+    from web_app.temporal_capture import centered_observation
+    _,profile=setup
+    def detection(x):
+        return dict(bbox=[x,150,100,75],label='car',depth=.1,status='waiting_for_line')
+    rows=[dict(frame=i,detections=[detection(150+10*i)]) for i in range(11)]
+    found=centered_observation(profile,0,rows[0]['detections'][0]['bbox'],rows)
+    assert found['frame']==10
+    for detections in ([],[detection(200),detection(205)]):
+        broken=[dict(row) for row in rows];broken[5]=dict(frame=5,detections=detections)
+        assert centered_observation(profile,0,rows[0]['detections'][0]['bbox'],broken) is None
+    assert centered_observation(profile,0,rows[0]['detections'][0]['bbox'],rows[:5]+rows[6:]) is None
+
+
+@pytest.mark.parametrize('anchor',[0,20])
+def test_video_review_recovers_actual_center_and_updates_photo_and_source(setup,monkeypatch,anchor):
+    path,profile=setup
+    profile=profile.model_copy(update={'measurement_mode':'estimate'})
+    video=path/'center.avi'
+    writer=cv2.VideoWriter(str(video),cv2.VideoWriter_fourcc(*'MJPG'),25,(600,500))
+    for i in range(21):writer.write(np.full((500,600,3),i*10,np.uint8))
+    writer.release()
+    monkeypatch.setitem(wb.media,'center',dict(path=video,kind='video',fps=25,frames=21))
+    def detect(image,*args,**kwargs):
+        i=round(float(image.mean())/10)
+        return [dict(bbox=[150+10*i,150,100,75],label='car')]
+    monkeypatch.setattr(wb,'detect_vehicles',detect)
+    record=station.capture(station.Capture(media_id='center',profile=profile,frame=anchor,
+        bbox=[150+10*anchor,150,100,75],review_fallback=True))
+    assert record['length_m']==pytest.approx(5)
+    assert record['source']['frame']==10
+    assert record['source']['bbox']==[250,150,100,75]
+    measured=record['source']['measurement']
+    assert measured['at_measurement_line'] and measured['line_offset_px']==0
+    assert measured['center_recovery']['anchor_frame']==anchor
+    assert cv2.imread(str(path/record['full_frame_photo'])).mean()==pytest.approx(100,abs=2)
+
+
+def test_ip_visible_off_center_car_does_not_expire_review(setup,monkeypatch):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    packet=ip.Packet(1,10,b'')
+    track=dict(id='waiting',sent=False,stamp=15,box=[150,150,100,75],
+        review=((packet,None,None),dict(bbox=[150,150,100,75]),camera.side.epoch,100))
+    camera.tracks=[track]
+    monkeypatch.setattr(camera,'capture',lambda *a,**k:pytest.fail('Still visible before the centre'))
+    camera.flush_reviews(15)
+    camera.flush_reviews(16)
+    assert not track['sent']
+
+
+def test_ip_review_searches_original_buffer_for_center(setup,monkeypatch):
+    path,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    packets=[ip.Packet(i,10+i*.1,cv2.imencode('.jpg',np.full((500,600,3),i*10,np.uint8))[1].tobytes())
+             for i in range(21)]
+    for packet in packets:camera.side.append(packet)
+    monkeypatch.setattr(wb,'detect_vehicles',lambda image,*a,**k:[dict(
+        bbox=[150+10*round(float(image.mean())/10),150,100,75],label='car')])
+    camera.tracks=[dict(id='missed',sent=False,stamp=12,box=[350,150,100,75],
+        review=((packets[0],None,None),dict(bbox=[150,150,100,75],label='car'),camera.side.epoch,100))]
+    camera.flush_reviews(14)
+    record=camera.saved['missed']
+    assert record['source']['frame']==10 and record['length_m']==pytest.approx(5)
+    assert record['source']['measurement']['at_measurement_line']
+    assert cv2.imread(str(path/record['full_frame_photo'])).mean()==pytest.approx(100,abs=2)
+
+
+def test_ip_review_pins_center_frames_after_receiver_eviction(setup,monkeypatch):
+    _,profile=setup
+    camera=ip.Station(ip.Settings(),profile)
+    packets=[ip.Packet(i,10+i*.1,cv2.imencode('.jpg',np.full((500,600,3),i*10,np.uint8))[1].tobytes())
+             for i in range(21)]
+    camera.side.append(packets[0])
+    window=camera.side.retain_passage(packets[0],0,review=True)
+    for packet in packets[1:]:camera.side.append(packet)
+    # Enough later packets to evict all actual passage images from the receiver.
+    for i in range(100):camera.side.append(ip.Packet(100+i,20+i*.1,packets[-1].jpeg))
+    assert camera.side.snapshot()[0].seq==100
+    monkeypatch.setattr(wb,'detect_vehicles',lambda image,*a,**k:[dict(
+        bbox=[150+10*round(float(image.mean())/10),150,100,75],label='car')])
+    camera.tracks=[dict(id='pinned-review',sent=False,stamp=12,box=[350,150,100,75],review_frames=window,
+        review=((packets[0],None,None),dict(bbox=[150,150,100,75],label='car'),0,100))]
+    camera.flush_reviews(30)
+    record=camera.saved['pinned-review']
+    assert record['source']['frame']==10 and record['length_m']==pytest.approx(5)
+    assert 'review_frames' not in camera.tracks[0]
+
+
+def test_center_frame_retention_is_bounded_and_preserves_consecutive_evidence():
+    anchor=ip.Packet(100,10,b'x'*(1024*1024))
+    window=ip.CenterFrames(anchor,0)
+    window.extend(ip.Packet(i,10+(i-100)/30,anchor.jpeg) for i in range(241))
+    packets=window.snapshot()
+    assert anchor in packets
+    assert len(packets)<=241 and sum(len(p.jpeg) for p in packets)<=48*1024*1024
+    assert [p.seq for p in packets]==list(range(packets[0].seq,packets[-1].seq+1))

@@ -150,3 +150,16 @@ def test_family_exclusion_and_missing_wheels_do_not_leak_labels_into_fit():
     assert folds[0]['model'] == changed[0]['model']
     for fold in folds:
         assert fold['heldout_group'] not in fold['model']['training_groups']
+
+
+def test_off_center_review_cannot_be_resurrected_by_wheel_models(wheels,monkeypatch):
+    from web_app import outline_measurement as om
+    _,_,payload,_=wheels
+    monkeypatch.setattr(om,'infer_outline',lambda *a:pytest.fail('Off-center outline inference'))
+    monkeypatch.setattr(wm,'infer_wheels',lambda *a:pytest.fail('Off-center wheel inference'))
+    response=TestClient(app).post('/api/station/capture',json={**payload,
+        'bbox':[150,150,100,75],'review_fallback':True})
+    assert response.status_code==200
+    record=response.json()
+    assert record['length_m'] is None
+    assert record['source']['measurement']['wheels']['status']=='not_applicable'
