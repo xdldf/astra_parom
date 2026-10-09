@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "selection_sha256": "8c7e68c2806861670e424d7dc42acea8a6b281e7698c76b1c43cbd6676624e8e",
+  "frozen_profile_sha256": "ea43b6348de9468824541bf3ce2bb469478887bbfa48a1efaef7ea163409abf9",
+  "review_order": "Selection and candidate reference intervals saved before reading replay results. Inference ran concurrently without any reference values as inputs.",
+  "accuracy_validated": false,
+  "dataset_role": "additional_catalogue_comparison_not_unseen_video",
+  "limitations": [
+    "Images belong to previously audited detector observations, not an unseen-video cohort.",
+    "These ten candidates were absent from the 78-car length development cohort and seven previous catalogue comparisons.",
+    "Vehicle identities and stock configuration remain provisional; catalogue discrepancy is not measured physical error.",
+    "Renault and L200 remain context-only cases selected before inspecting outputs.",
+    "No references are installed or used for coefficient fitting."
+  ],
+  "rows": [
+    {
+      "id": "V1-013",
+      "model_candidate": "Suzuki Jimny JB23",
+      "catalogue_interval_m": [
+        3.395,
+        3.395
+      ],
+      "sources": [
+        {
+          "title": "Suzuki JB23 official history",
+          "url": "https://www.suzuki.co.jp/car/jimny/special/history/jb23.html"
+        },
+        {
+          "title": "Suzuki 2010 JB23 brochure",
+          "url": "https://www.suzuki.co.jp/car/jimny/special/history/catalog/JB23.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Narrow three-door body, bonnet scoop, no wide Sierra arches; standard rear spare visible. Comparison assumes stock JB23 dimensions and mounting.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V1-047",
+      "model_candidate": "Nissan Serena C26",
+      "catalogue_interval_m": [
+        4.685,
+        4.77
+      ],
+      "sources": [
+        {
+          "title": "Nissan C26 specifications",
+          "url": "https://history.nissan.co.jp/SERENA/C26/1312/PDF/serena_specification.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "C26 body candidate. Listed standard and Highway Star variants retained; exact trim/badging not confirmed. Not an exhaustive interval for aftermarket conversions.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V1-049",
+      "model_candidate": "Nissan NV200 M20 / Mitsubishi Delica D:3 candidate",
+      "catalogue_interval_m": [
+        4.4,
+        4.41
+      ],
+      "sources": [
+        {
+          "title": "Nissan NV200 official specifications",
+          "url": "https://www-asia.nissan-cdn.net/content/dam/Nissan/jp/vehicles/nv200vanette/2407/pdf/nv200vanette_specsheet.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Shared-body van candidate; brand/year unresolved. Reference covers Nissan listed M20 variants. Roof bicycles visible; no clear fore/aft overhang of cargo beyond body in this frame.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V1-054",
+      "model_candidate": "Toyota Isis",
+      "catalogue_interval_m": [
+        4.61,
+        4.64
+      ],
+      "sources": [
+        {
+          "title": "Toyota vehicle history: Isis",
+          "url": "https://www.toyota-global.com/company/history_of_toyota/75years/vehicle_lineage/car/id60000003/index.html"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Sliding-door Isis candidate with roof basket. Standard and Platana body lengths retained; exact trim unresolved.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V2-018",
+      "model_candidate": "Toyota Sienta XP80",
+      "catalogue_interval_m": [
+        4.1,
+        4.1
+      ],
+      "sources": [
+        {
+          "title": "Toyota Sienta X 2006 catalogue",
+          "url": "https://toyota.jp/ucar/catalog/brand-TOYOTA/car-SIENTA/200605/10033764/"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Round-headlamp first-generation Sienta; reference assumes standard body, not DICE conversion.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V2-052",
+      "model_candidate": "Renault Captur I / Kaptur",
+      "catalogue_interval_m": [
+        4.122,
+        4.333
+      ],
+      "sources": [
+        {
+          "title": "Renault Captur 2013 press release",
+          "url": "https://presse.renault.de/renault-captur-vereint-vorteile-von-suv-und-kompaktlimousine-1/?lang=deu"
+        },
+        {
+          "title": "Renault Kaptur official brochure",
+          "url": "https://cdn.group.renault.com/ren/ru/new-kaptur/renault_KAPTUR_10_09.pdf.asset.pdf/25c119e468.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Orange crossover with roof bars. Similar Captur/Kaptur bodies not conclusively distinguished. Range spans different models, not one confirmed reference; context only.",
+      "conditional_stock_body_comparison": false,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V4-015",
+      "model_candidate": "Chery Tiggo 7 Pro",
+      "catalogue_interval_m": [
+        4.5,
+        4.5
+      ],
+      "sources": [
+        {
+          "title": "Chery Kazakhstan Tiggo 7 Pro specifications",
+          "url": "https://chery.kz/userdata/rubrics/rubrics_117/file_ru.pdf?1748847938="
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Floating roof/window chrome and lights fit Tiggo 7 Pro candidate. Roof rack and load visible; comparison assumes stock body length.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V4-019",
+      "model_candidate": "UAZ Patriot",
+      "catalogue_interval_m": [
+        4.75,
+        4.785
+      ],
+      "sources": [
+        {
+          "title": "UAZ Patriot official brochure, 2022",
+          "url": "https://www.uaz.ru/data/uploads/uaz/originals/uaz-patriot-catalog-011122.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Standard-wheelbase Patriot candidate. Official dimensions differ with spare-wheel container; rear spare present without a confirmed original cover. Unknown modifications remain possible.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V6-010",
+      "model_candidate": "Mitsubishi L200 fourth generation, double cab",
+      "catalogue_interval_m": [
+        5.0,
+        5.185
+      ],
+      "sources": [
+        {
+          "title": "L200 type approval ROSС TH.MT02.E05539, rehosted original",
+          "url": "https://ruscoc.ru/ru/home/mitsubishi-ka0t-l200-sertifikat-pocc-tn-mt02-e05539/%D0%A0%D0%9E%D0%A1%D0%A1%20%D0%A2%D0%9D.%D0%9C%D0%A202.%D0%9505539-original.pdf"
+        },
+        {
+          "title": "Mitsubishi UK 2014 brochure, rehosted manufacturer document",
+          "url": "https://autocatalogarchive.com/wp-content/uploads/2017/05/Mitsubishi-L200-2014-UK.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Double-cab fourth-generation pickup; bed/bumper/market variant unresolved. Listed references span short and long beds and do not establish an exhaustive interval for the observed export variant; context only. Brochure dimensions retrieved from search extract, direct PDF fetch failed.",
+      "conditional_stock_body_comparison": false,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    },
+    {
+      "id": "V6-048",
+      "model_candidate": "Chevrolet Niva / Lada Niva, pre-Travel body",
+      "catalogue_interval_m": [
+        4.056,
+        4.056
+      ],
+      "sources": [
+        {
+          "title": "Chevrolet Niva manufacturer specification sheet, dealer-hosted",
+          "url": "https://niva-ufa.ru/upload/iblock/ab1/ab11b7a7c19135b23393c9d75c5f21f6.pdf"
+        }
+      ],
+      "identity_status": "provisional_visual_identification",
+      "identity_note": "Rounded pre-Travel front; reference is 4056 mm with standard rear spare, not 3919 mm body-only dimension. Exact year and spare mounting are not confirmed.",
+      "conditional_stock_body_comparison": true,
+      "physical_ground_truth": false,
+      "fit_allowed": false
+    }
+  ]
+}

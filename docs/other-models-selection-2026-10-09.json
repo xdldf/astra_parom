@@ -1,0 +1,148 @@
+{
+  "selection_rule": "Ten distinct visually reviewed model candidates absent from the 78-car catalogue development cohort and seven subsequent catalogue references; chosen before inspecting their replay outputs. Same local videos and prior technical capture audit, not an unseen-video test.",
+  "comparison_sha256": "3ce834d1c0221e3d4c9cf453ea990a35de1cb933e07474e5dd1d7355cd0c3dbf",
+  "profile_sha256": "ea43b6348de9468824541bf3ce2bb469478887bbfa48a1efaef7ea163409abf9",
+  "scope": "10 model candidates, selected from previously captured but not catalogue-compared observations",
+  "rows": [
+    {
+      "id": "V1-013",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 7071,
+      "bbox": [
+        1087.2445068359375,
+        1053.27392578125,
+        413.3109130859375,
+        223.4312744140625
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-013-frame.jpg",
+      "prior_model_candidate": "Suzuki Jimny JB23 candidate",
+      "prior_note": "Exact variant and external spare/bumper extent need confirmation."
+    },
+    {
+      "id": "V1-047",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 32915,
+      "bbox": [
+        996.7382202148438,
+        1047.83984375,
+        588.5275268554688,
+        279.009521484375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-047-frame.jpg",
+      "prior_model_candidate": "Nissan Serena C26 candidate",
+      "prior_note": "Exact aero bumper variant unresolved; roof box where present."
+    },
+    {
+      "id": "V1-049",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 34501,
+      "bbox": [
+        1018.1256103515625,
+        1060.9140625,
+        542.9241943359375,
+        264.929443359375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-049-frame.jpg",
+      "prior_model_candidate": "Nissan NV200 / Mitsubishi Delica D:3",
+      "prior_note": "Badge unresolved; roof-mounted bicycles may affect silhouette."
+    },
+    {
+      "id": "V1-054",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-00-04.mp4",
+      "frame": 38719,
+      "bbox": [
+        1012.1806030273438,
+        1065.1146240234375,
+        571.9041137695312,
+        262.8050537109375
+      ],
+      "image": "ST_2026-09-04_18-00-04/V1-054-frame.jpg",
+      "prior_model_candidate": "Toyota Isis candidate",
+      "prior_note": "Exact bumper grade unresolved."
+    },
+    {
+      "id": "V2-018",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 21742,
+      "bbox": [
+        1038.998291015625,
+        1073.9044189453125,
+        502.05810546875,
+        252.888916015625
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-018-frame.jpg",
+      "prior_model_candidate": "Toyota Sienta XP80 candidate",
+      "prior_note": "Full-frame review corrected an earlier XP170 generation label. Custom exterior styling and exact variant remain unconfirmed; stock first-generation length is context only."
+    },
+    {
+      "id": "V2-052",
+      "video": "/home/user/Downloads/ST_2026-09-04_18-30-04.mp4",
+      "frame": 35404,
+      "bbox": [
+        1030.0262451171875,
+        1074.280517578125,
+        529.2269287109375,
+        252.725830078125
+      ],
+      "image": "ST_2026-09-04_18-30-04/V2-052-frame.jpg",
+      "prior_model_candidate": "Renault Captur / Kaptur candidate",
+      "prior_note": "Different markets have different dimensions; badge/version unresolved."
+    },
+    {
+      "id": "V4-015",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 19551,
+      "bbox": [
+        1016.020263671875,
+        1078.725341796875,
+        545.18896484375,
+        250.0970458984375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-015-frame.jpg",
+      "prior_model_candidate": "Chery Tiggo 7 Pro candidate",
+      "prior_note": "Exact market/version unresolved; roof load present."
+    },
+    {
+      "id": "V4-019",
+      "video": "/home/user/Downloads/ST_2026-09-07_15-30-01.mp4",
+      "frame": 24531,
+      "bbox": [
+        1016.803955078125,
+        1034.625244140625,
+        567.63330078125,
+        282.714599609375
+      ],
+      "image": "ST_2026-09-07_15-30-01/V4-019-frame.jpg",
+      "prior_model_candidate": "UAZ Patriot",
+      "prior_note": "Aftermarket tyres/suspension and rear spare; actual full length unknown."
+    },
+    {
+      "id": "V6-010",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 15373,
+      "bbox": [
+        965.3886108398438,
+        1077.28076171875,
+        669.0209350585938,
+        255.42578125
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-010-frame.jpg",
+      "prior_model_candidate": "Mitsubishi L200 fourth generation",
+      "prior_note": "Front accessory and load mean stock body length is not physical truth."
+    },
+    {
+      "id": "V6-048",
+      "video": "/home/user/Downloads/ST_2026-09-07_16-30-04.mp4",
+      "frame": 39874,
+      "bbox": [
+        1041.0660400390625,
+        1072.438232421875,
+        501.448974609375,
+        251.600341796875
+      ],
+      "image": "ST_2026-09-07_16-30-04/V6-048-frame.jpg",
+      "prior_model_candidate": "Chevrolet Niva / Lada Niva Travel older body",
+      "prior_note": "Exact rear spare/bumper configuration unresolved."
+    }
+  ]
+}
