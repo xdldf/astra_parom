@@ -139,30 +139,6 @@ class PassageFrames:
         return passage
 
 
-class CenterFrames(PassageFrames):
-    """Keep consecutive originals for a missed-centre search, within 48 MiB."""
-    def __init__(self, anchor, epoch):
-        super().__init__(anchor, epoch)
-        from web_app.temporal_capture import CENTER_WINDOW_SECONDS
-        self.end=anchor.stamp+CENTER_WINDOW_SECONDS
-
-    def extend(self, packets):
-        from web_app.temporal_capture import CENTER_WINDOW_SECONDS
-        with self.lock:
-            available={p.seq:p for p in [*self.packets.values(),*packets]
-                       if abs(p.stamp-self.anchor.stamp)<=CENTER_WINDOW_SECONDS}
-            selected={self.anchor.seq:self.anchor};size=len(self.anchor.jpeg)
-            for packet in sorted(available.values(),key=lambda p:abs(p.seq-self.anchor.seq)):
-                if packet.seq==self.anchor.seq:continue
-                if len(selected)>=241 or size+len(packet.jpeg)>48*1024*1024:break
-                selected[packet.seq]=packet;size+=len(packet.jpeg)
-            self.packets=selected
-
-    def snapshot(self, *, extended=False):
-        with self.lock:
-            return sorted(self.packets.values(),key=lambda p:p.seq)
-
-
 class Receiver:
     def __init__(self,url,stop,opener=None,save_fps=15):
         self.url=url
@@ -186,11 +162,11 @@ class Receiver:
         with self.lock:
             return list(self.packets)
 
-    def retain_passage(self, anchor, epoch, earlier=(), *, review=False):
+    def retain_passage(self, anchor, epoch, earlier=()):
         with self.lock:
             if epoch!=self.epoch:
                 raise HTTPException(409,'Камера переподключилась во время измерения')
-            window=CenterFrames(anchor,epoch) if review else PassageFrames(anchor,epoch)
+            window=PassageFrames(anchor,epoch)
             window.extend([*earlier,*self.packets,anchor])
             latest=self.packets[-1].stamp if self.packets else anchor.stamp
             self.windows=[w for w in self.windows if w.epoch==epoch and w.end>latest]
@@ -271,8 +247,9 @@ def iou(a,b):
 
 class Station:
     def __init__(self,cfg,profile):
+        from web_app.passage_tracking import station_profile
         self.cfg=cfg
-        self.profile=profile
+        self.profile=station_profile(profile)
         self.id=uuid.uuid4().hex
         self.stop=threading.Event()
         self.side=Receiver(cfg.side_url,self.stop,save_fps=30)
@@ -357,17 +334,13 @@ class Station:
                     self.sequence+=1;self.condition.notify_all()
 
     def infer(self):
-        from web_app.temporal_capture import capture_candidate, review_candidate, crossing_match, WINDOW_SECONDS, MAX_FRAMES
-        from web_app.passage_tracking import match_track
+        from web_app.temporal_capture import capture_candidate, capture_geometry_reasons, crossing_match, WINDOW_SECONDS, MAX_FRAMES
+        from web_app.passage_tracking import update_tracks, capture_ready
         last=-1
         epoch=None
         while not self.stop.wait(.015):
             a=self.fresh(self.side)
             if not a or a.seq<=last:
-                try:
-                    self.flush_reviews(time.monotonic())
-                except Exception:
-                    self.error='Не удалось сохранить кадр автомобиля для проверки.'
                 continue
             pair=self.paired() or (a,None,None)
             a,b,delta=pair
@@ -385,27 +358,18 @@ class Station:
                 result.update(frame=a.seq,stamp=a.stamp)
                 self.result=result
                 self.error=None
-                used=set();self.tracks=[t for t in self.tracks if a.stamp-t['stamp']<3 or t.get('pending') or t.get('review')]
-                for index,d in enumerate(result['detections']):
-                    track=match_track(self.tracks,result['detections'],index,used,a.stamp)
-                    if track is None:
-                        track=dict(id=uuid.uuid4().hex,sent=False,box=d['bbox'],stamp=a.stamp)
-                        self.tracks.append(track)
-                    previous=track['box'];previous_time=track['stamp']
-                    track.update(box=d['bbox'],stamp=a.stamp);used.add(track['id'])
-                    if not self.cfg.auto_measure or track['sent'] or track.get('pending'):continue
-                    if review_candidate(d):
-                        distance=abs(d.get('line_offset_px') or 0)+(self.profile.image_size[0] if d['status']=='clipped' else 0)
-                        if not track.get('review') or distance<track['review'][3]:
-                            self.side.release_passage(track.pop('review_frames',None))
-                            track['review_frames']=self.side.retain_passage(pair[0],current_epoch,earlier,review=True)
-                            track['review']=(pair,d,current_epoch,distance)
+                self.tracks,assigned=update_tracks(self.tracks,result['detections'],a.stamp)
+                for d,track in zip(result['detections'],assigned):
+                    d.update(passage_id=track['id'],passage_captured=track['sent'])
+                    if not self.cfg.auto_measure or not capture_ready(track,d):continue
+                    previous=track['previous']['box'];previous_time=track['previous']['time']
                     candidate=d;capture_pair=pair
                     line=self.profile.measurement_line_x
                     if not capture_candidate(d) and line is not None:
                         before=previous[0]+previous[2]/2-line;after=d['bbox'][0]+d['bbox'][2]/2-line
-                        if before*after<0 and a.stamp-previous_time<2:
-                            when=previous_time+(a.stamp-previous_time)*abs(before)/(abs(before)+abs(after))
+                        if (before*after<0 or abs(before)<=self.profile.line_tolerance_px) and a.stamp-previous_time<2:
+                            fraction=0 if abs(before)<=self.profile.line_tolerance_px else abs(before)/(abs(before)+abs(after))
+                            when=previous_time+(a.stamp-previous_time)*fraction
                             packets=[p for p in earlier if previous_time<=p.stamp<=a.stamp
                                      and abs(p.stamp-when)<=WINDOW_SECONDS]
                             for packet in sorted(packets,key=lambda p:abs(p.stamp-when))[:MAX_FRAMES]:
@@ -415,54 +379,13 @@ class Station:
                                 t=(packet.stamp-previous_time)/(a.stamp-previous_time)
                                 expected=[v+t*(w-v) for v,w in zip(previous,d['bbox'])]
                                 match=crossing_match(rr['detections'],expected)
-                                if match is not None:
+                                if match is not None and not capture_geometry_reasons(self.profile,match['bbox']):
                                     candidate=match;capture_pair=pp;break
-                    if capture_candidate(candidate):
-                        track.pop('review',None)
-                        self.side.release_passage(track.pop('review_frames',None))
+                    if capture_candidate(candidate) and not capture_geometry_reasons(self.profile,candidate['bbox']):
                         track['passage_frames']=self.side.retain_passage(capture_pair[0],current_epoch,earlier)
                         track['pending']=(capture_pair,candidate,current_epoch)
-                self.flush_reviews(a.stamp)
             except Exception:
                 self.error='Измерение не выполнено. Проверьте камеры и настройку.'
-
-    def flush_reviews(self, stamp):
-        """Give centred detection priority, then persist the closest real frame."""
-        from web_app.temporal_capture import REVIEW_IDLE_SECONDS, CENTER_WINDOW_SECONDS, centered_observation
-        for track in self.tracks:
-            review=track.get('review')
-            if not review or track['sent'] or track.get('pending'):
-                continue
-            pair,candidate,epoch,_=review
-            if epoch!=self.side.epoch or not self.cfg.auto_measure:
-                track.pop('review',None)
-                self.side.release_passage(track.pop('review_frames',None))
-                continue
-            if stamp-track['stamp']<REVIEW_IDLE_SECONDS:
-                continue
-            # Recheck real buffered frames before accepting a missed centre.
-            # A sparse detector may have seen only the entrance/exit fragment.
-            retained=track.get('review_frames')
-            originals=retained.snapshot() if retained else self.side.snapshot()
-            packets={p.seq:p for p in originals if abs(p.stamp-pair[0].stamp)<=CENTER_WINDOW_SECONDS}
-            packets[pair[0].seq]=pair[0]
-            observations=[]
-            if self.profile.measurement_line_x is not None and len(packets)>1:
-                for packet in sorted(packets.values(),key=lambda p:p.seq):
-                    result=wb.render_raw(packet.image(),wb.FrameRequest(profile=self.profile,frame=packet.seq,detect=True),include_image=False)
-                    observations.append(dict(frame=packet.seq,detections=result['detections']))
-                found=centered_observation(self.profile,pair[0].seq,candidate['bbox'],observations)
-                if found:
-                    packet=packets[found['frame']]
-                    front=self.front.snapshot()
-                    b=min(front,key=lambda p:abs(p.stamp-packet.stamp-self.cfg.offset_seconds)) if front else None
-                    delta=b.stamp-packet.stamp-self.cfg.offset_seconds if b else None
-                    if delta is not None and abs(delta)>self.cfg.tolerance_ms/1000:b=None;delta=None
-                    pair=(packet,b,delta);candidate=found['detection']
-            self.capture(pair,candidate,track['id'],epoch=epoch,review_fallback=True)
-            track.update(sent=True)
-            track.pop('review',None)
-            self.side.release_passage(track.pop('review_frames',None))
 
     def flush_pending(self, stamp):
         from web_app.temporal_capture import WINDOW_SECONDS, EXTENDED_WINDOW_SECONDS, needs_more_evidence
@@ -533,7 +456,7 @@ class Station:
             if review_fallback:
                 from web_app.temporal_capture import prepare_review_measurement
                 prepare_review_measurement(self.profile,result)
-            payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source=self.profile.detector_model,actor='Камеры',temporal=temporal,review_fallback=review_fallback)
+            payload=st.Capture(media_id=self.id,profile=self.profile,frame=a.seq,bbox=d['bbox'],label=d['label'],source=self.profile.detector_model,actor='Камеры',temporal=temporal,review_fallback=review_fallback,passage_id=track_id)
             paired=None;samples=[]
             if b is not None:
                 paired=dict(kind='ip',frame=b.seq,side_seconds=a.stamp,front_seconds=b.stamp,

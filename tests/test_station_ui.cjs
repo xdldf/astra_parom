@@ -231,6 +231,46 @@ test('video polling processes the middle crossing even when the latest frame pas
   assert.equal(ui.run('captures.length'),1);
 });
 
+test('automatic capture claims each server passage once and ignores exit fragments',async()=>{
+  const ui=await stationUI();
+  ui.run(`streamId='clip';liveGeneration=1;liveSource={media:{id:'clip',fps:25,frames:500},profile:{measurement_line_x:300}};
+    $('autoMeasure').checked=true;var captures=[];queueLive=async(snapshot,d)=>{captures.push([snapshot.frame,d.passage_id])};`);
+  const results=[
+    [10,280,100,'first',false,false], [12,250,100,'first',true,true],
+    [14,248,100,'first',true,true], [90,295,25,'first',true,false],
+    [92,250,100,'following',true,true], [94,120,100,'first',false,false],
+  ].map(([frame,x,width,id,line,ready],i)=>({sequence:i+1,frame,detections:[{
+    bbox:[x,150,width,75],label:'car',depth:.5,length_m:5,status:'depth_calibrated',
+    passage_id:id,at_measurement_line:line,capture_ready:ready}]}));
+  ui.respond(()=>({data:{frame:94,results,ended:true}}));
+  await ui.run("pollStream('clip',1)");
+  assert.equal(ui.run('JSON.stringify(captures)'),JSON.stringify([[12,'first'],[92,'following']]));
+});
+
+test('off-line numeric estimates never auto-save on disappearance, video end, or stop',async()=>{
+  const ui=await stationUI();
+  ui.run(`streamId='clip';liveGeneration=1;liveSource={media:{id:'clip',fps:25,frames:500},profile:{measurement_line_x:300}};
+    $('autoMeasure').checked=true;var captures=[];queueLive=async(snapshot,d)=>{captures.push(snapshot.frame)};`);
+  ui.respond(()=>({data:{frame:150,ended:true,results:[
+    {sequence:1,frame:10,detections:[{bbox:[350,150,100,75],label:'car',depth:.5,length_m:1.148,at_measurement_line:false,status:'depth_calibrated'}]},
+    {sequence:2,frame:150,detections:[]},
+  ]}}));
+  await ui.run("pollStream('clip',1)");
+  await ui.run('stopStream()');
+  assert.equal(ui.run('captures.length'),0);
+  assert.ok(ui.requests.every(r=>!r.path.includes('/capture')));
+});
+
+test('capture request carries the shared passage and its video session',async()=>{
+  const ui=await stationUI();
+  ui.run("streamId='clip-session';loadVehicles=async()=>{};renderRecord=()=>{};");
+  ui.respond(()=>({data:{id:'record'}}));
+  await ui.run(`queueLive({source:{media:{id:'clip'},profile:{}},frame:12},
+    {bbox:[250,150,100,75],label:'car',passage_id:'first'})`);
+  const body=JSON.parse(ui.requests.find(r=>r.path.endsWith('/capture')).options.body);
+  assert.equal(body.passage_id,'first');assert.equal(body.capture_session_id,'clip-session');
+});
+
 test('skipped video crossing sends both observed boxes for server-side neighbourhood search',async()=>{
   const ui=await stationUI();
   ui.run('loadVehicles=async()=>{};renderRecord=()=>{};');

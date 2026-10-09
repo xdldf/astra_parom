@@ -159,7 +159,4 @@ def test_off_center_review_cannot_be_resurrected_by_wheel_models(wheels,monkeypa
     monkeypatch.setattr(wm,'infer_wheels',lambda *a:pytest.fail('Off-center wheel inference'))
     response=TestClient(app).post('/api/station/capture',json={**payload,
         'bbox':[150,150,100,75],'review_fallback':True})
-    assert response.status_code==200
-    record=response.json()
-    assert record['length_m'] is None
-    assert record['source']['measurement']['wheels']['status']=='not_applicable'
+    assert response.status_code==422

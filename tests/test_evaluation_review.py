@@ -19,7 +19,7 @@ def setup(tmp_path,monkeypatch):
     profile=wb.Profile(image_size=(600,500),polygon=[(20,200),(580,200),(580,450),(20,450)],
         references=[dict(bbox=[100,150,100,75],length_m=5)],measurement_line_x=300)
     payload=dict(media_id='evaluation-test',profile=profile.model_dump(),frame=7,
-                 bbox=[120,150,100,75],review_fallback=True)
+                 bbox=[250,150,100,75],review_fallback=True)
     client=TestClient(app)
     response=client.post('/api/station/capture',json=payload)
     assert response.status_code==200,response.text
@@ -32,11 +32,10 @@ def review(client,record,action='label',length=4.725,**overrides):
     return client.post('/api/station/evaluation/'+record['id'],json=payload)
 
 
-def test_off_line_capture_preserves_entire_images_without_assigning_length(setup):
+def test_center_capture_preserves_entire_images_for_evaluation(setup):
     client,profile,record,path,payload=setup
-    assert record['length_m'] is None
-    assert not record['source']['measurement']['approximate']
-    assert 'missed_measurement_line' in record['source']['measurement']['quality_reasons']
+    assert record['length_m']==pytest.approx(5)
+    assert record['source']['measurement']['at_measurement_line']
     response=client.get('/api/station/photos/'+record['full_frame_photo'])
     assert response.status_code==200
     image=cv2.imdecode(np.frombuffer(response.content,np.uint8),cv2.IMREAD_COLOR)
@@ -48,8 +47,7 @@ def test_off_line_capture_preserves_entire_images_without_assigning_length(setup
     assert len(list(path.glob('*.jpg')))==2
     payload['profile']['measurement_mode']='strict';payload['frame']=8
     strict=client.post('/api/station/capture',json=payload).json()
-    assert strict['length_m'] is None and strict['full_frame_photo']
-    assert strict['source']['measurement']['status']=='capture_review'
+    assert strict['length_m']==pytest.approx(5) and strict['full_frame_photo']
 
 
 def test_label_exports_real_length_without_rewriting_measurement_or_cashier_state(setup):
@@ -65,7 +63,7 @@ def test_label_exports_real_length_without_rewriting_measurement_or_cashier_stat
     data=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()
     assert data['references'][-1]['length_m']==4.725
     sample=data['evaluation_samples'][0]
-    assert sample['measured_length_m'] is None and sample['actual_length_m']==4.725
+    assert sample['measured_length_m']==pytest.approx(5) and sample['actual_length_m']==4.725
     assert sample['full_frame_photo']==record['full_frame_photo']
     assert sample['bbox']==record['source']['bbox']
     assert sample['verified_by']=='Reviewer'
@@ -109,14 +107,16 @@ def test_labels_stay_with_compatible_camera_geometry(setup):
     assert client.get('/evaluation').status_code==200
 
 
-def test_clipped_detection_is_saved_for_evaluation_but_never_used_as_scale(setup):
-    client,_,_,_,payload=setup
+def test_clipped_capture_is_rejected_and_legacy_clipped_evaluation_still_works(setup):
+    client,_,record,_,payload=setup
     payload.update(frame=10,bbox=[0,150,100,75])
-    response=client.post('/api/station/capture',json=payload)
-    assert response.status_code==200,response.text
-    record=response.json()
-    assert record['measured_length_m'] is None
-    assert 'clipped' in record['source']['measurement']['quality_reasons']
+    assert client.post('/api/station/capture',json=payload).status_code==422
+    # Records saved by the previous version remain reviewable, never scale data.
+    record['source']['bbox']=payload['bbox']
+    record['source']['measurement'].update(length_m=None,quality_reasons=['clipped'])
+    record['measured_length_m']=None
+    with st.connect() as db:
+        db.execute('UPDATE vehicles SET data=? WHERE id=?',(json.dumps(record),record['id']))
     saved=review(client,record).json()
     assert not saved['evaluation']['reference_added']
     data=client.get('/api/station/evaluation/'+record['id']+'/calibration.json').json()

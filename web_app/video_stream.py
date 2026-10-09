@@ -45,6 +45,8 @@ def paired_frame(side_frame, side_fps, front_fps, offset):
 
 class Camera:
     def __init__(self, request):
+        from web_app.passage_tracking import station_profile
+        request=request.model_copy(update={'profile':station_profile(request.profile)})
         wb.read_frame(request.media_id, request.frame)  # UUID and frame validation
         item = wb.media[request.media_id]
         if item['kind'] != 'video':
@@ -83,6 +85,8 @@ class Camera:
         self.display_count = 0
         self.inference_count = 0
         self.id = uuid.uuid4().hex
+        self.tracks = []
+        self.passages = {}
 
     def start(self):
         for fn in (self.produce, self.infer, self.recognize_plates):
@@ -210,7 +214,17 @@ class Camera:
 
     def publish_result(self, result, index):
         # Browser polling must not erase intermediate crossing observations.
+        from web_app.passage_tracking import update_tracks, capture_ready
         with self.condition:
+            detections=[d for d in result['detections'] if 'bbox' in d]
+            self.tracks,assigned=update_tracks(self.tracks,detections,index/self.fps)
+            for detection,track in zip(detections,assigned):
+                track.setdefault('capture_lock',threading.Lock())
+                self.passages[track['id']]=track
+                detection.update(passage_id=track['id'],capture_ready=capture_ready(track,detection),
+                                 passage_captured=track['sent'])
+            while len(self.passages)>1000:
+                self.passages.pop(next(iter(self.passages)))
             self.result_sequence += 1
             self.result = {**result,'frame':index,'sequence':self.result_sequence}
             self.results.append(self.result)

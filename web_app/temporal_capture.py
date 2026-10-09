@@ -15,8 +15,6 @@ MAX_FRAMES = 31
 # Keep the original evidence and add a bounded, sparse set of real neighbours.
 EXTENDED_WINDOW_SECONDS = 2.
 MAX_EXTENDED_FRAMES = 61
-REVIEW_IDLE_SECONDS = 2.
-CENTER_WINDOW_SECONDS = 4.
 
 
 @lru_cache(maxsize=4)
@@ -47,63 +45,6 @@ def capture_geometry_reasons(profile, box):
     return reasons
 
 
-def centered_observation(profile, anchor_frame, anchor_box, observations):
-    """Follow one observed car from an anchor to a complete, centred frame.
-
-    Walk both time directions through every supplied observation. Stop at a
-    lost/ambiguous association; never jump across a gap to another car.
-    """
-    if profile.measurement_line_x is None:
-        return None
-    rows = sorted(observations, key=lambda row: row['frame'])
-    position = next((i for i, row in enumerate(rows) if row['frame'] == anchor_frame), None)
-    if position is None:
-        return None
-    candidates = {}
-    for sequence in (rows[position:], list(reversed(rows[:position+1]))):
-        previous = anchor_box
-        previous_frame = anchor_frame
-        for row in sequence:
-            if abs(row['frame']-previous_frame)>1:
-                break
-            ranked = sorted(((box_iou(previous, d['bbox']), d) for d in row['detections']),
-                            key=lambda pair: pair[0], reverse=True)
-            if not ranked or ranked[0][0] < .5 or (len(ranked)>1 and ranked[1][0]>.4):
-                break
-            detection = ranked[0][1]
-            previous = detection['bbox']
-            previous_frame = row['frame']
-            if review_candidate(detection) and not capture_geometry_reasons(profile, previous):
-                candidates[row['frame']] = detection
-    if not candidates:
-        return None
-    index = min(candidates, key=lambda i:(abs(candidates[i]['bbox'][0]+candidates[i]['bbox'][2]/2
-                                             -profile.measurement_line_x), abs(i-anchor_frame)))
-    return dict(frame=index, detection=candidates[index], examined_frames=len(rows), anchor_frame=anchor_frame)
-
-
-def find_video_center(profile, item, anchor_frame, anchor_box):
-    """Recover a missed centre even when sparse tracking has only one endpoint."""
-    fps = item.get('fps', 0)
-    if item.get('kind') != 'video' or not math.isfinite(fps) or fps <= 0 or profile.measurement_line_x is None:
-        return None
-    radius = min(120, max(1, round(fps*CENTER_WINDOW_SECONDS)))
-    first, last = max(0, anchor_frame-radius), min(item['frames']-1, anchor_frame+radius)
-    capture = cv2.VideoCapture(str(item['path']))
-    observations = []
-    try:
-        capture.set(cv2.CAP_PROP_POS_FRAMES, first)
-        for index in range(first, last+1):
-            ok, raw = capture.read()
-            if not ok:
-                break
-            result = wb.render_raw(raw, wb.FrameRequest(profile=profile, frame=index, detect=True), include_image=False)
-            observations.append(dict(frame=index, detections=result['detections']))
-    finally:
-        capture.release()
-    return centered_observation(profile, anchor_frame, anchor_box, observations)
-
-
 def needs_more_evidence(passage):
     reasons = set(passage.get('reasons', []))
     return bool(reasons) and reasons <= {'line_not_bracketed', 'insufficient_temporal_frames'}
@@ -121,6 +62,10 @@ def crossing_fraction(profile, before_box, after_box):
             raise ValueError('Invalid crossing box')
     before = before_box[0]+before_box[2]/2-line
     after = after_box[0]+after_box[2]/2-line
+    if abs(before)<=profile.line_tolerance_px:
+        return 0.
+    if abs(after)<=profile.line_tolerance_px:
+        return 1.
     if before*after >= 0:
         raise ValueError('Observed boxes must straddle the measurement line')
     return abs(before)/(abs(before)+abs(after))
@@ -169,8 +114,8 @@ def find_video_crossing(profile, item, before_frame, before_box, after_frame, af
 
 
 def capture_candidate(detection):
-    return detection['length_m'] is not None or (detection.get('at_measurement_line') and
-                                                 detection['status'] in {'outside_calibration','calibration_review'})
+    return bool(detection.get('at_measurement_line')) and (
+        detection['length_m'] is not None or detection['status'] in {'outside_calibration','calibration_review'})
 
 
 def review_candidate(detection):

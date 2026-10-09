@@ -195,9 +195,11 @@ class Capture(BaseModel):
     source: Literal['manual','yolo26x','yolo26n','yolo26m','yolo26l','rtdetr-l','rtdetr-x']='manual'
     temporal: bool = False
     review_fallback: bool = False
+    passage_id: str | None = Field(None,pattern=r'^[A-Za-z0-9_-]{1,128}$')
     actor: str=Field('Оператор',min_length=1,max_length=100)
     front_media_id: str | None = None
     front_session_id: str | None = None
+    capture_session_id: str | None = None
     front_offset_seconds: float=Field(3,ge=-3600,le=3600,allow_inf_nan=False)
 
 
@@ -254,6 +256,9 @@ def create(fields: Fields):
 @router.post('/capture-crossing')
 def capture_crossing(payload: CrossingCapture):
     from web_app.temporal_capture import find_video_crossing
+    from web_app.passage_tracking import station_profile
+    payload=payload.model_copy(update={'profile':station_profile(payload.profile)})
+    payload,_=video_passage(payload)
     workbench.read_frame(payload.media_id,payload.frame)
     try:
         found = find_video_crossing(payload.profile,workbench.media[payload.media_id],
@@ -261,16 +266,7 @@ def capture_crossing(payload: CrossingCapture):
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
     if found['frame'] is None:
-        # Both endpoints were observed. Keep the nearer actual frame when even
-        # the recording contains no usable centred box (never interpolate pixels).
-        line = payload.profile.measurement_line_x
-        frame, box = min(((payload.before_frame,payload.before_bbox),(payload.frame,payload.bbox)),
-                        key=lambda row:abs(row[1][0]+row[1][2]/2-line))
-        values = payload.model_dump(exclude={'before_frame','before_bbox'})
-        values.update(frame=frame,bbox=box,temporal=False,review_fallback=True)
-        record = capture(Capture.model_validate(values))
-        return dict(captured=True,record=record,**{**found,'frame':record['source']['frame'],
-            'review_fallback':not record['source']['measurement'].get('at_measurement_line',False)})
+        return dict(captured=False,**found)
     detection = found.pop('detection')
     values = payload.model_dump(exclude={'before_frame','before_bbox'})
     values.update(frame=found['frame'],bbox=detection['bbox'],label=detection['label'],
@@ -279,35 +275,58 @@ def capture_crossing(payload: CrossingCapture):
     return dict(captured=True,record=record,**found)
 
 
+def video_passage(payload):
+    """Use the shared server track for every browser observing this video."""
+    if not payload.capture_session_id:
+        return payload,None
+    from web_app.video_stream import sessions
+    from web_app.passage_tracking import observed_track
+    camera=sessions.get(payload.capture_session_id)
+    if not camera or camera.request.media_id!=payload.media_id:
+        raise HTTPException(409,'Видеосеанс завершён. Возобновите воспроизведение.')
+    with camera.condition:
+        tracks=list(camera.passages.values())
+        track=observed_track(tracks,payload.frame/camera.fps,payload.bbox)
+        # A recovered centre need not have been included in the sparse preview.
+        if track is None and payload.passage_id:
+            track=next((t for t in tracks if t['id']==payload.passage_id),None)
+        if track is None:
+            raise HTTPException(409,'Проезд не найден в текущем видеосеансе.')
+        return payload.model_copy(update={'passage_id':track['id']}),track
+
+
 @router.post('/capture')
 def capture(payload: Capture):
+    from contextlib import nullcontext
+    from web_app.passage_tracking import station_profile
+    payload=payload.model_copy(update={'profile':station_profile(payload.profile)})
+    payload,track=video_passage(payload)
+    with track['capture_lock'] if track is not None else nullcontext():
+        record=capture_vehicle(payload)
+        if track is not None:
+            track['sent']=True
+        return record
+
+
+def capture_vehicle(payload):
+    from web_app.temporal_capture import capture_geometry_reasons
+    if capture_geometry_reasons(payload.profile,payload.bbox):
+        raise HTTPException(422,'Измерение разрешено только для целого автомобиля у центральной линии.')
+    if payload.passage_id:
+        with connect() as db:
+            existing=db.execute('SELECT data FROM vehicles WHERE source_key=?',(capture_key(payload),)).fetchone()
+            if existing:return json.loads(existing['data'])
     # Recalculate from the original uploaded frame and submitted calibration.
     raw=workbench.read_frame(payload.media_id,payload.frame)
     result=workbench.render_raw(raw,
             workbench.FrameRequest(profile=payload.profile,frame=payload.frame,boxes=[payload.bbox]),
             include_image=False,include_frame=True)
-    recovery=None
-    if payload.review_fallback:
-        from web_app.temporal_capture import capture_geometry_reasons, find_video_center
-        item=workbench.media.get(payload.media_id, {})
-        if capture_geometry_reasons(payload.profile,payload.bbox):
-            recovery=find_video_center(payload.profile,item,payload.frame,payload.bbox)
-        if recovery:
-            detection=recovery['detection']
-            payload=payload.model_copy(update=dict(frame=recovery['frame'],bbox=detection['bbox'],
-                label=detection['label'],temporal=True,review_fallback=False))
-            raw=workbench.read_frame(payload.media_id,payload.frame)
-            result=workbench.render_raw(raw,
-                workbench.FrameRequest(profile=payload.profile,frame=payload.frame,boxes=[payload.bbox]),
-                include_image=False,include_frame=True)
     if payload.temporal:
         from web_app.temporal_capture import refine_video
         refine_video(payload, result)
     if payload.review_fallback:
         from web_app.temporal_capture import prepare_review_measurement
         prepare_review_measurement(payload.profile, result)
-    if recovery:
-        result['detections'][0]['center_recovery']={k:v for k,v in recovery.items() if k!='detection'}
     front_image=None
     paired=None
     evidence=[]
@@ -339,15 +358,23 @@ def capture(payload: Capture):
     return persist_capture(payload,result,front_image,paired,front_evidence=evidence)
 
 
+def capture_key(payload,paired=None):
+    identity=[payload.media_id,payload.frame,[round(v,1) for v in payload.bbox]]
+    if paired:
+        identity.append(paired)
+    if payload.passage_id:
+        identity=[payload.media_id,'passage',payload.passage_id]
+    return hashlib.sha256(json.dumps(identity).encode()).hexdigest()
+
+
 def persist_capture(payload,result,front_image=None,paired=None,front_samples=None,camera_note=None,front_evidence=None):
     measured=result['detections'][0]
+    from web_app.passage_tracking import station_profile
+    payload=payload.model_copy(update={'profile':station_profile(payload.profile)})
     from web_app.temporal_capture import capture_geometry_reasons
     geometry_reasons=capture_geometry_reasons(payload.profile,payload.bbox)
-    if geometry_reasons and (payload.review_fallback or measured['status'] not in {'clipped','waiting_for_line','outside_road'}):
-        measured=dict(measured,length_m=None,approximate=False,status='capture_review',cm_per_px=None,coefficient=None,
-            quality_reasons=list(dict.fromkeys([*measured.get('quality_reasons',[]),*geometry_reasons])),
-            warnings=[*measured.get('warnings',[]),'Нет полного автомобиля у линии измерения. Длина не назначена.'])
-        result['detections'][0]=measured
+    if geometry_reasons:
+        raise HTTPException(422,'Измерение разрешено только для целого автомобиля у центральной линии.')
     if payload.temporal and measured['status']=='outside_calibration' and measured['at_measurement_line']:
         from vehicle_metrology.temporal import apply_passage
         measured=apply_passage(measured,dict(status='temporal_review',length_m=None,
@@ -368,13 +395,12 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
     if measured['status'] in {'outside_road','clipped','waiting_for_line','outside_calibration'}:
         raise HTTPException(422,'Автомобиль должен быть целиком в кадре, на дороге, в области калибровки и у линии измерения (если она включена).')
     category={'car':'car','bus':'bus','truck':'truck','motorcycle':'motorcycle'}.get(payload.label,'car')
-    identity=[payload.media_id,payload.frame,[round(v,1) for v in payload.bbox]]
-    if paired:
-        identity.append(paired)
-    source_key=hashlib.sha256(json.dumps(identity).encode()).hexdigest()
+    source_key=capture_key(payload,paired)
     source=dict(media_id=payload.media_id,frame=payload.frame,bbox=list(payload.bbox),label=payload.label,
                 detector=payload.source,measurement=measured,measured_length_m=measured['length_m'],
                 calibration=payload.profile.model_dump(exclude={'evaluation_samples'}))
+    if payload.passage_id:
+        source['passage_id']=payload.passage_id
     if paired:
         source['front_camera']=paired
     if camera_note:

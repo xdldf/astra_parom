@@ -100,7 +100,7 @@ def test_ip_capture_survives_buffer_loss(tmp_path,monkeypatch):
     raw=np.zeros((500,600,3),np.uint8);jpeg=cv2.imencode('.jpg',raw)[1].tobytes();stamp=time.monotonic()
     a=ip.Packet(1,stamp,jpeg);b=ip.Packet(2,stamp,jpeg)
     camera.side.packets.append(a);camera.front.packets.append(b)
-    d={'bbox':[100,150,100,75],'label':'car'}
+    d={'bbox':[250,150,100,75],'label':'car'}
     result=camera.capture((a,b,0),d,'track-1')
     assert result['source']['front_camera']['kind']=='ip'
     assert 'media_id' not in result['source']['front_camera']
@@ -122,7 +122,7 @@ def test_side_measurement_persists_without_front(tmp_path,monkeypatch):
     a=ip.Packet(1,time.monotonic(),cv2.imencode('.jpg',np.zeros((500,600,3),np.uint8))[1].tobytes())
     c.side.packets.append(a)
     assert c.paired() is None
-    result=c.capture((a,None,None),{'bbox':[100,150,100,75],'label':'car'},'one')
+    result=c.capture((a,None,None),{'bbox':[250,150,100,75],'label':'car'},'one')
     assert result['length_m']==pytest.approx(5)
     assert result['front_photo'] is None and result['plate']==''
     assert result['side_photo'] and result['source']['camera_note']
@@ -213,7 +213,7 @@ def test_truck_capture_uses_earlier_cab_and_keeps_synchronized_photo(tmp_path,mo
                 camera.front_history.observe(frame(30+i,now+i*.4,60),[0,0,600,500],reads,camera.front.epoch)
             return original(*args,**kwargs)
         monkeypatch.setattr(wb,'render_raw',render)
-    result=camera.capture((side,body,0),{'bbox':[100,150,100,75],'label':'truck'},'truck')
+    result=camera.capture((side,body,0),{'bbox':[250,150,100,75],'label':'truck'},'truck')
     assert cv2.imread(str(tmp_path/result['front_photo'])).mean()==pytest.approx(200,abs=1)
     source=result['source']
     assert cv2.imread(str(tmp_path/source['synchronized_front_photo'])).mean()==pytest.approx(40,abs=1)
@@ -256,7 +256,7 @@ def test_calibration_frame_uses_fresh_original_receiver_image(tmp_path,monkeypat
     monkeypatch.setattr(ip.Receiver,'open',lambda *a:pytest.fail('Must reuse the running receiver'))
     client=TestClient(app)
     loaded=client.get('/api/ip/calibration')
-    assert loaded.status_code==200 and loaded.json()==profile.model_dump(mode='json')
+    assert loaded.status_code==200 and loaded.json()==profile.model_copy(update={'measurement_line_x':300}).model_dump(mode='json')
     result=client.post('/api/workbench/camera-frame')
     assert result.status_code==200,result.text
     item=result.json()
@@ -265,7 +265,7 @@ def test_calibration_frame_uses_fresh_original_receiver_image(tmp_path,monkeypat
     assert wb.media[item['id']]['path'].read_bytes()==jpeg
     assert np.array_equal(wb.read_frame(item['id'],0),cv2.imdecode(np.frombuffer(jpeg,np.uint8),cv2.IMREAD_COLOR))
     assert client.post('/api/workbench/frame/'+item['id'],json={'profile':profile.model_dump(),'detect':False}).status_code==200
-    assert c.profile==profile and not c.stop.is_set()
+    assert c.profile==profile.model_copy(update={'measurement_line_x':300}) and not c.stop.is_set()
     c.side.packets.clear()
     c.side.packets.append(ip.Packet(2,time.monotonic()-5,jpeg))
     assert client.post('/api/workbench/camera-frame').status_code==409

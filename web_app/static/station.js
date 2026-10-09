@@ -458,11 +458,12 @@ function selectedVideoDetector(){
  const p=liveSource?.profile||importedProfile;
  showDetector(p?{model:p.detector_model??'yolo26n',imgsz:p.detector_imgsz??640}:null,'Видеозаписи · выбранная настройка');
 }
-function calibrationLabel(){const p=liveSource?.profile||importedProfile;selectedVideoDetector();if(p?.wheel_recovery_calibration){$('calibrationStatus').textContent=`Контур и колёса · резерв для разных положений · приблизительная длина`;return;}if(p?.wheel_calibration){$('calibrationStatus').textContent=`Контур и колёса · ${p.wheel_calibration.training_count} каталожных проездов · приблизительная длина`;return;}if(p?.outline_calibration){$('calibrationStatus').textContent=`Контур кузова · ${p.outline_calibration.training_count} каталожных проездов · приблизительная длина`;return;}if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · ${p.measurement_line_x==null?'вся дорога':'измерение у линии'}`:'Импортируйте JSON с дорогой и эталонными длинами';}
+function calibrationLabel(){const p=liveSource?.profile||importedProfile;selectedVideoDetector();if(p?.wheel_recovery_calibration){$('calibrationStatus').textContent=`Контур и колёса · резерв для разных положений · приблизительная длина`;return;}if(p?.wheel_calibration){$('calibrationStatus').textContent=`Контур и колёса · ${p.wheel_calibration.training_count} каталожных проездов · приблизительная длина`;return;}if(p?.outline_calibration){$('calibrationStatus').textContent=`Контур кузова · ${p.outline_calibration.training_count} каталожных проездов · приблизительная длина`;return;}if(p?.survey_calibration){$('calibrationStatus').textContent='Калибровка по метровым отметкам · требуется проверка геометрии';return;}$('calibrationStatus').textContent=(p?.references?.length||p?.metric_rulers?.length)?`Калибровка активна · ${p.metric_rulers?.length? p.metric_rulers.length+' мерных линий':p.references.length+' эталонов'} · измерение у линии`:'Импортируйте JSON с дорогой и эталонными длинами';}
 async function workbench(path,body){const response=await fetch('/api/workbench'+path,body instanceof FormData?{method:'POST',body}:body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
-async function stopStream(){const id=streamId;if(id)await flushVideoReviews(Infinity,true);streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';selectedVideoDetector();if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
+async function stopStream(){const id=streamId;streamId=null;liveGeneration++;clearTimeout(streamTimer);$('operatorDetection').removeAttribute('src');$('frontStream').removeAttribute('src');$('streamPlay').textContent='▶ Пуск';selectedVideoDetector();if(id)await fetch('/api/stream/'+id,{method:'DELETE'});}
 async function startStream({throwOnError=false}={}){
  if(streamStarting||streamId)return;if(!liveSource){toast('Откройте видео');return;}streamStarting=true;
+ if(liveSource.profile.measurement_line_x==null)liveSource.profile.measurement_line_x=liveSource.profile.image_size[0]/2;
  try{const response=await fetch('/api/stream/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_id:liveSource.media.id,profile:liveSource.profile,frame:streamFrame,front_media_id:liveSource.frontMedia?.id,front_offset_seconds:liveSource.frontOffset??3})});const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));streamId=data.id;streamResultCursor=0;liveGeneration++;liveTracks=new LiveTracks();liveSnapshot=null;$('operatorDetection').src='/api/stream/'+streamId+'/video';if(liveSource.frontMedia)$('frontStream').src='/api/stream/'+streamId+'/front';$('streamPlay').textContent='Ⅱ Пауза';pollStream(streamId,liveGeneration);}
  catch(e){toast(e.message);if(throwOnError)throw e;}finally{streamStarting=false;}
 }
@@ -477,19 +478,18 @@ async function pollStream(id,generation){
  for(const result of results){if(result.frame===liveSnapshot?.frame)continue;const frame=result.frame;
  streamResultCursor=Math.max(streamResultCursor,result.sequence??0);
  liveSnapshot={source,frame,detections:result.detections};
- $('liveCar').replaceChildren();result.detections.forEach((d,i)=>{const option=document.createElement('option');option.value=i;option.textContent=(i+1)+': '+d.label+' · '+(d.length_m==null?'длина не измерена':d.length_m.toFixed(2)+' м');$('liveCar').append(option);});$('captureLive').disabled=!result.detections.length;
+ $('liveCar').replaceChildren();result.detections.forEach((d,i)=>{const option=document.createElement('option');option.value=i;option.textContent=(i+1)+': '+d.label+' · '+(d.length_m==null?'длина не измерена':d.length_m.toFixed(2)+' м');$('liveCar').append(option);});$('captureLive').disabled=!result.detections.some(captureCandidate);
       const tracks=liveTracks.update(result.detections,frame/source.media.fps);
-      if($('autoMeasure').checked){for(let i=0;i<result.detections.length;i++){const d=result.detections[i],t=tracks[i];if(t.sent)continue;
-        liveTracks.remember(t,{source,frame},d);
+      if($('autoMeasure').checked){for(let i=0;i<result.detections.length;i++){const d=result.detections[i],t=tracks[i];if(t.sent||d.passage_captured||d.capture_ready===false)continue;
         if(captureCandidate(d)){t.sent=true;queueLive({source,frame},d).catch(e=>{t.sent=false;toast(e.message);});continue;}
         const line=source.profile.measurement_line_x,prev=t.previous;
         if(line!=null&&prev&&d.depth!=null){const before=prev.box[0]+prev.box[2]/2-line,after=d.bbox[0]+d.bbox[2]/2-line;
-          if(before*after<0&&frame/source.media.fps-prev.time<2){t.sent=true;
+          if((before*after<0||Math.abs(before)<=(source.profile.line_tolerance_px??10))&&frame/source.media.fps-prev.time<2){t.sent=true;
           captureCrossing(source,frame,d,prev).then(ok=>{if(!ok)t.sent=false;}).catch(e=>{t.sent=false;toast(e.message);});}}
         }}
 
  }
- await flushVideoReviews((liveSnapshot?.frame??streamFrame)/source.media.fps,!!state.ended);
+
  }catch(e){if(id===streamId){$('detectionStatus').textContent=e.message;await stopStream();}return;}
  if(id===streamId)streamTimer=setTimeout(()=>pollStream(id,generation),100);
 }
@@ -498,19 +498,12 @@ $('streamPlay').onclick=()=>ipMode?toggleIp():streamId?stopStream():startStream(
 $('streamSeek').onchange=async()=>{if(!liveSource)return;const frame=Math.round(Number($('streamSeek').value)*(liveSource.media.frames-1)/100),running=!!streamId;await stopStream();streamFrame=frame;if(running)await startStream();};
 $('operatorFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{$('liveStatus').textContent='Загрузка видео…';const fd=new FormData();fd.append('file',file);const media=await workbench('/media',fd);const previous=importedProfile||liveSource?.profile;if(previous&&previous.image_size.toString()!==media.image_size.toString())throw Error('Разрешение видео не совпадает с калибровкой');const profile=previous||{version:1,image_size:media.image_size,lens:{},polygon:[],references:[]};await openLive({media,profile,frontMedia:liveSource?.frontMedia,frontOffset:liveSource?.frontOffset??3});}catch(error){toast(error.message);}e.target.value='';};
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===$('calibrationFrame').contentWindow&&e.data?.type==='station-play')openLive({media:e.data.media,profile:e.data.profile,frontMedia:liveSource?.frontMedia,frontOffset:liveSource?.frontOffset??3},e.data.frame).catch(e=>toast(e.message));});
-$('captureLive').onclick=()=>action(async()=>{const snapshot=structuredClone(liveSnapshot),d=snapshot?.detections[Number($('liveCar').value)];if(d)await queueLive(snapshot,d);});
+$('captureLive').onclick=()=>action(async()=>{const snapshot=structuredClone(liveSnapshot),d=snapshot?.detections[Number($('liveCar').value)];if(d&&captureCandidate(d))await queueLive(snapshot,d);});
 try{const saved=JSON.parse(localStorage.getItem('ferryVideo'));if(saved?.media&&saved?.profile){liveSource=saved;calibrationLabel();$('liveStatus').textContent=saved.media.name;}}catch{}
 window.addEventListener('pagehide',()=>{if(streamId)fetch('/api/stream/'+streamId,{method:'DELETE',keepalive:true});});
-function captureCandidate(d){return d.length_m!=null||(d.at_measurement_line&&['outside_calibration','calibration_review'].includes(d.status));}
-async function flushVideoReviews(time,force=false){
-  if(!$('autoMeasure').checked)return;
-  for(const t of liveTracks.reviewsDue(time,force)){
-    t.sent=true;
-    try{await queueLive(t.review.snapshot,t.review.detection,true);}catch(e){t.sent=false;toast(e.message);}
-  }
-}
-async function queueLive(snapshot,d,reviewFallback=false){
-  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:snapshot.source.profile.detector_model??'yolo26n',temporal:!reviewFallback,review_fallback:reviewFallback,actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
+function captureCandidate(d){return d.at_measurement_line===true&&(d.length_m!=null||['outside_calibration','calibration_review'].includes(d.status));}
+async function queueLive(snapshot,d){
+  const record=await api('/capture',{media_id:snapshot.source.media.id,profile:snapshot.source.profile,frame:snapshot.frame,bbox:d.bbox,label:d.label,source:snapshot.source.profile.detector_model??'yolo26n',temporal:true,passage_id:d.passage_id,actor:$('actor').value||'Оператор',front_media_id:snapshot.source.frontMedia?.id,front_session_id:streamId,capture_session_id:streamId,front_offset_seconds:snapshot.source.frontOffset??3});
   await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+record.id));return record;
 }
 $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
@@ -526,9 +519,9 @@ $('operatorCalibration').onchange=async e=>{const file=e.target.files[0];if(!fil
 
 async function captureCrossing(source,frame,original,previous){
   const result=await api('/capture-crossing',{media_id:source.media.id,profile:source.profile,
-    frame,bbox:original.bbox,label:original.label,source:source.profile.detector_model??'yolo26n',temporal:true,
+    frame,bbox:original.bbox,label:original.label,passage_id:original.passage_id,source:source.profile.detector_model??'yolo26n',temporal:true,
     before_frame:Math.round(previous.time*source.media.fps),before_bbox:previous.box,
-    actor:$('actor').value||'Оператор',front_media_id:source.frontMedia?.id,front_session_id:streamId,
+    actor:$('actor').value||'Оператор',front_media_id:source.frontMedia?.id,front_session_id:streamId,capture_session_id:streamId,
     front_offset_seconds:source.frontOffset??3});
   if(!result.captured){toast(result.reason||'Не удалось восстановить проезд у линии. Проверьте вручную.');return false;}
   await loadVehicles();if(!dirty&&!current)renderRecord(await api('/vehicles/'+result.record.id));return true;

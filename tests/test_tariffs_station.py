@@ -157,7 +157,7 @@ def test_synchronized_capture_saves_front_and_side(client,monkeypatch):
     payload={'media_id':'side','front_media_id':'front','front_offset_seconds':3,
       'profile':{'image_size':[600,500],'polygon':[[20,200],[580,200],[580,450],[20,450]],
         'references':[{'bbox':[100,150,100,75],'length_m':5}]},
-      'frame':250,'bbox':[100,150,100,75],'label':'car','source':'yolo26n'}
+      'frame':250,'bbox':[250,150,100,75],'label':'car','source':'yolo26n'}
     response=client.post('/api/station/capture',json=payload)
     assert response.status_code==200,response.text
     record=response.json()
@@ -310,7 +310,7 @@ def test_simultaneous_capture_is_idempotent_and_has_no_orphan_photos(client,monk
     payload={'media_id':'parallel-test','profile':{'image_size':[600,500],
              'polygon':[[20,200],[580,200],[580,450],[20,450]],
              'references':[{'bbox':[100,150,100,75],'length_m':5}]},
-             'frame':0,'bbox':[100,150,100,75],'label':'car'}
+             'frame':0,'bbox':[250,150,100,75],'label':'car'}
     with ThreadPoolExecutor(max_workers=4) as pool:
         results=list(pool.map(lambda _:TestClient(app).post('/api/station/capture',json=payload),range(4)))
     assert all(r.status_code==200 for r in results)
@@ -394,7 +394,7 @@ def test_video_capture_uses_only_matching_session_front_history(client,monkeypat
     payload=dict(media_id='side',front_media_id='front',front_session_id='video-session',front_offset_seconds=0,
         profile={'image_size':[600,500],'polygon':[[20,200],[580,200],[580,450],[20,450]],
                  'references':[{'bbox':[100,150,100,75],'length_m':5}]},
-        frame=100,bbox=[100,150,100,75],label='truck')
+        frame=100,bbox=[250,150,100,75],label='truck')
     result=client.post('/api/station/capture',json=payload)
     assert result.status_code==200,result.text
     assert result.json()['source']['front_evidence']['offset_seconds']==-8
@@ -456,7 +456,7 @@ def test_capture_respects_measurement_only_setting(client,monkeypatch):
     client.post('/api/station/configuration',json={'tariffs_enabled':False})
     monkeypatch.setattr(station,'quote',lambda *a,**kw:pytest.fail('Capture must skip tariff calculation'))
     monkeypatch.setattr(workbench,'read_frame',lambda *a:np.zeros((500,600,3),np.uint8))
-    payload=dict(media_id='side',frame=1,bbox=[100,150,100,75],label='truck',
+    payload=dict(media_id='side',frame=1,bbox=[250,150,100,75],label='truck',
         profile={'image_size':[600,500],'polygon':[[20,200],[580,200],[580,450],[20,450]],
                  'references':[{'bbox':[100,150,100,75],'length_m':5}]})
     response=client.post('/api/station/capture',json=payload)
