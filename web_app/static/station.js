@@ -129,7 +129,7 @@ function cell(tr,text){let td=document.createElement('td');td.textContent=text;t
 function badge(s){let span=document.createElement('span');span.className='tag '+statusClass(s);span.textContent=s;return span;}
 function emptyTable(id,span,text){let tr=document.createElement('tr');tr.className='empty-row';let td=cell(tr,text);td.colSpan=span-(!tariffsEnabled||(id==='carsTable'&&!$('showOperatorPrices').checked)?1:0);$(id).append(tr);}
 function query(report=false){
-  const names=report?{date_from:'reportFrom',date_to:'reportTo',status:'reportStatus',category:'reportCategory'}:
+  const names=report?{date_from:'reportFrom',date_to:'reportTo',time_from:'reportTimeFrom',time_to:'reportTimeTo',status:'reportStatus',category:'reportCategory'}:
     {plate:'filterPlate',status:'filterStatus',category:'filterCategory',length_min:'filterMin',length_max:'filterMax'};
   const params=new URLSearchParams();
   for(const [key,id] of Object.entries(names))if($(id).value.trim())params.set(key,$(id).value.trim());
@@ -412,10 +412,26 @@ $('frontFile').onchange=e=>action(async()=>{
   const fd=new FormData();fd.append('file',file);fd.append('version',current.version);fd.append('actor',$('actor').value);
   const r=await api('/vehicles/'+current.id+'/front-photo',fd);renderRecord(await api('/vehicles/'+r.id));e.target.value='';toast('Фото сохранено');
 });
-['reportFrom','reportTo','reportStatus','reportCategory'].forEach(id=>$(id).onchange=()=>{reportOffset=0;reportSnapshot=null;action(report);});
-$('resetReport').onclick=()=>{['reportFrom','reportTo','reportStatus','reportCategory'].forEach(id=>$(id).value='');reportOffset=0;reportSnapshot=null;action(report);};
+const reportFilters=['reportFrom','reportTo','reportTimeFrom','reportTimeTo','reportStatus','reportCategory'];
+reportFilters.forEach(id=>$(id).onchange=()=>{reportOffset=0;reportSnapshot=null;$('photoExportStatus').textContent='';action(report);});
+$('resetReport').onclick=()=>{reportFilters.forEach(id=>$(id).value='');reportOffset=0;reportSnapshot=null;$('photoExportStatus').textContent='';action(report);};
 $('exportCSV').onclick=()=>action(async()=>{
   await report();let a=document.createElement('a');a.href='/api/station/reports.csv?'+query(true);a.download='ferry_report.csv';a.click();
+});
+$('exportPhotos').onclick=()=>action(async()=>{
+  const params=query(true);
+  for(const [kind,id] of [['plate','exportPlate'],['side','exportSide'],['full','exportFull']]){
+    if($(id).checked)params.append('photo_types',kind);
+  }
+  $('photoExportStatus').textContent='';
+  if(!params.has('photo_types'))throw Error('Выберите хотя бы один тип фото для архива');
+  $('exportPhotos').disabled=true;
+  try{
+    const result=await api('/photos.zip?'+params+'&preview=true');
+    const a=document.createElement('a');a.href='/api/station/photos.zip?'+params;
+    a.download='vehicle_photos.zip';a.click();
+    $('photoExportStatus').textContent=`Готовится скачивание: ${result.count} фото.`+(result.missing?' Некоторые выбранные фото отсутствуют и будут пропущены.':'');
+  }finally{$('exportPhotos').disabled=false;}
 });
 const requestedStation=new URLSearchParams(location.search).get('station');
 $('stationId').value=requestedStation||localStorage.getItem('ferryStation')||('desk-'+Math.random().toString(36).slice(2,10));

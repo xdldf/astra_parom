@@ -5,9 +5,11 @@ import hashlib
 import io
 import json
 import re
+import tempfile
 import uuid
+import zipfile
 from functools import lru_cache
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 
@@ -16,6 +18,7 @@ import numpy as np
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from starlette.background import BackgroundTask
 
 from vehicle_metrology.plate_text import normalize_plate
 from vehicle_metrology.tariffs import CATEGORIES, catalog, quote
@@ -496,13 +499,21 @@ def recognize_plate(ident: str):
     return record
 
 
-def filters(plate='',status='',category='',length_min=None,length_max=None,date_from=None,date_to=None):
+def filters(plate='',status='',category='',length_min=None,length_max=None,date_from=None,date_to=None,
+            time_from=None,time_to=None):
     if status and status not in STATUSES:
         raise HTTPException(422,'Неизвестный статус')
     if category and category not in CATEGORIES:
         raise HTTPException(422,'Неизвестная категория')
     if date_from and date_to and date_from>date_to:
         raise HTTPException(422,'Начальная дата позже конечной')
+    for day,clock in ((date_from,time_from),(date_to,time_to)):
+        if clock is not None and day is None:
+            raise HTTPException(422,'Для времени укажите соответствующую дату')
+        if clock is not None and (clock.tzinfo is not None or clock.microsecond):
+            raise HTTPException(422,'Укажите время Якутска с точностью до секунды, без часового пояса')
+    if date_from and date_to and date_from==date_to and (time_from or time.min)>(time_to or time(23,59,59)):
+        raise HTTPException(422,'Начало периода позже конца')
     if length_min is not None and length_max is not None and length_min>length_max:
         raise HTTPException(422,'Минимальная длина больше максимальной')
     clauses,values=[],[]
@@ -511,9 +522,13 @@ def filters(plate='',status='',category='',length_min=None,length_max=None,date_
             clauses.append(column+'=?');values.append(value)
     if plate:
         clauses.append('instr(plate,?)>0');values.append(normalize_plate(plate))
+    start=date_from.isoformat() if date_from else None
+    end=date_to.isoformat()+'T99' if date_to else None
+    if time_from is not None:start+='T'+time_from.isoformat()
+    # Include the whole final second and the stored +09:00 suffix.
+    if time_to is not None:end=date_to.isoformat()+'T'+time_to.isoformat()+'~'
     for column,operator,value in (('length_m','>=',length_min),('length_m','<=',length_max),
-                                   ('created_at','>=',date_from.isoformat() if date_from else None),
-                                   ('created_at','<=',date_to.isoformat()+'T99' if date_to else None)):
+                                   ('created_at','>=',start),('created_at','<=',end)):
         if value is not None:
             clauses.append(column+operator+'?');values.append(value)
     return ' AND '.join(clauses) or '1', values
@@ -530,8 +545,9 @@ def conditional(request, response, token):
 def vehicles(request: Request,response: Response,plate: str='',status: str='',category: str='',
              length_min: float|None=Query(None,allow_inf_nan=False),
              length_max: float|None=Query(None,allow_inf_nan=False),date_from: date|None=None,date_to: date|None=None,
+             time_from: time|None=None,time_to: time|None=None,
              limit: int=Query(250,ge=1,le=250),offset: int=Query(0,ge=0),snapshot: int|None=Query(None,ge=0)):
-    where,args=filters(plate,status,category,length_min,length_max,date_from,date_to)
+    where,args=filters(plate,status,category,length_min,length_max,date_from,date_to,time_from,time_to)
     with connect() as db:
         db.execute('BEGIN')
         enabled=tariffs_enabled(db)
@@ -700,8 +716,9 @@ def front_photo(ident: str,version: int=Form(...),actor: str=Form('Операт�
 
 
 @router.get('/reports.csv')
-def report_csv(status: str='',category: str='',date_from: date|None=None,date_to: date|None=None):
-    where,args=filters(status=status,category=category,date_from=date_from,date_to=date_to)
+def report_csv(status: str='',category: str='',date_from: date|None=None,date_to: date|None=None,
+               time_from: time|None=None,time_to: time|None=None):
+    where,args=filters(status=status,category=category,date_from=date_from,date_to=date_to,time_from=time_from,time_to=time_to)
     with connect() as db:
         enabled=tariffs_enabled(db)
     def columns(values):
@@ -727,3 +744,66 @@ def report_csv(status: str='',category: str='',date_from: date|None=None,date_to
                 yield out.getvalue()
     return StreamingResponse(stream(),media_type='text/csv; charset=utf-8',
                     headers={'Content-Disposition':'attachment; filename="ferry_report.csv"'})
+
+
+def export_photos(where, args, photo_types):
+    """Yield only selected, saved images belonging to the filtered records."""
+    with connect() as db:
+        cursor=db.execute(f"""SELECT page.id, page.created_at,
+            json_extract(v.data, '$.front_photo') AS plate,
+            json_extract(v.data, '$.side_photo') AS side,
+            json_extract(v.data, '$.full_frame_photo') AS full
+            FROM (SELECT id, created_at, seq FROM vehicle_list WHERE {where}) AS page
+            JOIN vehicles v ON v.id=page.id ORDER BY page.seq""",args)
+        while batch:=cursor.fetchmany(250):
+            for record in batch:
+                folder=re.sub(r'[^0-9A-Za-z_-]','_',record['created_at'][:19]+'_'+record['id'])
+                for kind in dict.fromkeys(photo_types):
+                    filename=record[kind]
+                    if not isinstance(filename,str) or not re.fullmatch(r'[0-9a-f]{32}-(?:side|front|frame)\.jpg',filename):
+                        yield None
+                        continue
+                    path=DATA/filename
+                    if path.is_symlink() or not path.is_file():
+                        yield None
+                        continue
+                    yield path,folder+'/'+filename
+
+
+@router.get('/photos.zip')
+def photos_zip(status: str='',category: str='',date_from: date|None=None,date_to: date|None=None,
+               time_from: time|None=None,time_to: time|None=None,
+               photo_types: list[Literal['plate','side','full']]=Query(['full'],min_length=1,max_length=3),
+               preview: bool=False):
+    where,args=filters(status=status,category=category,date_from=date_from,date_to=date_to,time_from=time_from,time_to=time_to)
+    if preview:
+        count=missing=0
+        for item in export_photos(where,args,photo_types):
+            if item is None:missing+=1
+            else:count+=1
+        if not count:raise HTTPException(404,'За выбранный период нет сохранённых фото выбранных типов')
+        return dict(count=count,missing=missing)
+    # JPEGs are already compressed. Stage on disk so large exports do not fill RAM.
+    archive=tempfile.TemporaryFile()
+    try:
+        count=0
+        with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_STORED,allowZip64=True) as output:
+            for item in export_photos(where,args,photo_types):
+                if item is not None:
+                    output.write(*item)
+                    count+=1
+        if not count:raise HTTPException(404,'За выбранный период нет сохранённых фото выбранных типов')
+        size=archive.tell()
+        archive.seek(0)
+    except BaseException:
+        archive.close()
+        raise
+    def stream():
+        try:
+            while chunk:=archive.read(1024*1024):yield chunk
+        finally:
+            archive.close()
+    filename=f'vehicle_photos_{date_from or "all"}_{date_to or "all"}.zip'
+    return StreamingResponse(stream(),media_type='application/zip',background=BackgroundTask(archive.close),
+        headers={'Content-Disposition':f'attachment; filename="{filename}"','Content-Length':str(size),
+                 'Cache-Control':'no-store'})

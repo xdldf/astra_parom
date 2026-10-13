@@ -41,6 +41,57 @@ function page(offset=0){return {rows:[{id:'car-'+offset,version:1,created_at:'20
   plate:'А123ВС14',category:'car',length_m:4,tariff:{amount_rub:1390},status:'Требует проверки'}],
   count:501,offset,snapshot:501,has_more:offset<500};}
 
+test('photo archive defaults to full frames and downloads selected types across all report pages',async()=>{
+  const html=fs.readFileSync(require.resolve('../web_app/static/station.html'),'utf8');
+  assert.match(html,/<input id="exportFull"[^>]* checked/);
+  assert.doesNotMatch(html,/<input id="export(?:Side|Plate)"[^>]* checked/);
+  const ui=await stationUI(),downloads=[];
+  ui.document.createElement=()=>({click(){downloads.push(this);}});
+  ui.elements.get('reportFrom').value='2026-10-13';ui.elements.get('reportTo').value='2026-10-14';
+  ui.elements.get('reportTimeFrom').value='09:15:00';ui.elements.get('reportTimeTo').value='18:30:00';
+  ui.elements.get('reportStatus').value='Подтвержден';ui.elements.get('reportCategory').value='car';
+  ui.document.getElementById('exportFull').checked=true;
+  ui.run('reportOffset=250;reportSnapshot=501');
+  ui.respond(()=>({data:{count:300,missing:2}}));
+  await ui.elements.get('exportPhotos').onclick();
+  const params=new URL(downloads[0].href,'http://station').searchParams;
+  assert.deepEqual(params.getAll('photo_types'),['full']);
+  assert.equal(params.get('date_from'),'2026-10-13');assert.equal(params.get('date_to'),'2026-10-14');
+  assert.equal(params.get('time_from'),'09:15:00');assert.equal(params.get('time_to'),'18:30:00');
+  assert.equal(params.get('status'),'Подтвержден');assert.equal(params.get('category'),'car');
+  assert.equal(params.has('limit'),false);assert.equal(params.has('offset'),false);assert.equal(params.has('snapshot'),false);
+  assert.equal(params.has('preview'),false);
+  assert.match(ui.requests[0].path,/preview=true$/);
+  assert.match(ui.elements.get('photoExportStatus').textContent,/300 фото.*пропущены/);
+  ui.elements.get('exportSide').checked=true;ui.elements.get('exportPlate').checked=true;
+  await ui.elements.get('exportPhotos').onclick();
+  assert.deepEqual(new URL(downloads[1].href,'http://station').searchParams.getAll('photo_types'),['plate','side','full']);
+});
+
+test('empty photo selection and missing photos show errors without starting a download',async()=>{
+  const ui=await stationUI();let downloads=0;
+  ui.document.createElement=()=>({click(){downloads++;}});
+  await ui.elements.get('exportPhotos').onclick();
+  assert.equal(ui.requests.length,0);assert.equal(downloads,0);
+  assert.match(ui.elements.get('toast').textContent,/Выберите хотя бы один/);
+  ui.document.getElementById('exportFull').checked=true;
+  ui.respond(()=>({status:404,data:{detail:'За выбранный период нет сохранённых фото выбранных типов'}}));
+  await ui.elements.get('exportPhotos').onclick();
+  assert.equal(downloads,0);assert.equal(ui.elements.get('exportPhotos').disabled,false);
+  assert.match(ui.elements.get('toast').textContent,/нет сохранённых фото/);
+});
+
+test('resetting reports clears dates and times while preserving photo choices',async()=>{
+  const ui=await stationUI();
+  ui.respond(()=>({data:page()}));
+  ui.elements.get('reportTimeFrom').value='12:00';ui.elements.get('reportTimeTo').value='13:00';
+  ui.document.getElementById('exportFull').checked=true;
+  ui.elements.get('resetReport').onclick();
+  assert.equal(ui.elements.get('reportTimeFrom').value,'');assert.equal(ui.elements.get('reportTimeTo').value,'');
+  assert.equal(ui.elements.get('exportFull').checked,true);
+  await new Promise(resolve=>setImmediate(resolve));
+});
+
 test('polling unchanged queue preserves DOM and sends ETag',async()=>{
   const ui=await stationUI();
   ui.respond((_,options)=>options.headers?.['If-None-Match']?{status:304}:{data:page()});

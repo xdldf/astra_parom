@@ -154,8 +154,16 @@ tbody tr.selected{background:#edf5ff;box-shadow:inset 3px 0 0 var(--blue)}
 .report-toolbar-head h2{margin:0;font-size:22px}
 .report-toolbar-head p{margin:4px 0 0;color:var(--muted);font-size:14px}
 .report-filter-grid{
-  display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:end
+  display:grid;grid-template-columns:minmax(320px,1.5fr) minmax(320px,1.5fr) minmax(130px,1fr) minmax(160px,1fr) auto;gap:12px;align-items:end
 }
+.report-period{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.report-period input{min-width:0}
+.photo-export{margin:18px 0 6px;padding:12px;border:1px solid var(--line);border-radius:9px}
+.photo-export legend{padding:0 6px;font-size:14px;font-weight:700}
+.photo-export-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px}
+.photo-export-options label{display:flex;align-items:center;gap:6px;font-size:14px}
+.photo-export-options button{margin-left:auto}
+#photoExportStatus{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
 .primary-btn{
   border:0;background:var(--blue);color:#fff;border-radius:9px;padding:11px 16px;
   cursor:pointer;font-weight:800;white-space:nowrap
@@ -180,11 +188,12 @@ tbody tr.selected{background:#edf5ff;box-shadow:inset 3px 0 0 var(--blue)}
 @media(max-width:1180px){
   .operator-grid{grid-template-columns:1fr}.statusbar .status:nth-child(2){display:none}
   .filter-grid{grid-template-columns:1fr 1fr 1fr}
-  .report-filter-grid{grid-template-columns:1fr 1fr 1fr}
+  .report-filter-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:760px){
   .filter-grid{grid-template-columns:1fr}
   .report-filter-grid{grid-template-columns:1fr}
+  .photo-export-options button{margin-left:0}
   .report-summary{grid-template-columns:1fr}
 }
 
