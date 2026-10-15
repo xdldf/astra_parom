@@ -3,6 +3,8 @@ import io
 import json
 import zipfile
 
+import cv2
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
@@ -39,6 +41,133 @@ def archive_files(response):
     with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
         assert archive.testzip() is None
         return {name: archive.read(name) for name in archive.namelist()}
+
+
+def captured_car(client, monkeypatch, bbox=(100.5, 150.5, 100.25, 75.25)):
+    monkeypatch.setattr(station.workbench, 'read_frame', lambda *_: np.full((500, 600, 3), 30, np.uint8))
+    response = client.post('/api/station/capture', json=dict(
+        media_id='photo-export-test', frame=7, bbox=bbox, source='yolo26n',
+        profile=dict(image_size=[600, 500], polygon=[[2, 100], [598, 100], [598, 450], [2, 450]],
+                     measurement_line_x=bbox[0]+bbox[2]/2,
+                     references=[dict(bbox=bbox, length_m=5)])))
+    assert response.status_code == 200, response.text
+    return response.json()
+
+
+@pytest.mark.parametrize('variant', ['original', 'boxes', 'both'])
+@pytest.mark.parametrize('left', [10.5, 100.5])
+def test_export_draws_saved_model_box_in_full_frame_and_crop_without_changing_evidence(client, monkeypatch, variant, left):
+    record = captured_car(client, monkeypatch, bbox=(left, 150.5, 100.25, 75.25))
+    origins = {'full': (0, 0), 'side': (max(0, int(left)-20), 130)}
+    assert record['source']['side_crop_origin'] == list(origins['side'])
+    originals = {kind: (station.DATA / record[field]).read_bytes()
+                 for kind, field in [('full', 'full_frame_photo'), ('side', 'side_photo')]}
+    params = [('photo_types', 'full'), ('photo_types', 'side'), ('photo_variant', variant)]
+    preview = client.get('/api/station/photos.zip', params=params + [('preview', 'true')]).json()
+    files = archive_files(client.get('/api/station/photos.zip', params=params))
+    assert len(files) == preview['count'] == (4 if variant == 'both' else 2)
+    assert preview['missing'] == 0
+    if variant != 'original':
+        assert preview['missing_boxes'] == 0
+    for kind, field in [('full', 'full_frame_photo'), ('side', 'side_photo')]:
+        basename = record[field]
+        if variant in {'original', 'both'}:
+            assert next(data for name, data in files.items() if name.endswith('/'+basename)) == originals[kind]
+        if variant in {'boxes', 'both'}:
+            data = next(data for name, data in files.items() if name.endswith('/'+basename[:-4]+'-boxes.jpg'))
+            image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
+            original = cv2.imdecode(np.frombuffer(originals[kind], np.uint8), cv2.IMREAD_COLOR)
+            assert image.shape == original.shape
+            # Detect the rendered green frame; independent of JPEG byte changes.
+            blue, green, red = image.astype(int).transpose(2, 0, 1)
+            ys, xs = np.where((green > 140) & (green > red+60) & (green > blue+60))
+            ox, oy = origins[kind]
+            assert xs.min() == pytest.approx(left-ox, abs=3)
+            assert xs.max() == pytest.approx(left+100.25-ox, abs=3)
+            assert ys.min() == pytest.approx(150.5-oy, abs=3)
+            assert ys.max() == pytest.approx(225.75-oy, abs=3)
+            assert image[-3, -3].tolist() == pytest.approx([30, 30, 30], abs=3)
+        assert (station.DATA / basename).read_bytes() == originals[kind]
+    with station.connect() as db:
+        assert station.find(db, record['id']) == record
+
+
+@pytest.mark.parametrize('length_m,expected', [(4.72564, '4.726 m'), (None, None), (0, None)])
+def test_export_labels_full_frame_and_crop_with_calculated_length_not_operator_edit(client, monkeypatch, length_m, expected):
+    record = captured_car(client, monkeypatch)
+    record['measured_length_m'] = length_m
+    record['source']['measured_length_m'] = length_m
+    record['source']['measurement']['length_m'] = length_m
+    record['length_m'] = 8.5  # An operator edit must not replace the model result on the image.
+    with station.connect() as db:
+        db.execute('UPDATE vehicles SET data=? WHERE id=?', (json.dumps(record), record['id']))
+    labels = []
+    original_put_text = cv2.putText
+    def capture_label(image, text, origin, font, scale, color, thickness, line_type):
+        (width, height), baseline = cv2.getTextSize(text, font, scale, thickness)
+        x, y = origin
+        assert 0 <= x and x+width <= image.shape[1]
+        assert 0 <= y-height and y+baseline <= image.shape[0]
+        labels.append((text, image.shape))
+        return original_put_text(image, text, origin, font, scale, color, thickness, line_type)
+    monkeypatch.setattr(cv2, 'putText', capture_label)
+    files = archive_files(client.get('/api/station/photos.zip', params=[
+        ('photo_types', 'full'), ('photo_types', 'side'), ('photo_variant', 'both')]))
+    assert labels == ([(expected, (500, 600, 3)), (expected, (115, 140, 3))] if expected else [])
+    for field in ('full_frame_photo', 'side_photo'):
+        filename = record[field]
+        original = (station.DATA / filename).read_bytes()
+        assert next(data for name, data in files.items() if name.endswith('/'+filename)) == original
+        annotated = next(data for name, data in files.items() if name.endswith('/'+filename[:-4]+'-boxes.jpg'))
+        image = cv2.imdecode(np.frombuffer(annotated, np.uint8), cv2.IMREAD_COLOR)
+        # White lettering is present in the actual JPEG only for a known measurement.
+        assert bool(np.any(np.min(image, axis=2) > 180)) == bool(expected)
+
+
+def test_legacy_crop_without_saved_origin_gets_same_box(client, monkeypatch):
+    record = captured_car(client, monkeypatch)
+    params = dict(photo_types='side', photo_variant='boxes')
+    current = archive_files(client.get('/api/station/photos.zip', params=params))
+    record['source'].pop('side_crop_origin')
+    record['source'].pop('image_space')
+    with station.connect() as db:
+        db.execute('UPDATE vehicles SET data=? WHERE id=?', (json.dumps(record), record['id']))
+    assert archive_files(client.get('/api/station/photos.zip', params=params)) == current
+
+
+@pytest.mark.parametrize('variant', ['boxes', 'both'])
+@pytest.mark.parametrize('source', [None, {}, {'bbox': [1, 2, -3, 4]}, {'bbox': [1, 2, 3]},
+                                   {'bbox': [1, 2, None, 4]}, {'bbox': 'bad'},
+                                   {'bbox': [1, 2, 3, 4], 'image_space': 'unknown'}])
+def test_missing_or_invalid_boxes_preserve_original_once_and_report_fallback(client, variant, source):
+    record = saved_car()
+    record['source'] = source
+    with station.connect() as db:
+        db.execute('UPDATE vehicles SET data=? WHERE id=?', (json.dumps(record), record['id']))
+    params = [('photo_types', kind) for kind in ('full', 'side', 'plate')] + [('photo_variant', variant)]
+    assert client.get('/api/station/photos.zip', params=params + [('preview', 'true')]).json() == {
+        'count': 3, 'missing': 0, 'missing_boxes': 2}
+    files = archive_files(client.get('/api/station/photos.zip', params=params))
+    assert len(files) == 3
+    assert set(files.values()) == {b'original-jpeg-full', b'original-jpeg-side', b'original-jpeg-plate'}
+
+
+def test_front_photo_remains_original_when_exporting_both_variants(client, monkeypatch):
+    record = captured_car(client, monkeypatch)
+    record['front_photo'] = record['id']+'-front.jpg'
+    (station.DATA / record['front_photo']).write_bytes(b'original-jpeg-plate')
+    with station.connect() as db:
+        db.execute('UPDATE vehicles SET data=? WHERE id=?', (json.dumps(record), record['id']))
+    params = [('photo_types', kind) for kind in ('full', 'side', 'plate')] + [('photo_variant', 'both')]
+    assert client.get('/api/station/photos.zip', params=params + [('preview', 'true')]).json() == {
+        'count': 5, 'missing': 0, 'missing_boxes': 0}
+    files = archive_files(client.get('/api/station/photos.zip', params=params))
+    assert len(files) == 5
+    assert next(data for name, data in files.items() if name.endswith('-front.jpg')) == b'original-jpeg-plate'
+
+
+def test_invalid_photo_variant_is_rejected(client):
+    assert client.get('/api/station/photos.zip?photo_variant=unknown').status_code == 422
 
 
 def test_default_exports_only_original_full_frames_and_all_pages(client):

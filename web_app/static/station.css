@@ -162,6 +162,7 @@ tbody tr.selected{background:#edf5ff;box-shadow:inset 3px 0 0 var(--blue)}
 .photo-export legend{padding:0 6px;font-size:14px;font-weight:700}
 .photo-export-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px}
 .photo-export-options label{display:flex;align-items:center;gap:6px;font-size:14px}
+.photo-export-options select{max-width:100%;padding:7px;border:1px solid var(--line);border-radius:7px;background:#fff;font:inherit}
 .photo-export-options button{margin-left:auto}
 #photoExportStatus{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
 .primary-btn{

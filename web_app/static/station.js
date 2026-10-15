@@ -425,12 +425,13 @@ $('exportPhotos').onclick=()=>action(async()=>{
   }
   $('photoExportStatus').textContent='';
   if(!params.has('photo_types'))throw Error('Выберите хотя бы один тип фото для архива');
+  params.set('photo_variant',$('exportPhotoVariant').value);
   $('exportPhotos').disabled=true;
   try{
     const result=await api('/photos.zip?'+params+'&preview=true');
     const a=document.createElement('a');a.href='/api/station/photos.zip?'+params;
     a.download='vehicle_photos.zip';a.click();
-    $('photoExportStatus').textContent=`Готовится скачивание: ${result.count} фото.`+(result.missing?' Некоторые выбранные фото отсутствуют и будут пропущены.':'');
+    $('photoExportStatus').textContent=`Готовится скачивание: ${result.count} фото.`+(result.missing?' Некоторые выбранные фото отсутствуют и будут пропущены.':'')+(result.missing_boxes?` Для ${result.missing_boxes} фото нет сохранённых боксов: в архив войдут исходники.`:'');
   }finally{$('exportPhotos').disabled=false;}
 });
 const requestedStation=new URLSearchParams(location.search).get('station');

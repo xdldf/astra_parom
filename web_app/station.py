@@ -419,12 +419,14 @@ def persist_capture(payload,result,front_image=None,paired=None,front_samples=No
         image=cv2.imdecode(np.frombuffer(base64.b64decode(result['image']),np.uint8),cv2.IMREAD_COLOR)
     x,y,bw,bh=map(int,payload.bbox)
     margin=max(20,int(bw*.08))
-    crop=image[max(0,y-margin):min(image.shape[0],y+bh+margin),max(0,x-margin):min(image.shape[1],x+bw+margin)]
+    left,top=max(0,x-margin),max(0,y-margin)
+    crop=image[top:min(image.shape[0],y+bh+margin),left:min(image.shape[1],x+bw+margin)]
     # Encode outside the SQLite write transaction so operators can continue saving.
     photos={record['id']+'-side.jpg':crop, record['id']+'-frame.jpg':image}
     record['side_photo']=record['id']+'-side.jpg'
     record['full_frame_photo']=record['id']+'-frame.jpg'
     source['image_space']='lens_corrected_full_frame'
+    source['side_crop_origin']=[left,top]
     if front_evidence and front_image is not None and paired:
         # Keep the simultaneous image as evidence; the readable cab can pass
         # earlier than the centre of a long truck reaches the measurement line.
@@ -746,13 +748,80 @@ def report_csv(status: str='',category: str='',date_from: date|None=None,date_to
                     headers={'Content-Disposition':'attachment; filename="ferry_report.csv"'})
 
 
-def export_photos(where, args, photo_types):
+def export_photo_box(record, kind):
+    """Map the saved measurement box to the full image or its side crop."""
+    if kind not in {'full','side'} or record['image_space'] not in (None,'lens_corrected_full_frame'):
+        return None
+    try:
+        box=np.asarray(json.loads(record['bbox'] or 'null'),dtype=float)
+        if box.shape!=(4,) or not np.isfinite(box).all() or min(box[:2])<0 or min(box[2:])<=0:
+            return None
+        if kind=='side':
+            origin=json.loads(record['side_crop_origin'] or 'null')
+            if origin is None:
+                # Older captures used this same crop but did not store its origin.
+                x,y,w,_=map(int,box)
+                margin=max(20,int(w*.08))
+                origin=[max(0,x-margin),max(0,y-margin)]
+            origin=np.asarray(origin,dtype=float)
+            if origin.shape!=(2,) or not np.isfinite(origin).all() or min(origin)<0:
+                return None
+            box[:2]-=origin
+        if min(box[:2])<0:
+            return None
+        return box.tolist()
+    except (TypeError,ValueError):
+        return None
+
+
+def boxed_photo(path, box, length_m=None):
+    # Decode only the copy being exported; saved evidence stays byte-for-byte intact.
+    image=cv2.imdecode(np.frombuffer(path.read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+    if image is None:
+        raise HTTPException(422,'Не удалось открыть сохранённое фото для добавления бокса')
+    x,y,w,h=box
+    height,width=image.shape[:2]
+    if x>=width or y>=height or x+w>width+1 or y+h>height+1:
+        raise HTTPException(422,'Бокс не соответствует размеру сохранённого фото. Выберите вариант без боксов.')
+    start=(min(width-1,round(x)),min(height-1,round(y)))
+    end=(min(width-1,round(x+w)),min(height-1,round(y+h)))
+    thickness=max(2,round(max(width,height)/600))
+    cv2.rectangle(image,start,end,(0,210,70),thickness,cv2.LINE_AA)
+    if isinstance(length_m,(int,float)) and not isinstance(length_m,bool) and np.isfinite(length_m) and length_m>0:
+        text=f'{length_m:.3f} m'
+        font=cv2.FONT_HERSHEY_SIMPLEX
+        scale=max(.5,max(width,height)/1200)
+        padding=max(3,thickness)
+        text_thickness=max(1,round(scale*2))
+        (tw,th),baseline=cv2.getTextSize(text,font,scale,text_thickness)
+        # Fit the label even when a side crop is narrow or close to an image edge.
+        scale*=min(1,(width-2*padding)/max(1,tw),(height-2*padding)/max(1,th+baseline))
+        text_thickness=max(1,round(scale*2))
+        (tw,th),baseline=cv2.getTextSize(text,font,scale,text_thickness)
+        label_width,label_height=tw+2*padding,th+baseline+2*padding
+        left=max(0,min(start[0],width-label_width))
+        top=start[1]-label_height-thickness
+        if top<0:
+            top=max(0,min(start[1]+thickness+1,height-label_height))
+        cv2.rectangle(image,(left,top),(left+label_width-1,top+label_height-1),(20,20,20),cv2.FILLED)
+        cv2.putText(image,text,(left+padding,top+padding+th),font,scale,(255,255,255),text_thickness,cv2.LINE_AA)
+    ok,jpeg=cv2.imencode('.jpg',image,[cv2.IMWRITE_JPEG_QUALITY,95])
+    if not ok:
+        raise HTTPException(500,'Не удалось подготовить фото с боксом')
+    return jpeg.tobytes()
+
+
+def export_photos(where, args, photo_types, include_boxes=False):
     """Yield only selected, saved images belonging to the filtered records."""
     with connect() as db:
         cursor=db.execute(f"""SELECT page.id, page.created_at,
             json_extract(v.data, '$.front_photo') AS plate,
             json_extract(v.data, '$.side_photo') AS side,
-            json_extract(v.data, '$.full_frame_photo') AS full
+            json_extract(v.data, '$.full_frame_photo') AS full,
+            json_extract(v.data, '$.source.bbox') AS bbox,
+            json_extract(v.data, '$.source.side_crop_origin') AS side_crop_origin,
+            json_extract(v.data, '$.source.image_space') AS image_space,
+            json_extract(v.data, '$.measured_length_m') AS measured_length_m
             FROM (SELECT id, created_at, seq FROM vehicle_list WHERE {where}) AS page
             JOIN vehicles v ON v.id=page.id ORDER BY page.seq""",args)
         while batch:=cursor.fetchmany(250):
@@ -767,31 +836,44 @@ def export_photos(where, args, photo_types):
                     if path.is_symlink() or not path.is_file():
                         yield None
                         continue
-                    yield path,folder+'/'+filename
+                    box=export_photo_box(record,kind) if include_boxes else None
+                    yield path,folder+'/'+filename,box,kind,record['measured_length_m']
 
 
 @router.get('/photos.zip')
 def photos_zip(status: str='',category: str='',date_from: date|None=None,date_to: date|None=None,
                time_from: time|None=None,time_to: time|None=None,
                photo_types: list[Literal['plate','side','full']]=Query(['full'],min_length=1,max_length=3),
+               photo_variant: Literal['original','boxes','both']='original',
                preview: bool=False):
     where,args=filters(status=status,category=category,date_from=date_from,date_to=date_to,time_from=time_from,time_to=time_to)
     if preview:
-        count=missing=0
-        for item in export_photos(where,args,photo_types):
+        count=missing=missing_boxes=0
+        for item in export_photos(where,args,photo_types,photo_variant!='original'):
             if item is None:missing+=1
-            else:count+=1
+            else:
+                _,_,box,kind,_=item
+                count+=2 if photo_variant=='both' and box is not None else 1
+                if photo_variant!='original' and kind in {'side','full'} and box is None:
+                    missing_boxes+=1
         if not count:raise HTTPException(404,'За выбранный период нет сохранённых фото выбранных типов')
-        return dict(count=count,missing=missing)
+        result=dict(count=count,missing=missing)
+        if photo_variant!='original':result['missing_boxes']=missing_boxes
+        return result
     # JPEGs are already compressed. Stage on disk so large exports do not fill RAM.
     archive=tempfile.TemporaryFile()
     try:
         count=0
         with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_STORED,allowZip64=True) as output:
-            for item in export_photos(where,args,photo_types):
+            for item in export_photos(where,args,photo_types,photo_variant!='original'):
                 if item is not None:
-                    output.write(*item)
-                    count+=1
+                    path,name,box,_,length_m=item
+                    if photo_variant in {'original','both'} or box is None:
+                        output.write(path,name)
+                        count+=1
+                    if photo_variant!='original' and box is not None:
+                        output.writestr(name[:-4]+'-boxes.jpg',boxed_photo(path,box,length_m))
+                        count+=1
         if not count:raise HTTPException(404,'За выбранный период нет сохранённых фото выбранных типов')
         size=archive.tell()
         archive.seek(0)

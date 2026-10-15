@@ -14,6 +14,7 @@ async function stationUI({search='',storage={}}={}){
     setAttribute(name,value){this[name]=value;},showModal(){this.open=true;},addEventListener(){},removeAttribute(name){delete this[name];},getAttribute(name){return this[name];}};}
   const document={hidden:false,body:element(),querySelectorAll:()=>[],addEventListener(){},createElement:element,
     getElementById(id){if(!elements.has(id))elements.set(id,element());return elements.get(id);}};
+  document.getElementById('exportPhotoVariant').value='boxes';
   let responder=()=>({status:404,data:{detail:'Not configured'}});
   const sandbox=vm.createContext({document,console,URLSearchParams,FormData,structuredClone,
     localStorage:{getItem:key=>storage[key]??null,setItem(key,value){storage[key]=value;}},location:{search,origin:'http://station'},
@@ -45,6 +46,7 @@ test('photo archive defaults to full frames and downloads selected types across 
   const html=fs.readFileSync(require.resolve('../web_app/static/station.html'),'utf8');
   assert.match(html,/<input id="exportFull"[^>]* checked/);
   assert.doesNotMatch(html,/<input id="export(?:Side|Plate)"[^>]* checked/);
+  assert.match(html,/<option value="boxes" selected>С боксами<\/option>/);
   const ui=await stationUI(),downloads=[];
   ui.document.createElement=()=>({click(){downloads.push(this);}});
   ui.elements.get('reportFrom').value='2026-10-13';ui.elements.get('reportTo').value='2026-10-14';
@@ -56,6 +58,7 @@ test('photo archive defaults to full frames and downloads selected types across 
   await ui.elements.get('exportPhotos').onclick();
   const params=new URL(downloads[0].href,'http://station').searchParams;
   assert.deepEqual(params.getAll('photo_types'),['full']);
+  assert.equal(params.get('photo_variant'),'boxes');
   assert.equal(params.get('date_from'),'2026-10-13');assert.equal(params.get('date_to'),'2026-10-14');
   assert.equal(params.get('time_from'),'09:15:00');assert.equal(params.get('time_to'),'18:30:00');
   assert.equal(params.get('status'),'Подтвержден');assert.equal(params.get('category'),'car');
@@ -66,6 +69,23 @@ test('photo archive defaults to full frames and downloads selected types across 
   ui.elements.get('exportSide').checked=true;ui.elements.get('exportPlate').checked=true;
   await ui.elements.get('exportPhotos').onclick();
   assert.deepEqual(new URL(downloads[1].href,'http://station').searchParams.getAll('photo_types'),['plate','side','full']);
+});
+
+test('photo variants reach preview and download and missing boxes are explained',async()=>{
+  const ui=await stationUI(),downloads=[];
+  ui.document.createElement=()=>({click(){downloads.push(this);}});
+  ui.document.getElementById('exportFull').checked=true;
+  for(const variant of ['original','boxes','both']){
+    ui.elements.get('exportPhotoVariant').value=variant;
+    ui.respond(()=>({data:{count:3,missing:0,missing_boxes:variant==='original'?0:1}}));
+    await ui.elements.get('exportPhotos').onclick();
+    const preview=new URL(ui.requests.at(-1).path,'http://station').searchParams;
+    const download=new URL(downloads.at(-1).href,'http://station').searchParams;
+    assert.equal(preview.get('photo_variant'),variant);
+    assert.equal(download.get('photo_variant'),variant);
+    if(variant==='original')assert.doesNotMatch(ui.elements.get('photoExportStatus').textContent,/нет сохранённых боксов/);
+    else assert.match(ui.elements.get('photoExportStatus').textContent,/Для 1 фото нет сохранённых боксов.*исходники/);
+  }
 });
 
 test('empty photo selection and missing photos show errors without starting a download',async()=>{
@@ -86,9 +106,11 @@ test('resetting reports clears dates and times while preserving photo choices',a
   ui.respond(()=>({data:page()}));
   ui.elements.get('reportTimeFrom').value='12:00';ui.elements.get('reportTimeTo').value='13:00';
   ui.document.getElementById('exportFull').checked=true;
+  ui.elements.get('exportPhotoVariant').value='both';
   ui.elements.get('resetReport').onclick();
   assert.equal(ui.elements.get('reportTimeFrom').value,'');assert.equal(ui.elements.get('reportTimeTo').value,'');
   assert.equal(ui.elements.get('exportFull').checked,true);
+  assert.equal(ui.elements.get('exportPhotoVariant').value,'both');
   await new Promise(resolve=>setImmediate(resolve));
 });
 
